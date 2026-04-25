@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Inventory') — Material App</title>
+    <title>@yield('title', 'Inventory') — RawMatPro</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -672,7 +672,7 @@
         <div class="sidebar-logo">
             <div class="logo-icon"><i class="fas fa-boxes-stacked"></i></div>
             <div>
-                <div class="logo-text">Material App</div>
+                <div class="logo-text">RawMatPro</div>
                 <div class="logo-sub">Inventory System</div>
             </div>
         </div>
