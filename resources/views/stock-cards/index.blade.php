@@ -1,33 +1,37 @@
 @extends('layouts.app')
 @section('title', 'Kartu Stok')
 @section('topbar-title', 'Kartu Stok')
-
 @section('topbar-actions')
-    <a href="{{ route('stock-cards.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Input Penerimaan
-    </a>
+    <span style="font-size:12px; color: var(--text-muted);">
+        <i class="fas fa-clock"></i>
+        {{ now()->format('d M Y, H:i') }}
+    </span>
 @endsection
 
 @section('content')
-<div class="page-header">
-    <div>
-        <div class="page-title">Kartu Stok</div>
-        <div class="page-subtitle">Riwayat semua transaksi masuk dan keluar raw material</div>
+<div style="margin-bottom:24px;">
+    <div class="page-title">Kartu Stok</div>
+    <div class="page-subtitle" style="margin-bottom:14px;">Riwayat semua transaksi masuk dan keluar raw material</div>
+    <div style="display:flex; gap:10px;">
+        <a href="{{ route('withdrawal-cards.create') }}" class="btn btn-secondary">
+            <i class="fas fa-file-invoice"></i> Buat Pengambilan
+        </a>
+        <a href="{{ route('stock-cards.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Input Penerimaan
+        </a>
     </div>
-    <a href="{{ route('stock-cards.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Input Penerimaan
-    </a>
 </div>
 
 <div class="card">
-    <div class="card-header" style="flex-wrap:wrap; gap:12px;">
-        <form method="GET" class="search-bar" style="flex:1;">
-            <div class="search-input-wrap">
+    <!-- Filter -->
+    <div class="card-header">
+        <form method="GET" style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
+            <div class="search-input-wrap" style="flex:1; min-width:180px;">
                 <i class="fas fa-search"></i>
-                <input type="text" name="search" class="form-control" placeholder="Cari material..."
-                       value="{{ request('search') }}">
+                <input type="text" name="search" class="form-control"
+                       placeholder="Cari material..." value="{{ request('search') }}">
             </div>
-            <select name="material_id" class="form-control" style="width:200px;">
+            <select name="material_id" class="form-control" style="width:180px;">
                 <option value="">Semua Material</option>
                 @foreach($materials as $m)
                     <option value="{{ $m->id }}" {{ request('material_id') == $m->id ? 'selected' : '' }}>
@@ -35,22 +39,25 @@
                     </option>
                 @endforeach
             </select>
-            <select name="type" class="form-control" style="width:140px;">
+            <select name="type" class="form-control" style="width:130px;">
                 <option value="">Semua Tipe</option>
                 <option value="in"  {{ request('type') === 'in'  ? 'selected' : '' }}>Masuk</option>
                 <option value="out" {{ request('type') === 'out' ? 'selected' : '' }}>Keluar</option>
             </select>
-            <input type="date" name="date_from" class="form-control" style="width:155px;"
-                   value="{{ request('date_from') }}" placeholder="Dari tanggal">
-            <input type="date" name="date_to" class="form-control" style="width:155px;"
-                   value="{{ request('date_to') }}" placeholder="Sampai tanggal">
-            <button type="submit" class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+            <input type="date" name="date_from" class="form-control" style="width:150px;" value="{{ request('date_from') }}">
+            <input type="date" name="date_to"   class="form-control" style="width:150px;" value="{{ request('date_to') }}">
+            <button type="submit" class="btn btn-secondary">
+                <i class="fas fa-filter"></i> Filter
+            </button>
             @if(request()->hasAny(['search','material_id','type','date_from','date_to']))
-                <a href="{{ route('stock-cards.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i></a>
+                <a href="{{ route('stock-cards.index') }}" class="btn btn-ghost">
+                    <i class="fas fa-times"></i> Reset
+                </a>
             @endif
         </form>
     </div>
 
+    <!-- Table -->
     <div class="table-wrap">
         <table>
             <thead>
@@ -73,7 +80,11 @@
                     <td style="white-space:nowrap; font-size:12px; color:var(--text-muted);">
                         {{ $sc->transaction_date->format('d M Y') }}
                     </td>
-                    <td><span class="mono" style="color:var(--accent); font-size:11px;">{{ $sc->material->code ?? '-' }}</span></td>
+                    <td>
+                        <span class="mono" style="color:var(--accent); font-size:11px;">
+                            {{ $sc->material->code ?? '-' }}
+                        </span>
+                    </td>
                     <td style="font-weight:500;">{{ $sc->material->name ?? '-' }}</td>
                     <td>
                         @if($sc->type === 'in')
@@ -93,16 +104,23 @@
                     <td class="text-right">
                         @if($sc->quantity_in > 0)
                             <span class="stock-in">+{{ number_format($sc->quantity_in, 2) }}</span>
-                        @else <span style="color:var(--text-dim);">—</span> @endif
+                        @else
+                            <span style="color:var(--text-dim);">—</span>
+                        @endif
                     </td>
                     <td class="text-right">
                         @if($sc->quantity_out > 0)
                             <span class="stock-out">-{{ number_format($sc->quantity_out, 2) }}</span>
-                        @else <span style="color:var(--text-dim);">—</span> @endif
+                        @else
+                            <span style="color:var(--text-dim);">—</span>
+                        @endif
                     </td>
-                    <td class="text-right" style="font-weight:600;">{{ number_format($sc->balance, 2) }}</td>
+                    <td class="text-right" style="font-weight:600;">
+                        {{ number_format($sc->balance, 2) }}
+                    </td>
                     <td class="text-center">
-                        <a href="{{ route('stock-cards.show', $sc->material) }}" class="btn btn-ghost btn-xs" title="Lihat Kartu">
+                        <a href="{{ route('stock-cards.show', $sc->material) }}"
+                           class="btn btn-ghost btn-xs" title="Lihat Kartu Stok">
                             <i class="fas fa-eye"></i>
                         </a>
                     </td>
@@ -125,7 +143,8 @@
     @if($stockCards->hasPages())
     <div class="pagination-wrap">
         <div class="pagination-info">
-            Menampilkan {{ $stockCards->firstItem() }}–{{ $stockCards->lastItem() }} dari {{ $stockCards->total() }} transaksi
+            Menampilkan {{ $stockCards->firstItem() }}–{{ $stockCards->lastItem() }}
+            dari {{ $stockCards->total() }} transaksi
         </div>
         {{ $stockCards->links() }}
     </div>

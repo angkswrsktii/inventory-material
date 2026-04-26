@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Inventory') — RawMatPro</title>
+    <title>@yield('title', 'Inventory') — Material App</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +34,7 @@
             --danger: #f87171;
             --danger-bg: rgba(248,113,113,0.1);
             --info: #60a5fa;
-            --sidebar-w: 260px;
+            --sidebar-w: 220px;
             --header-h: 60px;
             --radius: 12px;
             --radius-sm: 8px;
@@ -672,7 +672,7 @@
         <div class="sidebar-logo">
             <div class="logo-icon"><i class="fas fa-boxes-stacked"></i></div>
             <div>
-                <div class="logo-text">RawMatPro</div>
+                <div class="logo-text">Material App</div>
                 <div class="logo-sub">Inventory System</div>
             </div>
         </div>
@@ -689,7 +689,7 @@
             </a>
 
             <div class="nav-section">Transaksi</div>
-            <a href="{{ route('stock-cards.index') }}" class="nav-item {{ request()->routeIs('stock-cards.*') ? 'active' : '' }}">
+            <a href="{{ route('stock-cards.index') }}" class="nav-item {{ request()->routeIs('stock-cards.index') || request()->routeIs('stock-cards.show') ? 'active' : '' }}">
                 <i class="fas fa-table-list"></i> Kartu Stok
             </a>
             <a href="{{ route('stock-cards.create') }}" class="nav-item {{ request()->routeIs('stock-cards.create') ? 'active' : '' }}">

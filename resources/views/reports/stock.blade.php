@@ -1,6 +1,12 @@
 @extends('layouts.app')
 @section('title', 'Laporan Stok')
 @section('topbar-title', 'Laporan Stok')
+@section('topbar-actions')
+    <span style="font-size:12px; color: var(--text-muted);">
+        <i class="fas fa-clock"></i>
+        {{ now()->format('d M Y, H:i') }}
+    </span>
+@endsection
 
 @section('content')
 <div class="page-header">

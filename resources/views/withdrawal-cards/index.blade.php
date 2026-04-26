@@ -1,11 +1,11 @@
 @extends('layouts.app')
 @section('title', 'Kartu Pengambilan')
 @section('topbar-title', 'Kartu Pengambilan')
-
 @section('topbar-actions')
-    <a href="{{ route('withdrawal-cards.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Buat Pengambilan
-    </a>
+    <span style="font-size:12px; color: var(--text-muted);">
+        <i class="fas fa-clock"></i>
+        {{ now()->format('d M Y, H:i') }}
+    </span>
 @endsection
 
 @section('content')

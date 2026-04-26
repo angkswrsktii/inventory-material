@@ -4,9 +4,10 @@
 @section('topbar-title', 'Data Material')
 
 @section('topbar-actions')
-    <a href="{{ route('materials.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Tambah Material
-    </a>
+    <span style="font-size:12px; color: var(--text-muted);">
+        <i class="fas fa-clock"></i>
+        {{ now()->format('d M Y, H:i') }}
+    </span>
 @endsection
 
 @section('content')
@@ -15,6 +16,9 @@
         <div class="page-title">Data Material</div>
         <div class="page-subtitle">Manajemen master data raw material</div>
     </div>
+     <a href="{{ route('materials.create') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Tambah Material
+    </a>
 </div>
 
 <!-- Stats -->
