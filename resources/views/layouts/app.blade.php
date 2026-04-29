@@ -40,6 +40,51 @@
             --radius-sm: 8px;
         }
 
+        /* ── LIGHT MODE ── */
+        body.light-mode {
+            --bg: #f0f2f7;
+            --surface: #ffffff;
+            --surface-2: #f5f6fa;
+            --surface-3: #eaecf3;
+            --border: rgba(0,0,0,0.08);
+            --border-active: rgba(79,142,247,0.4);
+            --text: #1a1d2e;
+            --text-muted: #6b7280;
+            --text-dim: #9ca3af;
+            --accent: #3b7de8;
+            --accent-glow: rgba(59,125,232,0.12);
+            --accent-2: #6c5ce7;
+            --success: #059669;
+            --success-bg: rgba(5,150,105,0.08);
+            --warning: #d97706;
+            --warning-bg: rgba(217,119,6,0.08);
+            --danger: #dc2626;
+            --danger-bg: rgba(220,38,38,0.08);
+            --info: #2563eb;
+        }
+
+        /* ── THEME TOGGLE BUTTON ── */
+        .theme-toggle {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover {
+            background: var(--surface-3);
+            color: var(--text);
+            border-color: var(--border-active);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -383,7 +428,8 @@
         }
         .btn-danger:hover { background: var(--danger-bg); }
 
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-sm { padding: 5px 10px; font-size: 11.5px; }
+        .btn-xs { padding: 3px 8px; font-size: 11px; border-radius: 6px; }
         .btn-xs { padding: 4px 10px; font-size: 11px; border-radius: 6px; }
         .btn-ghost {
             background: transparent;
@@ -734,9 +780,9 @@
     <div class="main">
         <header class="topbar">
             <div class="topbar-title">@yield('topbar-title', 'Dashboard')</div>
-            <div class="topbar-actions">
-                @yield('topbar-actions')
-            </div>
+            <button class="theme-toggle" id="themeToggle" title="Ganti Tema" onclick="toggleTheme()">
+                <i class="fas fa-moon" id="themeIcon"></i>
+            </button>
         </header>
 
         <main class="content">
@@ -759,5 +805,34 @@
     </div>
 
     @stack('scripts')
+
+    <script>
+        // ── Theme Toggle ──────────────────────────────────
+        const THEME_KEY = 'materialapp_theme';
+
+        function applyTheme(theme) {
+            const icon = document.getElementById('themeIcon');
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+                icon.className = 'fas fa-sun';
+            } else {
+                document.body.classList.remove('light-mode');
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        function toggleTheme() {
+            const current = localStorage.getItem(THEME_KEY) || 'dark';
+            const next    = current === 'dark' ? 'light' : 'dark';
+            localStorage.setItem(THEME_KEY, next);
+            applyTheme(next);
+        }
+
+        // Apply saved theme on load (before paint)
+        (function () {
+            const saved = localStorage.getItem(THEME_KEY) || 'dark';
+            applyTheme(saved);
+        })();
+    </script>
 </body>
 </html>
