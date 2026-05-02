@@ -37,7 +37,7 @@ class UserController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
-            'role'     => 'required|in:admin,karyawan',
+            'role'     => 'required|in:admin,pimpinan,kepala_gudang,karyawan',
             'password' => ['required', 'confirmed', Password::min(6)],
         ]);
 
@@ -64,14 +64,15 @@ class UserController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'role'     => 'required|in:admin,karyawan',
+            'role'     => 'required|in:admin,pimpinan,kepala_gudang,karyawan',
             'password' => ['nullable', 'confirmed', Password::min(6)],
         ]);
 
-        // Cegah satu-satunya admin di-demote
-        if ($user->isAdmin() && $request->role !== 'admin') {
-            if (User::where('role', 'admin')->count() <= 1) {
-                return back()->with('error', 'Tidak dapat mengubah role. Minimal harus ada 1 Admin aktif.');
+        // Cegah satu-satunya pimpinan/admin di-demote
+        if ($user->isManagement() && !in_array($request->role, ['admin', 'pimpinan'])) {
+            $managementCount = User::whereIn('role', ['admin', 'pimpinan'])->count();
+            if ($managementCount <= 1) {
+                return back()->with('error', 'Tidak dapat mengubah role. Minimal harus ada 1 Pimpinan atau Admin aktif.');
             }
         }
 
@@ -98,8 +99,8 @@ class UserController extends Controller
             return back()->with('error', 'Tidak dapat menghapus akun yang sedang digunakan.');
         }
 
-        if ($user->isAdmin() && User::where('role', 'admin')->count() <= 1) {
-            return back()->with('error', 'Tidak dapat menghapus satu-satunya Admin.');
+        if ($user->isManagement() && User::whereIn('role', ['admin', 'pimpinan'])->count() <= 1) {
+            return back()->with('error', 'Tidak dapat menghapus satu-satunya Pimpinan/Admin.');
         }
 
         $user->delete();

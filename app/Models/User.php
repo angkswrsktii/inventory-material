@@ -25,27 +25,74 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'is_active' => 'boolean',
+        'password'          => 'hashed',
+        'is_active'         => 'boolean',
     ];
+
+    // ── Role constants ────────────────────────────────────
+    const ROLE_ADMIN         = 'admin';
+    const ROLE_PIMPINAN      = 'pimpinan';
+    const ROLE_KEPALA_GUDANG = 'kepala_gudang';
+    const ROLE_KARYAWAN      = 'karyawan';
 
     // ── Role helpers ──────────────────────────────────────
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function isPimpinan(): bool
+    {
+        return $this->role === self::ROLE_PIMPINAN;
+    }
+
+    public function isKepalaGudang(): bool
+    {
+        return $this->role === self::ROLE_KEPALA_GUDANG;
     }
 
     public function isKaryawan(): bool
     {
-        return $this->role === 'karyawan';
+        return $this->role === self::ROLE_KARYAWAN;
+    }
+
+    /**
+     * Pimpinan atau Admin = punya akses level tertinggi
+     */
+    public function isManagement(): bool
+    {
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_PIMPINAN]);
+    }
+
+    /**
+     * Kepala Gudang atau Pimpinan/Admin = bisa approve
+     */
+    public function canApprove(): bool
+    {
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_PIMPINAN, self::ROLE_KEPALA_GUDANG]);
     }
 
     public function getRoleLabelAttribute(): string
     {
         return match($this->role) {
-            'admin'    => 'Administrator',
-            'karyawan' => 'Karyawan',
-            default    => ucfirst($this->role),
+            self::ROLE_ADMIN         => 'Administrator',
+            self::ROLE_PIMPINAN      => 'Pimpinan',
+            self::ROLE_KEPALA_GUDANG => 'Kepala Gudang',
+            self::ROLE_KARYAWAN      => 'Pegawai',
+            default                  => ucfirst($this->role),
         };
+    }
+
+    /**
+     * Semua pilihan role untuk dropdown
+     */
+    public static function roleOptions(): array
+    {
+        return [
+            self::ROLE_PIMPINAN      => '👔 Pimpinan — Akses penuh & approval purchase order',
+            self::ROLE_KEPALA_GUDANG => '🏭 Kepala Gudang — Kelola stok & purchase request/order',
+            self::ROLE_KARYAWAN      => '👷 Pegawai — Input penerimaan & permintaan barang',
+            self::ROLE_ADMIN         => '🛡️ Administrator — Akses penuh sistem',
+        ];
     }
 }

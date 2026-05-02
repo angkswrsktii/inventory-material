@@ -13,7 +13,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Tambah User Baru</div>
-        <div class="page-subtitle">Buat akun untuk Admin atau Karyawan</div>
+        <div class="page-subtitle">Buat akun untuk Pimpinan, Kepala Gudang, atau Pegawai</div>
     </div>
 </div>
 
@@ -44,11 +44,17 @@
                     <label class="form-label">Role <span class="required">*</span></label>
                     <select name="role" class="form-control" required>
                         <option value="">-- Pilih Role --</option>
-                        <option value="admin"    {{ old('role') === 'admin'    ? 'selected' : '' }}>
-                            🛡️ Administrator — Akses penuh termasuk manajemen user
+                        <option value="pimpinan"      {{ old('role') === 'pimpinan'      ? 'selected' : '' }}>
+                            👔 Pimpinan — Akses penuh & approval purchase order
                         </option>
-                        <option value="karyawan" {{ old('role') === 'karyawan' ? 'selected' : '' }}>
-                            👷 Karyawan — Input stok & pengambilan material
+                        <option value="kepala_gudang" {{ old('role') === 'kepala_gudang' ? 'selected' : '' }}>
+                            🏭 Kepala Gudang — Kelola stok & purchase request/order
+                        </option>
+                        <option value="karyawan"      {{ old('role') === 'karyawan'      ? 'selected' : '' }}>
+                            👷 Pegawai — Input penerimaan & permintaan barang
+                        </option>
+                        <option value="admin"         {{ old('role') === 'admin'         ? 'selected' : '' }}>
+                            🛡️ Administrator — Akses penuh sistem
                         </option>
                     </select>
                     @error('role') <div class="form-error">{{ $message }}</div> @enderror
@@ -95,24 +101,35 @@
     <div style="margin-top:16px; display:grid; gap:10px;">
         <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px;">
             <div style="font-weight:600; color:var(--accent); margin-bottom:6px; font-size:13px;">
-                <i class="fas fa-shield-halved"></i> Hak Akses Admin
+                <i class="fas fa-user-tie"></i> Hak Akses Pimpinan
             </div>
             <ul style="font-size:12px; color:var(--text-muted); list-style:none; display:flex; flex-wrap:wrap; gap:6px;">
-                @foreach(['Dashboard','Data Material','Kartu Stok','Kartu Pengambilan','Laporan','Manajemen User'] as $f)
+                @foreach(['Dashboard','Data Material','Kartu Stok','Kartu Pengambilan','Laporan','Manajemen User','Approval Purchase Order','Approval Permintaan Barang'] as $f)
                     <li style="background:var(--accent-glow);color:var(--accent);padding:2px 10px;border-radius:20px;">✓ {{ $f }}</li>
                 @endforeach
             </ul>
         </div>
         <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px;">
-            <div style="font-weight:600; color:var(--accent-2); margin-bottom:6px; font-size:13px;">
-                <i class="fas fa-user-gear"></i> Hak Akses Karyawan
+            <div style="font-weight:600; color:#10b981; margin-bottom:6px; font-size:13px;">
+                <i class="fas fa-warehouse"></i> Hak Akses Kepala Gudang
             </div>
             <ul style="font-size:12px; color:var(--text-muted); list-style:none; display:flex; flex-wrap:wrap; gap:6px;">
-                @foreach(['Dashboard','Kartu Stok (Input)','Kartu Pengambilan','Lihat Laporan'] as $f)
+                @foreach(['Dashboard','Data Material','Kartu Stok','Penerimaan Barang','Purchase Request','Purchase Order','Approval Permintaan Barang'] as $f)
+                    <li style="background:rgba(16,185,129,0.1);color:#10b981;padding:2px 10px;border-radius:20px;">✓ {{ $f }}</li>
+                @endforeach
+                <li style="background:var(--danger-bg);color:var(--danger);padding:2px 10px;border-radius:20px;">✗ Manajemen User</li>
+            </ul>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px;">
+            <div style="font-weight:600; color:var(--accent-2); margin-bottom:6px; font-size:13px;">
+                <i class="fas fa-user-gear"></i> Hak Akses Pegawai
+            </div>
+            <ul style="font-size:12px; color:var(--text-muted); list-style:none; display:flex; flex-wrap:wrap; gap:6px;">
+                @foreach(['Dashboard','Input Penerimaan Barang','Permintaan Barang','Lihat Status Persetujuan'] as $f)
                     <li style="background:rgba(124,107,239,0.1);color:var(--accent-2);padding:2px 10px;border-radius:20px;">✓ {{ $f }}</li>
                 @endforeach
                 <li style="background:var(--danger-bg);color:var(--danger);padding:2px 10px;border-radius:20px;">✗ Manajemen User</li>
-                <li style="background:var(--danger-bg);color:var(--danger);padding:2px 10px;border-radius:20px;">✗ Edit/Hapus Material</li>
+                <li style="background:var(--danger-bg);color:var(--danger);padding:2px 10px;border-radius:20px;">✗ Purchase Order</li>
             </ul>
         </div>
     </div>

@@ -18,11 +18,20 @@
 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
     <div style="background:var(--accent-glow); border:1px solid rgba(79,142,247,0.2); border-radius:var(--radius); padding:16px 20px; display:flex; align-items:center; gap:14px;">
         <div style="width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0;">
-            <i class="fas fa-shield-halved"></i>
+            <i class="fas fa-user-tie"></i>
         </div>
         <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Role Admin</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Akses penuh: CRUD material, stok, pengambilan, <strong style="color:var(--accent)">manajemen user</strong>, laporan</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Pimpinan</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Akses penuh: approval purchase order, laporan, manajemen user</div>
+        </div>
+    </div>
+    <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius); padding:16px 20px; display:flex; align-items:center; gap:14px;">
+        <div style="width:40px;height:40px;background:#10b981;border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0;">
+            <i class="fas fa-warehouse"></i>
+        </div>
+        <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Kepala Gudang</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Kelola stok, approval barang, purchase request & order</div>
         </div>
     </div>
     <div style="background:rgba(124,107,239,0.08); border:1px solid rgba(124,107,239,0.2); border-radius:var(--radius); padding:16px 20px; display:flex; align-items:center; gap:14px;">
@@ -30,8 +39,17 @@
             <i class="fas fa-user-gear"></i>
         </div>
         <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Role Karyawan</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Akses terbatas: input stok masuk, kartu pengambilan, lihat laporan</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Pegawai</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Input penerimaan barang & ajukan permintaan barang</div>
+        </div>
+    </div>
+    <div style="background:var(--accent-glow); border:1px solid rgba(79,142,247,0.2); border-radius:var(--radius); padding:16px 20px; display:flex; align-items:center; gap:14px;">
+        <div style="width:40px;height:40px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;flex-shrink:0;">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+        <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Administrator</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Akses penuh sistem termasuk <strong style="color:var(--accent)">manajemen user</strong></div>
         </div>
     </div>
 </div>
@@ -74,13 +92,17 @@
                     </td>
                     <td style="color:var(--text-muted); font-size:13px;">{{ $user->email }}</td>
                     <td>
-                        @if($user->isAdmin())
-                            <span class="badge badge-info"><i class="fas fa-shield-halved"></i> Admin</span>
-                        @else
-                            <span class="badge" style="background:rgba(124,107,239,0.1);color:var(--accent-2);">
-                                <i class="fas fa-user-gear"></i> Karyawan
-                            </span>
-                        @endif
+                        @php
+                            $roleConfig = match($user->role) {
+                                'pimpinan'      => ['icon' => 'fa-user-tie',      'label' => 'Pimpinan',      'style' => 'background:rgba(79,142,247,0.1);color:var(--accent);'],
+                                'kepala_gudang' => ['icon' => 'fa-warehouse',     'label' => 'Kepala Gudang', 'style' => 'background:rgba(16,185,129,0.1);color:#10b981;'],
+                                'karyawan'      => ['icon' => 'fa-user-gear',     'label' => 'Pegawai',       'style' => 'background:rgba(124,107,239,0.1);color:var(--accent-2);'],
+                                default         => ['icon' => 'fa-shield-halved', 'label' => 'Admin',         'style' => 'background:rgba(79,142,247,0.15);color:var(--accent);'],
+                            };
+                        @endphp
+                        <span class="badge" style="{{ $roleConfig['style'] }}">
+                            <i class="fas {{ $roleConfig['icon'] }}"></i> {{ $roleConfig['label'] }}
+                        </span>
                     </td>
                     <td>
                         @if($user->is_active)

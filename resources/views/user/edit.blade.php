@@ -21,11 +21,17 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-pen" style="color:var(--accent);margin-right:8px;"></i>Edit Akun</span>
-            @if($user->isAdmin())
-                <span class="badge badge-info"><i class="fas fa-shield-halved"></i> Admin</span>
-            @else
-                <span class="badge" style="background:rgba(124,107,239,0.1);color:var(--accent-2);"><i class="fas fa-user-gear"></i> Karyawan</span>
-            @endif
+            @php
+                $editRoleConfig = match($user->role) {
+                    'pimpinan'      => ['icon' => 'fa-user-tie',      'label' => 'Pimpinan',      'style' => 'background:rgba(79,142,247,0.1);color:var(--accent);'],
+                    'kepala_gudang' => ['icon' => 'fa-warehouse',     'label' => 'Kepala Gudang', 'style' => 'background:rgba(16,185,129,0.1);color:#10b981;'],
+                    'karyawan'      => ['icon' => 'fa-user-gear',     'label' => 'Pegawai',       'style' => 'background:rgba(124,107,239,0.1);color:var(--accent-2);'],
+                    default         => ['icon' => 'fa-shield-halved', 'label' => 'Admin',         'style' => 'background:rgba(79,142,247,0.15);color:var(--accent);'],
+                };
+            @endphp
+            <span class="badge" style="{{ $editRoleConfig['style'] }}">
+                <i class="fas {{ $editRoleConfig['icon'] }}"></i> {{ $editRoleConfig['label'] }}
+            </span>
         </div>
         <div class="card-body">
             <form action="{{ route('users.update', $user) }}" method="POST">
@@ -49,8 +55,10 @@
                     <label class="form-label">Role <span class="required">*</span></label>
                     <select name="role" class="form-control" required
                             {{ ($user->id === auth()->id()) ? 'disabled' : '' }}>
-                        <option value="admin"    {{ old('role', $user->role) === 'admin'    ? 'selected' : '' }}>🛡️ Administrator</option>
-                        <option value="karyawan" {{ old('role', $user->role) === 'karyawan' ? 'selected' : '' }}>👷 Karyawan</option>
+                        <option value="pimpinan"      {{ old('role', $user->role) === 'pimpinan'      ? 'selected' : '' }}>👔 Pimpinan</option>
+                        <option value="kepala_gudang" {{ old('role', $user->role) === 'kepala_gudang' ? 'selected' : '' }}>🏭 Kepala Gudang</option>
+                        <option value="karyawan"      {{ old('role', $user->role) === 'karyawan'      ? 'selected' : '' }}>👷 Pegawai</option>
+                        <option value="admin"         {{ old('role', $user->role) === 'admin'         ? 'selected' : '' }}>🛡️ Administrator</option>
                     </select>
                     @if($user->id === auth()->id())
                         <input type="hidden" name="role" value="{{ $user->role }}">
