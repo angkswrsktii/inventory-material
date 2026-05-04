@@ -747,6 +747,9 @@
             <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}">
                 <i class="fas fa-cart-plus"></i> Purchase Request
             </a>
+            <a href="{{ route('purchase-orders.index') }}" class="nav-item {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}">
+                <i class="fas fa-file-invoice-dollar"></i> Purchase Order
+            </a>
 
             <div class="nav-section">Laporan</div>
             <a href="{{ route('reports.stock') }}" class="nav-item {{ request()->routeIs('reports.stock') ? 'active' : '' }}">

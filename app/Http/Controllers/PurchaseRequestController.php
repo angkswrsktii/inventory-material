@@ -13,9 +13,11 @@ use Illuminate\Support\Facades\Auth;
 class PurchaseRequestController extends Controller
 {
     // ── INDEX ─────────────────────────────────────────────
-
-    public function index(Request $request, User $user)
+    public function index(Request $request)
     {
+        /** @var User $currentUser */
+        $currentUser = Auth::user();
+
         $query = PurchaseRequest::with(['items', 'creator', 'reviewer'])
             ->orderBy('request_date', 'desc')
             ->orderBy('id', 'desc');
@@ -42,13 +44,12 @@ class PurchaseRequestController extends Controller
         }
 
         // Karyawan hanya lihat PR miliknya sendiri
-        if ($user->isKaryawan()) {
-            $query->where('created_by', $user->id());
+        if ($currentUser->isKaryawan()) {
+            $query->where('created_by', $currentUser->id);
         }
 
         $requests = $query->paginate(10)->withQueryString();
 
-        // Stats untuk header
         $stats = [
             'draft'     => PurchaseRequest::where('status', 'draft')->count(),
             'submitted' => PurchaseRequest::where('status', 'submitted')->count(),
@@ -60,36 +61,33 @@ class PurchaseRequestController extends Controller
     }
 
     // ── CREATE ────────────────────────────────────────────
-
     public function create()
     {
-        $materials = Material::where('is_active', true)->orderBy('name')->get();
+        $materials  = Material::where('is_active', true)->orderBy('name')->get();
         $documentNo = PurchaseRequest::generateDocumentNo();
 
         return view('purchase-requests.create', compact('materials', 'documentNo'));
     }
 
     // ── STORE ─────────────────────────────────────────────
-
     public function store(Request $request)
     {
         $request->validate([
-            'request_date'       => 'required|date',
-            'requested_by_name'  => 'required|string|max:100',
-            'department'         => 'nullable|string|max:100',
-            'purpose'            => 'nullable|string|max:500',
-            'notes'              => 'nullable|string',
-            'items'              => 'required|array|min:1',
-            'items.*.material_name' => 'required|string|max:255',
-            'items.*.unit'          => 'required|string|max:50',
+            'request_date'               => 'required|date',
+            'requested_by_name'          => 'required|string|max:100',
+            'department'                 => 'nullable|string|max:100',
+            'purpose'                    => 'nullable|string|max:500',
+            'notes'                      => 'nullable|string',
+            'items'                      => 'required|array|min:1',
+            'items.*.material_name'      => 'required|string|max:255',
+            'items.*.unit'               => 'required|string|max:50',
             'items.*.quantity_requested' => 'required|numeric|min:0.01',
             'items.*.estimated_price'    => 'nullable|numeric|min:0',
         ]);
 
-        $action = $request->input('action', 'draft'); // 'draft' or 'submit'
-        $user = Auth::user();
+        $action = $request->input('action', 'draft');
 
-        DB::transaction(function () use ($request, $action, $user) {
+        DB::transaction(function () use ($request, $action) {
             $pr = PurchaseRequest::create([
                 'document_no'       => PurchaseRequest::generateDocumentNo(),
                 'request_date'      => $request->request_date,
@@ -98,7 +96,7 @@ class PurchaseRequestController extends Controller
                 'purpose'           => $request->purpose,
                 'notes'             => $request->notes,
                 'status'            => $action === 'submit' ? 'submitted' : 'draft',
-                'created_by'        => $user->id,
+                'created_by'        => Auth::id(),
             ]);
 
             foreach ($request->items as $item) {
@@ -124,7 +122,6 @@ class PurchaseRequestController extends Controller
     }
 
     // ── SHOW ──────────────────────────────────────────────
-
     public function show(PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->load(['items.material', 'creator', 'reviewer']);
@@ -132,10 +129,9 @@ class PurchaseRequestController extends Controller
     }
 
     // ── EDIT ──────────────────────────────────────────────
-
     public function edit(PurchaseRequest $purchaseRequest)
     {
-        if (! $purchaseRequest->canEdit()) {
+        if (!$purchaseRequest->canEdit()) {
             return back()->with('error', 'Purchase Request ini tidak dapat diedit.');
         }
 
@@ -146,20 +142,19 @@ class PurchaseRequestController extends Controller
     }
 
     // ── UPDATE ────────────────────────────────────────────
-
     public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
-        if (! $purchaseRequest->canEdit()) {
+        if (!$purchaseRequest->canEdit()) {
             return back()->with('error', 'Purchase Request ini tidak dapat diedit.');
         }
 
         $request->validate([
-            'request_date'       => 'required|date',
-            'requested_by_name'  => 'required|string|max:100',
-            'department'         => 'nullable|string|max:100',
-            'purpose'            => 'nullable|string|max:500',
-            'notes'              => 'nullable|string',
-            'items'              => 'required|array|min:1',
+            'request_date'               => 'required|date',
+            'requested_by_name'          => 'required|string|max:100',
+            'department'                 => 'nullable|string|max:100',
+            'purpose'                    => 'nullable|string|max:500',
+            'notes'                      => 'nullable|string',
+            'items'                      => 'required|array|min:1',
             'items.*.material_name'      => 'required|string|max:255',
             'items.*.unit'               => 'required|string|max:50',
             'items.*.quantity_requested' => 'required|numeric|min:0.01',
@@ -178,7 +173,6 @@ class PurchaseRequestController extends Controller
                 'status'            => $action === 'submit' ? 'submitted' : 'draft',
             ]);
 
-            // Hapus items lama, buat ulang
             $purchaseRequest->items()->delete();
 
             foreach ($request->items as $item) {
@@ -203,11 +197,10 @@ class PurchaseRequestController extends Controller
         return redirect()->route('purchase-requests.show', $purchaseRequest)->with('success', $msg);
     }
 
-    // ── SUBMIT (ubah status draft → submitted) ────────────
-
+    // ── SUBMIT ────────────────────────────────────────────
     public function submit(PurchaseRequest $purchaseRequest)
     {
-        if (! $purchaseRequest->canSubmit()) {
+        if (!$purchaseRequest->canSubmit()) {
             return back()->with('error', 'Purchase Request ini tidak dapat diajukan.');
         }
 
@@ -217,24 +210,25 @@ class PurchaseRequestController extends Controller
     }
 
     // ── APPROVE ───────────────────────────────────────────
-
-    public function approve(Request $request, PurchaseRequest $purchaseRequest, User $user)
+    public function approve(Request $request, PurchaseRequest $purchaseRequest)
     {
-        if (! $purchaseRequest->canReview()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat di-approve.');
+        /** @var User $currentUser */
+        $currentUser = Auth::user();
+
+        if (!$purchaseRequest->canReview()) {
+            return back()->with('error', 'Purchase Request ini tidak dapat di-approve. Status saat ini: ' . $purchaseRequest->status_label);
         }
 
-        if (! $user || ! $user->canApprove()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk menyetujui PR ini.');
+        if (!$currentUser->canApprove()) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk menyetujui PR. Hanya Pimpinan atau Kepala Gudang yang dapat menyetujui.');
         }
 
         $request->validate([
-            'approved_quantities' => 'nullable|array',
-            'approved_quantities.*' => 'nullable|numeric|min:0',
+            'approved_quantities'    => 'nullable|array',
+            'approved_quantities.*'  => 'nullable|numeric|min:0',
         ]);
 
-        DB::transaction(function () use ($request, $purchaseRequest, $user) {
-            // Update qty approved per item jika diberikan
+        DB::transaction(function () use ($request, $purchaseRequest, $currentUser) {
             if ($request->approved_quantities) {
                 foreach ($request->approved_quantities as $itemId => $qty) {
                     $purchaseRequest->items()->where('id', $itemId)->update([
@@ -242,7 +236,6 @@ class PurchaseRequestController extends Controller
                     ]);
                 }
             } else {
-                // Default: approved qty = requested qty
                 $purchaseRequest->items()->update([
                     'quantity_approved' => DB::raw('quantity_requested'),
                 ]);
@@ -250,7 +243,7 @@ class PurchaseRequestController extends Controller
 
             $purchaseRequest->update([
                 'status'      => 'approved',
-                'reviewed_by' => $user->id,
+                'reviewed_by' => $currentUser->id,
                 'reviewed_at' => now(),
             ]);
         });
@@ -259,15 +252,17 @@ class PurchaseRequestController extends Controller
     }
 
     // ── REJECT ────────────────────────────────────────────
-
-    public function reject(Request $request, PurchaseRequest $purchaseRequest, User $user)
+    public function reject(Request $request, PurchaseRequest $purchaseRequest)
     {
-        if (! $purchaseRequest->canReview()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat ditolak.');
+        /** @var User $currentUser */
+        $currentUser = Auth::user();
+
+        if (!$purchaseRequest->canReview()) {
+            return back()->with('error', 'Purchase Request ini tidak dapat ditolak. Status saat ini: ' . $purchaseRequest->status_label);
         }
 
-        if (! $user->canApprove()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk menolak PR ini.');
+        if (!$currentUser->canApprove()) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk menolak PR. Hanya Pimpinan atau Kepala Gudang yang dapat menolak.');
         }
 
         $request->validate([
@@ -277,7 +272,7 @@ class PurchaseRequestController extends Controller
         $purchaseRequest->update([
             'status'           => 'rejected',
             'rejection_reason' => $request->rejection_reason,
-            'reviewed_by'      => $user->id(),
+            'reviewed_by'      => $currentUser->id,
             'reviewed_at'      => now(),
         ]);
 
@@ -285,14 +280,16 @@ class PurchaseRequestController extends Controller
     }
 
     // ── MARK ORDERED ──────────────────────────────────────
-
-    public function markOrdered(PurchaseRequest $purchaseRequest, User $user)
+    public function markOrdered(PurchaseRequest $purchaseRequest)
     {
-        if (! $purchaseRequest->canMarkOrdered()) {
+        /** @var User $currentUser */
+        $currentUser = Auth::user();
+
+        if (!$purchaseRequest->canMarkOrdered()) {
             return back()->with('error', 'Purchase Request ini belum disetujui.');
         }
 
-        if (! $user->canApprove()) {
+        if (!$currentUser->canApprove()) {
             return back()->with('error', 'Anda tidak memiliki akses untuk tindakan ini.');
         }
 
@@ -302,10 +299,9 @@ class PurchaseRequestController extends Controller
     }
 
     // ── DESTROY ───────────────────────────────────────────
-
     public function destroy(PurchaseRequest $purchaseRequest)
     {
-        if (! in_array($purchaseRequest->status, ['draft', 'rejected'])) {
+        if (!in_array($purchaseRequest->status, ['draft', 'rejected'])) {
             return back()->with('error', 'Hanya PR berstatus Draft atau Ditolak yang dapat dihapus.');
         }
 
@@ -316,7 +312,6 @@ class PurchaseRequestController extends Controller
     }
 
     // ── PRINT ─────────────────────────────────────────────
-
     public function print(PurchaseRequest $purchaseRequest)
     {
         $purchaseRequest->load(['items.material', 'creator', 'reviewer']);

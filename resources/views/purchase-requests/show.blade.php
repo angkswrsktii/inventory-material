@@ -42,12 +42,9 @@
             </form>
         @endif
         @if($purchaseRequest->canMarkOrdered() && auth()->user()->canApprove())
-            <form action="{{ route('purchase-requests.mark-ordered', $purchaseRequest) }}" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Tandai PR ini sudah diproses ke PO?')">
-                    <i class="fas fa-cart-shopping"></i> Tandai Sudah PO
-                </button>
-            </form>
+            <a href="{{ route('purchase-orders.create', ['pr_id' => $purchaseRequest->id]) }}" class="btn btn-primary">
+                <i class="fas fa-cart-shopping"></i> Buat PO
+            </a>
         @endif
     </div>
 </div>
