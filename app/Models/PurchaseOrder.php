@@ -15,6 +15,7 @@ class PurchaseOrder extends Model
         'purchase_request_id',
         'order_date',
         'expected_date',
+        'supplier_id',
         'supplier_name',
         'supplier_contact',
         'delivery_address',
@@ -35,6 +36,11 @@ class PurchaseOrder extends Model
     ];
 
     // ── Relations ─────────────────────────────────────────
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
+
     public function purchaseRequest()
     {
         return $this->belongsTo(PurchaseRequest::class);

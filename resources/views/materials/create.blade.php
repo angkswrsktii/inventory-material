@@ -57,8 +57,14 @@
 
                 <div class="form-group">
                     <label class="form-label">Supplier / Vendor</label>
-                    <input type="text" name="supplier" class="form-control"
-                           value="{{ old('supplier') }}" placeholder="Nama supplier">
+                    <select name="supplier" class="form-control">
+                        <option value="">-- Pilih Supplier (opsional) --</option>
+                        @foreach($suppliers ?? [] as $s)
+                            <option value="{{ $s->name }}" {{ old('supplier') == $s->name ? 'selected' : '' }}>
+                                {{ $s->name }}{{ $s->phone ? ' — '.$s->phone : '' }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('supplier') <div class="form-error">{{ $message }}</div> @enderror
                 </div>
 

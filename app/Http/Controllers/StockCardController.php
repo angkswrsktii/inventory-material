@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Material;
+use App\Models\Supplier;
+use App\Models\PurchaseOrder;
 use App\Models\StockCard;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class StockCardController extends Controller
@@ -37,10 +40,23 @@ class StockCardController extends Controller
         return view('stock-cards.index', compact('stockCards', 'materials'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $materials = Material::where('is_active', true)->orderBy('name')->get();
-        return view('stock-cards.create', compact('materials'));
+        $materials        = Material::where('is_active', true)->orderBy('name')->get();
+        $suppliers        = Supplier::active()->orderBy('name')->get();
+        $purchaseOrders   = PurchaseOrder::with('supplier')
+                                ->whereNotIn('status', ['cancelled'])
+                                ->orderByDesc('id')->get();
+
+        // Prefill dari PO jika ada
+        $fromPo       = $request->from_po;
+        $supplierName = $request->supplier_name;
+        $poItems      = [];
+        if ($request->po_items) {
+            $poItems = json_decode($request->po_items, true) ?? [];
+        }
+
+        return view('stock-cards.create', compact('materials', 'suppliers', 'purchaseOrders', 'fromPo', 'supplierName', 'poItems'));
     }
 
     public function store(Request $request)
@@ -83,7 +99,7 @@ class StockCardController extends Controller
                 'reference_no' => $validated['reference_no'] ?? null,
                 'source' => $validated['source'] ?? null,
                 'notes' => $validated['notes'] ?? null,
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
         });
 

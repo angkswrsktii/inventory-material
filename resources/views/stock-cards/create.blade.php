@@ -22,6 +22,81 @@
     </div>
 </div>
 
+@if(session('success'))
+<div class="alert alert-success" style="margin-bottom:16px;">
+    <i class="fas fa-check-circle"></i> {{ session('success') }}
+</div>
+@endif
+
+{{-- ── MODE: DARI PO (multi-item) ── --}}
+@if(!empty($poItems) && count($poItems) > 0)
+<div style="max-width:860px;">
+    @if($fromPo)
+    <div class="alert alert-success" style="margin-bottom:16px;">
+        <i class="fas fa-link"></i>
+        Penerimaan dari PO <strong>{{ $fromPo }}</strong> — Silakan verifikasi dan simpan tiap item ke kartu stok.
+    </div>
+    @endif
+
+    @foreach($poItems as $idx => $poItem)
+    @php $mat = $materials->firstWhere('id', $poItem['material_id']); @endphp
+    @if(!$mat || $poItem['qty'] <= 0) @continue @endif
+    <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+            <span class="card-title">
+                <i class="fas fa-cube" style="color:var(--accent);margin-right:8px;"></i>
+                {{ $mat->name }}
+                <span style="font-size:12px;color:var(--text-muted);margin-left:8px;">[{{ $mat->code }}]</span>
+            </span>
+            <span class="badge badge-success">Qty diterima: {{ $poItem['qty'] }} {{ $mat->unit }}</span>
+        </div>
+        <div class="card-body">
+            <form action="{{ route('stock-cards.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="type" value="in">
+                <input type="hidden" name="material_id" value="{{ $mat->id }}">
+                <input type="hidden" name="quantity" value="{{ $poItem['qty'] }}">
+                <input type="hidden" name="reference_no" value="{{ $fromPo }}">
+                <input type="hidden" name="source" value="{{ $supplierName }}">
+
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label">Tanggal Penerimaan <span class="required">*</span></label>
+                        <input type="date" name="transaction_date" class="form-control"
+                               value="{{ date('Y-m-d') }}" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label">Jumlah Diterima</label>
+                        <input type="number" name="quantity" class="form-control"
+                               value="{{ $poItem['qty'] }}" min="0.01" step="0.01" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label">Stok Saat Ini</label>
+                        <input type="text" class="form-control" value="{{ number_format($mat->current_stock,2) }} {{ $mat->unit }}" disabled
+                               style="opacity:0.7;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:12px;margin-bottom:0;">
+                    <label class="form-label">Catatan</label>
+                    <input type="text" name="notes" class="form-control"
+                           placeholder="Catatan tambahan (opsional)" value="{{ $fromPo }}">
+                </div>
+
+                <div style="margin-top:14px;">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i> Simpan ke Kartu Stok
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    @endforeach
+
+</div>
+
+{{-- ── MODE: MANUAL (form biasa) ── --}}
+@else
 <div style="max-width:720px;">
     <div class="card">
         <div class="card-header">
@@ -80,17 +155,32 @@
                         @error('quantity') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">No. Referensi / PO</label>
-                        <input type="text" name="reference_no" class="form-control"
-                               value="{{ old('reference_no') }}" placeholder="Contoh: PO-2024-001">
+                        <label class="form-label">No. Purchase Order</label>
+                        <select name="reference_no" class="form-control" id="poSelect"
+                                onchange="fillSupplierFromPO(this)">
+                            <option value="">-- Pilih PO (opsional) --</option>
+                            @foreach($purchaseOrders ?? [] as $po)
+                                <option value="{{ $po->document_no }}"
+                                        data-supplier="{{ $po->supplier?->name ?? $po->supplier_name }}"
+                                        {{ old('reference_no') == $po->document_no ? 'selected' : '' }}>
+                                    {{ $po->document_no }}{{ ($po->supplier?->name ?? $po->supplier_name) ? ' — '.($po->supplier?->name ?? $po->supplier_name) : '' }}
+                                </option>
+                            @endforeach
+                        </select>
                         @error('reference_no') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Sumber / Keterangan</label>
-                    <input type="text" name="source" class="form-control"
-                           value="{{ old('source') }}" placeholder="Nama supplier atau keterangan transaksi">
+                    <label class="form-label">Supplier / Vendor</label>
+                    <select name="source" class="form-control" id="supplierSelect">
+                        <option value="">-- Pilih Supplier (opsional) --</option>
+                        @foreach($suppliers ?? [] as $s)
+                            <option value="{{ $s->name }}" {{ old('source') == $s->name ? 'selected' : '' }}>
+                                {{ $s->name }}{{ $s->phone ? ' — '.$s->phone : '' }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('source') <div class="form-error">{{ $message }}</div> @enderror
                 </div>
 
@@ -114,21 +204,38 @@
         </div>
     </div>
 </div>
+@endif
 @endsection
 
 @push('scripts')
 <script>
-document.getElementById('materialSelect').addEventListener('change', function () {
-    const opt = this.options[this.selectedIndex];
-    const stock = opt.dataset.stock;
-    const unit = opt.dataset.unit;
-    const info = document.getElementById('stockInfo');
-    if (this.value) {
-        document.getElementById('stockValue').textContent = parseFloat(stock).toFixed(2) + ' ' + unit;
-        info.style.display = 'block';
-    } else {
-        info.style.display = 'none';
+function fillSupplierFromPO(sel) {
+    const opt = sel.options[sel.selectedIndex];
+    const supplierSelect = document.getElementById('supplierSelect');
+    if (supplierSelect && opt.dataset.supplier) {
+        // Cari option yang cocok dengan supplier name
+        for (let i = 0; i < supplierSelect.options.length; i++) {
+            if (supplierSelect.options[i].value === opt.dataset.supplier) {
+                supplierSelect.selectedIndex = i;
+                break;
+            }
+        }
     }
-});
+}
+
+const matSelect = document.getElementById('materialSelect');
+if (matSelect) {
+    matSelect.addEventListener('change', function () {
+        const opt = this.options[this.selectedIndex];
+        const info = document.getElementById('stockInfo');
+        if (this.value) {
+            document.getElementById('stockValue').textContent =
+                parseFloat(opt.dataset.stock).toFixed(2) + ' ' + opt.dataset.unit;
+            info.style.display = 'block';
+        } else {
+            info.style.display = 'none';
+        }
+    });
+}
 </script>
 @endpush

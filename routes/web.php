@@ -7,6 +7,7 @@ use App\Http\Controllers\WithdrawalCardController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,8 +44,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('purchase-orders/{purchaseOrder}',           [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
     Route::post('purchase-orders/{purchaseOrder}/send',     [PurchaseOrderController::class, 'send'])->name('purchase-orders.send');
     Route::post('purchase-orders/{purchaseOrder}/cancel',   [PurchaseOrderController::class, 'cancel'])->name('purchase-orders.cancel');
+    Route::post('purchase-orders/{purchaseOrder}/receive',  [PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
     Route::get('purchase-orders/{purchaseOrder}/print',     [PurchaseOrderController::class, 'print'])->name('purchase-orders.print');
-    Route::post('purchase-orders/{purchaseOrder}/receive', [PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
@@ -54,6 +55,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('print/stock-card/{material}',         [ReportController::class, 'printStockCard'])->name('print.stock-card');
         Route::get('print/withdrawal/{withdrawalCard}',   [ReportController::class, 'printWithdrawal'])->name('print.withdrawal');
     });
+
+    // ── SUPPLIERS ─────────────────────────────────────────
+    Route::resource('suppliers', SupplierController::class);
+    Route::patch('suppliers/{supplier}/toggle-active', [SupplierController::class, 'toggleActive'])->name('suppliers.toggle-active');
 
     // User management (pimpinan/admin only — middleware di controller)
     Route::get('users',                         [UserController::class, 'index'])->name('users.index');

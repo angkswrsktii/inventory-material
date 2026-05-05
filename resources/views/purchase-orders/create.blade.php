@@ -135,16 +135,33 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Nama Supplier <span class="required">*</span></label>
-                <input type="text" name="supplier_name" class="form-control"
-                       value="{{ old('supplier_name') }}" placeholder="Nama perusahaan supplier" required>
-                @error('supplier_name') <div class="form-error">{{ $message }}</div> @enderror
+                <label class="form-label">Supplier <span class="required">*</span></label>
+                @if(isset($suppliers) && $suppliers->isEmpty())
+                    <div class="alert alert-warning" style="font-size:13px;">
+                        <i class="fas fa-triangle-exclamation"></i>
+                        Belum ada supplier. <a href="{{ route('suppliers.create') }}" style="color:var(--accent);">Tambah supplier</a> terlebih dahulu.
+                    </div>
+                @else
+                <select name="supplier_id" class="form-control" required id="supplierSelect"
+                        onchange="fillSupplierContact(this)">
+                    <option value="">-- Pilih Supplier --</option>
+                    @foreach($suppliers ?? [] as $s)
+                        <option value="{{ $s->id }}"
+                                data-phone="{{ $s->phone }}"
+                                data-contact="{{ $s->contact_person }}"
+                                {{ old('supplier_id') == $s->id ? 'selected' : '' }}>
+                            {{ $s->name }}{{ $s->phone ? ' — '.$s->phone : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                @endif
+                @error('supplier_id') <div class="form-error">{{ $message }}</div> @enderror
             </div>
 
             <div class="form-group">
                 <label class="form-label">Kontak Supplier</label>
-                <input type="text" name="supplier_contact" class="form-control"
-                       value="{{ old('supplier_contact') }}" placeholder="No. telepon / email supplier">
+                <input type="text" name="supplier_contact" id="supplierContact" class="form-control"
+                       value="{{ old('supplier_contact') }}" placeholder="Terisi otomatis saat pilih supplier">
             </div>
 
             <div class="form-group">
@@ -313,6 +330,14 @@ function updateTotal() {
 
 function formatNumber(n) {
     return n.toLocaleString('id-ID', { minimumFractionDigits: 0 });
+}
+
+function fillSupplierContact(sel) {
+    const opt = sel.options[sel.selectedIndex];
+    const contact = document.getElementById('supplierContact');
+    if (contact) {
+        contact.value = opt.dataset.phone || opt.dataset.contact || '';
+    }
 }
 
 // Jika ada selectedPR dari URL parameter, load otomatis

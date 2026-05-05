@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\PurchaseRequest;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,7 @@ class PurchaseOrderController extends Controller
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('document_no', 'like', "%{$request->search}%")
-                    ->orWhere('supplier_name', 'like', "%{$request->search}%");
+                  ->orWhere('supplier_name', 'like', "%{$request->search}%");
             });
         }
 
@@ -67,8 +68,9 @@ class PurchaseOrderController extends Controller
                 ->find($request->pr_id);
         }
 
+        $suppliers = Supplier::active()->orderBy('name')->get();
         $documentNo = PurchaseOrder::generateDocumentNo();
-        return view('purchase-orders.create', compact('approvedPRs', 'selectedPR', 'documentNo'));
+        return view('purchase-orders.create', compact('approvedPRs', 'selectedPR', 'documentNo', 'suppliers'));
     }
 
     // ── STORE ─────────────────────────────────────────────
@@ -78,7 +80,7 @@ class PurchaseOrderController extends Controller
             'purchase_request_id'       => 'required|exists:purchase_requests,id',
             'order_date'                => 'required|date',
             'expected_date'             => 'nullable|date|after_or_equal:order_date',
-            'supplier_name'             => 'required|string|max:255',
+            'supplier_id'               => 'required|exists:suppliers,id',
             'supplier_contact'          => 'nullable|string|max:255',
             'delivery_address'          => 'nullable|string',
             'payment_terms'             => 'nullable|string|max:255',
@@ -107,7 +109,8 @@ class PurchaseOrderController extends Controller
                 'purchase_request_id'  => $pr->id,
                 'order_date'           => $request->order_date,
                 'expected_date'        => $request->expected_date,
-                'supplier_name'        => $request->supplier_name,
+                'supplier_id'          => $request->supplier_id,
+                'supplier_name'        => Supplier::find($request->supplier_id)?->name,
                 'supplier_contact'     => $request->supplier_contact,
                 'delivery_address'     => $request->delivery_address,
                 'payment_terms'        => $request->payment_terms,
@@ -187,14 +190,7 @@ class PurchaseOrderController extends Controller
         return back()->with('success', 'Purchase Order berhasil dibatalkan. Status PR dikembalikan ke Disetujui.');
     }
 
-    // ── PRINT ─────────────────────────────────────────────
-    public function print(PurchaseOrder $purchaseOrder)
-    {
-        $purchaseOrder->load(['purchaseRequest', 'items.material', 'creator', 'approver']);
-        return view('purchase-orders.print', compact('purchaseOrder'));
-    }
-
-    // ── RECEIVE (catat penerimaan barang) ────────────────
+    // ── RECEIVE (catat penerimaan barang) ─────────────────
     public function receive(Request $request, PurchaseOrder $purchaseOrder)
     {
         if (!in_array($purchaseOrder->status, ['sent', 'partial'])) {
@@ -213,25 +209,47 @@ class PurchaseOrderController extends Controller
                     $item->update([
                         'quantity_received' => min(
                             $item->quantity_ordered,
-                            $item->quantity_received + $qtyBaru
+                            ($item->quantity_received ?? 0) + $qtyBaru
                         ),
                     ]);
                 }
             }
 
-            // Refresh item dari DB
             $purchaseOrder->load('items');
 
             if ($purchaseOrder->isFullyReceived()) {
                 $purchaseOrder->update(['status' => 'received']);
             } else {
-                $anyReceived = $purchaseOrder->items->some(fn($i) => $i->quantity_received > 0);
+                $anyReceived = $purchaseOrder->items->some(fn($i) => ($i->quantity_received ?? 0) > 0);
                 if ($anyReceived) {
                     $purchaseOrder->update(['status' => 'partial']);
                 }
             }
         });
 
-        return back()->with('success', 'Penerimaan barang berhasil dicatat.');
+        // Kumpulkan data untuk redirect ke input stok
+        $purchaseOrder->load(['items.material', 'supplier']);
+        $firstItem = $purchaseOrder->items->first();
+
+        return redirect()->route('stock-cards.create', [
+            'from_po'       => $purchaseOrder->document_no,
+            'supplier_name' => $purchaseOrder->supplier?->name ?? $purchaseOrder->supplier_name,
+            'material_id'   => $firstItem?->material_id,
+            'quantity'      => $request->quantities[$firstItem?->id] ?? null,
+            'po_items'      => json_encode(
+                $purchaseOrder->items->map(fn($i) => [
+                    'material_id' => $i->material_id,
+                    'qty'         => $request->quantities[$i->id] ?? 0,
+                ])->filter(fn($i) => $i['qty'] > 0)->values()
+            ),
+        ])->with('success', 'Penerimaan barang berhasil dicatat. Silakan lengkapi kartu stok.');
+
+    }
+
+    // ── PRINT ─────────────────────────────────────────────
+    public function print(PurchaseOrder $purchaseOrder)
+    {
+        $purchaseOrder->load(['purchaseRequest', 'items.material', 'creator', 'approver']);
+        return view('purchase-orders.print', compact('purchaseOrder'));
     }
 }

@@ -730,6 +730,9 @@
             </a>
 
             <div class="nav-section">Master Data</div>
+            <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+                <i class="fas fa-building"></i> Data Supplier
+            </a>
             <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}">
                 <i class="fas fa-cube"></i> Data Material
             </a>
