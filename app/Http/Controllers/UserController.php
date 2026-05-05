@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Routing\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,18 @@ use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            if (!$user || !$user->isManagement()) {
+                abort(403, 'Akses ditolak. Hanya Admin dan Pimpinan yang dapat mengelola akun.');
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Ambil ID user yang sedang login secara type-safe.
      */

@@ -754,6 +754,13 @@
                 <i class="fas fa-file-invoice-dollar"></i> Purchase Order
             </a>
 
+            @if(auth()->user()->isManagement())
+            <div class="nav-section">Administrasi</div>
+            <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+                <i class="fas fa-users-gear"></i> Manajemen Akun
+            </a>
+            @endif
+
             <div class="nav-section">Laporan</div>
             <a href="{{ route('reports.stock') }}" class="nav-item {{ request()->routeIs('reports.stock') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar"></i> Laporan Stok
