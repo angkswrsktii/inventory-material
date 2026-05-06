@@ -41,7 +41,7 @@
                 </button>
             </form>
         @endif
-        @if($purchaseRequest->canMarkOrdered() && auth()->user()->canApprove())
+        @if($purchaseRequest->canMarkOrdered() && auth()->user()->canApprovePR())
             <a href="{{ route('purchase-orders.create', ['pr_id' => $purchaseRequest->id]) }}" class="btn btn-primary">
                 <i class="fas fa-cart-shopping"></i> Buat PO
             </a>
@@ -73,7 +73,7 @@
             </div>
 
             {{-- Approve form --}}
-            @if($purchaseRequest->canReview() && auth()->user()->canApprove())
+            @if($purchaseRequest->canReview() && auth()->user()->canApprovePR())
             <form action="{{ route('purchase-requests.approve', $purchaseRequest) }}" method="POST" id="approveForm">
             @csrf
             @endif
@@ -90,7 +90,7 @@
                             <th class="text-right">Qty Diminta</th>
                             @if(in_array($purchaseRequest->status, ['approved','ordered']))
                                 <th class="text-right">Qty Disetujui</th>
-                            @elseif($purchaseRequest->canReview() && auth()->user()->canApprove())
+                            @elseif($purchaseRequest->canReview() && auth()->user()->canApprovePR())
                                 <th class="text-right">Qty Disetujui</th>
                             @endif
                             <th class="text-right">Harga Est.</th>
@@ -119,7 +119,7 @@
                                         <span style="color:var(--text-dim);">—</span>
                                     @endif
                                 </td>
-                            @elseif($purchaseRequest->canReview() && auth()->user()->canApprove())
+                            @elseif($purchaseRequest->canReview() && auth()->user()->canApprovePR())
                                 <td class="text-right">
                                     <input type="number" name="approved_quantities[{{ $item->id }}]"
                                            class="form-control text-right"
@@ -145,7 +145,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="{{ $purchaseRequest->canReview() && auth()->user()->canApprove() ? 8 : (in_array($purchaseRequest->status, ['approved','ordered']) ? 8 : 7) }}"
+                            <td colspan="{{ $purchaseRequest->canReview() && auth()->user()->canApprovePR() ? 8 : (in_array($purchaseRequest->status, ['approved','ordered']) ? 8 : 7) }}"
                                 style="text-align:right;font-size:12px;color:var(--text-muted);padding:12px 16px;">
                                 <strong>Total Estimasi</strong>
                             </td>
@@ -161,7 +161,7 @@
             </div>
 
             {{-- Approve/Reject actions --}}
-            @if($purchaseRequest->canReview() && auth()->user()->canApprove())
+            @if($purchaseRequest->canReview() && auth()->user()->canApprovePR())
                 <div style="padding:16px 20px; border-top:1px solid var(--border); background:var(--surface-2); display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                     <button type="submit" form="approveForm" class="btn btn-success">
                         <i class="fas fa-check"></i> Setujui PR
@@ -269,7 +269,7 @@
 </div>
 
 {{-- Reject Modal --}}
-@if($purchaseRequest->canReview() && auth()->user()->canApprove())
+@if($purchaseRequest->canReview() && auth()->user()->canApprovePR())
 <div id="rejectModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:999;align-items:center;justify-content:center;">
     <div class="card" style="width:420px;max-width:90vw;">
         <div class="card-header">

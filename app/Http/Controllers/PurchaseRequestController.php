@@ -219,8 +219,8 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Purchase Request ini tidak dapat di-approve. Status saat ini: ' . $purchaseRequest->status_label);
         }
 
-        if (!$currentUser->canApprove()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk menyetujui PR. Hanya Pimpinan atau Kepala Gudang yang dapat menyetujui.');
+        if (!$currentUser->canApprovePR()) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk menyetujui PR. Hanya Pimpinan yang dapat menyetujui Purchase Request.');
         }
 
         $request->validate([
@@ -261,8 +261,8 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Purchase Request ini tidak dapat ditolak. Status saat ini: ' . $purchaseRequest->status_label);
         }
 
-        if (!$currentUser->canApprove()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk menolak PR. Hanya Pimpinan atau Kepala Gudang yang dapat menolak.');
+        if (!$currentUser->canApprovePR()) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk menolak PR. Hanya Pimpinan yang dapat menolak Purchase Request.');
         }
 
         $request->validate([
@@ -289,8 +289,8 @@ class PurchaseRequestController extends Controller
             return back()->with('error', 'Purchase Request ini belum disetujui.');
         }
 
-        if (!$currentUser->canApprove()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk tindakan ini.');
+        if (!$currentUser->canApprovePR()) {
+            return back()->with('error', 'Anda tidak memiliki akses untuk tindakan ini. Hanya Pimpinan yang dapat melakukan ini.');
         }
 
         $purchaseRequest->update(['status' => 'ordered']);

@@ -729,6 +729,8 @@
                 <i class="fas fa-chart-squares"></i> Dashboard
             </a>
 
+            {{-- Master Data: hanya Pimpinan, Admin, Kepala Gudang --}}
+            @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <div class="nav-section">Master Data</div>
             <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
                 <i class="fas fa-building"></i> Data Supplier
@@ -736,24 +738,40 @@
             <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}">
                 <i class="fas fa-cube"></i> Data Material
             </a>
+            @endif
 
             <div class="nav-section">Transaksi</div>
+
+            {{-- Kartu Stok: semua role bisa lihat --}}
             <a href="{{ route('stock-cards.index') }}" class="nav-item {{ request()->routeIs('stock-cards.index') || request()->routeIs('stock-cards.show') ? 'active' : '' }}">
                 <i class="fas fa-table-list"></i> Kartu Stok
             </a>
+
+            {{-- Penerimaan Barang: Pegawai & Kepala Gudang & Pimpinan --}}
             <a href="{{ route('stock-cards.create') }}" class="nav-item {{ request()->routeIs('stock-cards.create') ? 'active' : '' }}">
                 <i class="fas fa-arrow-right-to-bracket"></i> Penerimaan Barang
             </a>
+
+            {{-- Kartu Pengambilan: semua bisa ajukan --}}
             <a href="{{ route('withdrawal-cards.index') }}" class="nav-item {{ request()->routeIs('withdrawal-cards.*') ? 'active' : '' }}">
                 <i class="fas fa-file-invoice"></i> Kartu Pengambilan
             </a>
+
+            {{-- Purchase Request: hanya Kepala Gudang, Pimpinan, Admin --}}
+            @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}">
                 <i class="fas fa-cart-plus"></i> Purchase Request
             </a>
+            @endif
+
+            {{-- Purchase Order: hanya Kepala Gudang, Pimpinan, Admin --}}
+            @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <a href="{{ route('purchase-orders.index') }}" class="nav-item {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}">
                 <i class="fas fa-file-invoice-dollar"></i> Purchase Order
             </a>
+            @endif
 
+            {{-- Administrasi: hanya Pimpinan & Admin --}}
             @if(auth()->user()->isManagement())
             <div class="nav-section">Administrasi</div>
             <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
@@ -778,7 +796,7 @@
                 <div class="user-avatar">{{ strtoupper(substr(auth()->user()->name ?? 'A', 0, 1)) }}</div>
                 <div>
                     <div class="user-name">{{ auth()->user()->name ?? 'Admin' }}</div>
-                    <div class="user-role">Administrator</div>
+                    <div class="user-role">{{ auth()->user()->role_label }}</div>
                 </div>
                 <a href="{{ route('logout') }}" style="margin-left:auto; color: var(--text-muted);"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"

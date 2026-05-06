@@ -65,11 +65,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Kepala Gudang atau Pimpinan/Admin = bisa approve
+     * Kepala Gudang atau Pimpinan/Admin = bisa approve withdrawal/pengambilan barang
      */
     public function canApprove(): bool
     {
         return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_PIMPINAN, self::ROLE_KEPALA_GUDANG]);
+    }
+
+    /**
+     * Hanya Pimpinan & Admin yang bisa approve/tolak Purchase Request
+     */
+    public function canApprovePR(): bool
+    {
+        return in_array($this->role, [self::ROLE_ADMIN, self::ROLE_PIMPINAN]);
     }
 
     public function getRoleLabelAttribute(): string
