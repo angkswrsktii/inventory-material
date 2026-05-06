@@ -66,7 +66,26 @@
                             <input type="hidden" name="items[0][material_code]" class="mat-code">
                         </td>
                         <td>
-                            <input type="text" name="items[0][unit]" class="form-control" placeholder="pcs, kg, m..." required>
+                            <select name="items[0][unit]" class="form-control unit-select" required style="min-width:90px;">
+                                <option value="">--</option>
+                                <option value="Pcs">Pcs</option>
+                                <option value="Kg">Kg</option>
+                                <option value="Gram">Gram</option>
+                                <option value="Ltr">Ltr</option>
+                                <option value="mL">mL</option>
+                                <option value="Meter">Meter</option>
+                                <option value="cm">cm</option>
+                                <option value="mm">mm</option>
+                                <option value="Roll">Roll</option>
+                                <option value="Lembar">Lembar</option>
+                                <option value="Dus">Dus</option>
+                                <option value="Karton">Karton</option>
+                                <option value="Lusin">Lusin</option>
+                                <option value="Set">Set</option>
+                                <option value="Unit">Unit</option>
+                                <option value="Sak">Sak</option>
+                                <option value="Batang">Batang</option>
+                            </select>
                         </td>
                         <td>
                             <input type="text" name="items[0][specification]" class="form-control" placeholder="Opsional">
@@ -195,14 +214,23 @@ function fillFromMaterial(select, idx) {
     const row = document.getElementById('row_' + idx);
     const nameInput = row.querySelector('.mat-name');
     const codeInput = row.querySelector('.mat-code');
-    const unitInput = row.querySelector('input[name="items[' + idx + '][unit]"]');
+    const unitInput = row.querySelector('select[name="items[' + idx + '][unit]"]');
     const specInput = row.querySelector('input[name="items[' + idx + '][specification]"]');
 
     if (id && materialsData[id]) {
         const m = materialsData[id];
         nameInput.value = m.name;
         codeInput.value = m.code;
-        unitInput.value = m.unit;
+        // Set selected option yg sesuai dengan unit material
+        if (unitInput) {
+            const opts = unitInput.querySelectorAll('option');
+            opts.forEach(o => { o.selected = (o.value === m.unit); });
+            if (![...opts].some(o => o.value === m.unit) && m.unit) {
+                const opt = document.createElement('option');
+                opt.value = m.unit; opt.text = m.unit; opt.selected = true;
+                unitInput.appendChild(opt);
+            }
+        }
         specInput.value = m.specification || '';
     } else {
         nameInput.value = '';
@@ -245,7 +273,26 @@ function addRow() {
             <input type="text" name="items[${idx}][material_name]" class="form-control mat-name" placeholder="Nama material / barang" required style="margin-top:5px;">
             <input type="hidden" name="items[${idx}][material_code]" class="mat-code">
         </td>
-        <td><input type="text" name="items[${idx}][unit]" class="form-control" placeholder="pcs, kg, m..." required></td>
+        <td><select name="items[${idx}][unit]" class="form-control unit-select" required style="min-width:90px;">
+                <option value="">--</option>
+                <option value="Pcs">Pcs</option>
+                <option value="Kg">Kg</option>
+                <option value="Gram">Gram</option>
+                <option value="Ltr">Ltr</option>
+                <option value="mL">mL</option>
+                <option value="Meter">Meter</option>
+                <option value="cm">cm</option>
+                <option value="mm">mm</option>
+                <option value="Roll">Roll</option>
+                <option value="Lembar">Lembar</option>
+                <option value="Dus">Dus</option>
+                <option value="Karton">Karton</option>
+                <option value="Lusin">Lusin</option>
+                <option value="Set">Set</option>
+                <option value="Unit">Unit</option>
+                <option value="Sak">Sak</option>
+                <option value="Batang">Batang</option>
+            </select></td>
         <td><input type="text" name="items[${idx}][specification]" class="form-control" placeholder="Opsional"></td>
         <td><input type="number" name="items[${idx}][quantity_requested]" class="form-control text-right" min="0.01" step="0.01" placeholder="0" required oninput="updateSubtotal(${idx})"></td>
         <td>

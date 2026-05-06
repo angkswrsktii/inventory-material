@@ -276,8 +276,26 @@ function addRow(data = {}) {
                    value="${data.specification || ''}" placeholder="Spesifikasi" style="min-width:120px;">
         </td>
         <td>
-            <input type="text" name="items[${idx}][unit]" class="form-control"
-                   value="${data.unit || ''}" placeholder="Pcs" required style="width:70px;">
+<select name="items[${idx}][unit]" class="form-control unit-select" required style="width:90px;">
+                <option value="">--</option>
+                <option value="Pcs" ${data.unit==='Pcs'?'selected':''}>Pcs</option>
+                <option value="Kg" ${data.unit==='Kg'?'selected':''}>Kg</option>
+                <option value="Gram" ${data.unit==='Gram'?'selected':''}>Gram</option>
+                <option value="Ltr" ${data.unit==='Ltr'?'selected':''}>Ltr</option>
+                <option value="mL" ${data.unit==='mL'?'selected':''}>mL</option>
+                <option value="Meter" ${data.unit==='Meter'?'selected':''}>Meter</option>
+                <option value="cm" ${data.unit==='cm'?'selected':''}>cm</option>
+                <option value="mm" ${data.unit==='mm'?'selected':''}>mm</option>
+                <option value="Roll" ${data.unit==='Roll'?'selected':''}>Roll</option>
+                <option value="Lembar" ${data.unit==='Lembar'?'selected':''}>Lembar</option>
+                <option value="Dus" ${data.unit==='Dus'?'selected':''}>Dus</option>
+                <option value="Karton" ${data.unit==='Karton'?'selected':''}>Karton</option>
+                <option value="Lusin" ${data.unit==='Lusin'?'selected':''}>Lusin</option>
+                <option value="Set" ${data.unit==='Set'?'selected':''}>Set</option>
+                <option value="Unit" ${data.unit==='Unit'?'selected':''}>Unit</option>
+                <option value="Sak" ${data.unit==='Sak'?'selected':''}>Sak</option>
+                <option value="Batang" ${data.unit==='Batang'?'selected':''}>Batang</option>
+            </select>
         </td>
         <td>
             <input type="number" name="items[${idx}][quantity_ordered]" class="form-control text-right"

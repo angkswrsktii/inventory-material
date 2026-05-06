@@ -35,8 +35,13 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Satuan <span class="required">*</span></label>
-                        <input type="text" name="unit" class="form-control {{ $errors->has('unit') ? 'is-invalid' : '' }}"
-                               value="{{ old('unit') }}" placeholder="Contoh: Kg, Pcs, Ltr" required>
+                        <select name="unit" class="form-control {{ $errors->has('unit') ? 'is-invalid' : '' }}" required>
+                            <option value="">-- Pilih Satuan --</option>
+                            @php $units = ['Pcs','Kg','Gram','Ltr','mL','Meter','cm','mm','Roll','Lembar','Dus','Karton','Lusin','Set','Unit','Pasang','Botol','Kantong','Sak','Batang']; @endphp
+                            @foreach($units as $u)
+                                <option value="{{ $u }}" {{ old('unit') === $u ? 'selected' : '' }}>{{ $u }}</option>
+                            @endforeach
+                        </select>
                         @error('unit') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                 </div>
