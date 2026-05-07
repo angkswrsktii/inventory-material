@@ -120,8 +120,30 @@
     </div>
 
     @if($suppliers->hasPages())
-    <div style="padding:16px 20px;border-top:1px solid var(--border);">
-        {{ $suppliers->links() }}
+    <div style="padding:16px 20px;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        @if($suppliers->onFirstPage())
+            <span class="btn btn-xs btn-ghost" style="opacity:0.4;">« Prev</span>
+        @else
+            <a href="{{ $suppliers->previousPageUrl() }}" class="btn btn-xs btn-secondary">« Prev</a>
+        @endif
+
+        @foreach($suppliers->getUrlRange(1, $suppliers->lastPage()) as $page => $url)
+            @if($page == $suppliers->currentPage())
+                <span class="btn btn-xs btn-primary">{{ $page }}</span>
+            @else
+                <a href="{{ $url }}" class="btn btn-xs btn-secondary">{{ $page }}</a>
+            @endif
+        @endforeach
+
+        @if($suppliers->hasMorePages())
+            <a href="{{ $suppliers->nextPageUrl() }}" class="btn btn-xs btn-secondary">Next »</a>
+        @else
+            <span class="btn btn-xs btn-ghost" style="opacity:0.4;">Next »</span>
+        @endif
+
+        <span style="font-size:12px;color:var(--text-dim);margin-left:8px;">
+            Showing {{ $suppliers->firstItem() }} to {{ $suppliers->lastItem() }} of {{ $suppliers->total() }} results
+        </span>
     </div>
     @endif
 </div>

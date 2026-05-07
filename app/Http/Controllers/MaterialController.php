@@ -57,8 +57,14 @@ class MaterialController extends Controller
             'name' => 'required|string|max:255',
             'specification' => 'nullable|string|max:500',
             'unit' => 'required|string|max:50',
-            'supplier' => 'nullable|string|max:255',
-            'minimum_stock' => 'required|numeric|min:0',
+            'part_no'          => 'nullable|string|max:100',
+            'customer'         => 'nullable|string|max:100',
+            'supplier'         => 'nullable|string|max:255',
+            'panjang_material' => 'nullable|numeric|min:0',
+            'panjang_part'     => 'nullable|numeric|min:0',
+            'bq'               => 'nullable|numeric|min:0',
+            'minimum_stock'    => 'nullable|numeric|min:0',
+            'max_stock'        => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
         ]);
 
@@ -92,8 +98,14 @@ class MaterialController extends Controller
             'name' => 'required|string|max:255',
             'specification' => 'nullable|string|max:500',
             'unit' => 'required|string|max:50',
-            'supplier' => 'nullable|string|max:255',
-            'minimum_stock' => 'required|numeric|min:0',
+            'part_no'          => 'nullable|string|max:100',
+            'customer'         => 'nullable|string|max:100',
+            'supplier'         => 'nullable|string|max:255',
+            'panjang_material' => 'nullable|numeric|min:0',
+            'panjang_part'     => 'nullable|numeric|min:0',
+            'bq'               => 'nullable|numeric|min:0',
+            'minimum_stock'    => 'nullable|numeric|min:0',
+            'max_stock'        => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
         ]);
 
