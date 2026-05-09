@@ -18,6 +18,19 @@
         <a href="{{ route('reports.print.withdrawal', $withdrawalCard) }}" target="_blank" class="btn btn-ghost">
             <i class="fas fa-print"></i> Print
         </a>
+        @if($withdrawalCard->status === 'approved')
+            @php $hasQc = \App\Models\ProductionQc::where('withdrawal_card_id', $withdrawalCard->id)->whereIn('status',['draft','approved'])->exists(); @endphp
+            @if(!$hasQc)
+            <a href="{{ route('production-qc.create', ['withdrawal_id' => $withdrawalCard->id]) }}" class="btn btn-primary">
+                <i class="fas fa-microscope"></i> Input Quality Control Produksi
+            </a>
+            @else
+            @php $qc = \App\Models\ProductionQc::where('withdrawal_card_id', $withdrawalCard->id)->latest()->first(); @endphp
+            <a href="{{ route('production-qc.show', $qc) }}" class="btn btn-secondary">
+                <i class="fas fa-microscope"></i> Lihat Quality Control
+            </a>
+            @endif
+        @endif
         <a href="{{ route('withdrawal-cards.index') }}" class="btn btn-secondary">
             <i class="fas fa-arrow-left"></i> Kembali
         </a>

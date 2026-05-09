@@ -9,6 +9,7 @@ use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductionQcController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -59,6 +60,15 @@ Route::middleware(['auth'])->group(function () {
     // ── SUPPLIERS ─────────────────────────────────────────
     Route::resource('suppliers', SupplierController::class);
     Route::patch('suppliers/{supplier}/toggle-active', [SupplierController::class, 'toggleActive'])->name('suppliers.toggle-active');
+
+    // ── QC Produksi ──────────────────────────────────────
+    Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');
+    Route::get('production-qc/create',                  [ProductionQcController::class, 'create'])->name('production-qc.create');
+    Route::post('production-qc',                        [ProductionQcController::class, 'store'])->name('production-qc.store');
+    Route::get('production-qc/{productionQc}',          [ProductionQcController::class, 'show'])->name('production-qc.show');
+    Route::post('production-qc/{productionQc}/approve', [ProductionQcController::class, 'approve'])->name('production-qc.approve');
+    Route::post('production-qc/{productionQc}/reject',  [ProductionQcController::class, 'reject'])->name('production-qc.reject');
+    Route::delete('production-qc/{productionQc}',       [ProductionQcController::class, 'destroy'])->name('production-qc.destroy');
 
     // User management (pimpinan/admin only — middleware di controller)
     Route::get('users',                         [UserController::class, 'index'])->name('users.index');

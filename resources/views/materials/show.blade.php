@@ -58,13 +58,19 @@
         <div style="padding:0;">
             @php
                 $rows = [
-                    ['Kode Barang',   $material->code],
-                    ['Nama Material', $material->name],
-                    ['Spesifikasi',   $material->specification ?: '-'],
-                    ['Satuan',        $material->unit],
-                    ['Supplier',      $material->supplier ?: '-'],
-                    ['Stok Minimum',  number_format($material->minimum_stock, 2) . ' ' . $material->unit],
-                    ['Stok Saat Ini', number_format($material->current_stock, 2) . ' ' . $material->unit],
+                    ['Kode Barang',      $material->code],
+                    ['Part No.',         $material->part_no ?: '-'],
+                    ['Part Name',        $material->name],
+                    ['Customer',         $material->customer ?: '-'],
+                    ['Spesifikasi',      $material->specification ?: '-'],
+                    ['Satuan',           $material->unit],
+                    ['Supplier',         $material->supplier ?: '-'],
+                    ['Panjang Material', $material->panjang_material ? number_format($material->panjang_material, 2).' mm' : '-'],
+                    ['Panjang Part',     $material->panjang_part ? number_format($material->panjang_part, 2).' mm' : '-'],
+                    ['B/Q',              $material->bq ? number_format($material->bq, 4) : '-'],
+                    ['Stok Minimum',     number_format($material->minimum_stock, 2) . ' ' . $material->unit],
+                    ['Stok Maksimum',    $material->max_stock ? number_format($material->max_stock, 2).' '.$material->unit : '-'],
+                    ['Stok Saat Ini',    number_format($material->current_stock, 2) . ' ' . $material->unit],
                 ];
             @endphp
             @foreach($rows as [$label, $value])

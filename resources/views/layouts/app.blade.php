@@ -753,6 +753,9 @@
             </a>
 
             {{-- Kartu Pengambilan: semua bisa ajukan --}}
+            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}">
+                <i class="fas fa-microscope"></i> Quality Control
+            </a>
             <a href="{{ route('withdrawal-cards.index') }}" class="nav-item {{ request()->routeIs('withdrawal-cards.*') ? 'active' : '' }}">
                 <i class="fas fa-file-invoice"></i> Kartu Pengambilan
             </a>
