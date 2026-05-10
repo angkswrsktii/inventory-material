@@ -10,6 +10,7 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductionQcController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -60,6 +61,10 @@ Route::middleware(['auth'])->group(function () {
     // ── SUPPLIERS ─────────────────────────────────────────
     Route::resource('suppliers', SupplierController::class);
     Route::patch('suppliers/{supplier}/toggle-active', [SupplierController::class, 'toggleActive'])->name('suppliers.toggle-active');
+
+    // ── CUSTOMERS ─────────────────────────────────────────
+    Route::resource('customers', CustomerController::class);
+    Route::patch('customers/{customer}/toggle-active', [CustomerController::class, 'toggleActive'])->name('customers.toggle-active');
 
     // ── QC Produksi ──────────────────────────────────────
     Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');

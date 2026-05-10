@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Material;
+use App\Models\Customer;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -47,7 +48,8 @@ class MaterialController extends Controller
     public function create()
     {
         $suppliers = Supplier::active()->orderBy('name')->get();
-        return view('materials.create', compact('suppliers'));
+        $customers = Customer::active()->orderBy('name')->get();
+        return view('materials.create', compact('suppliers', 'customers'));
     }
 
     public function store(Request $request)
@@ -88,7 +90,8 @@ class MaterialController extends Controller
     public function edit(Material $material)
     {
         $suppliers = Supplier::active()->orderBy('name')->get();
-        return view('materials.edit', compact('material', 'suppliers'));
+        $customers = Customer::active()->orderBy('name')->get();
+        return view('materials.edit', compact('material', 'suppliers', 'customers'));
     }
 
     public function update(Request $request, Material $material)

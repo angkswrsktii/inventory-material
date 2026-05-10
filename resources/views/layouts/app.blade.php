@@ -735,6 +735,9 @@
             <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
                 <i class="fas fa-building"></i> Data Supplier
             </a>
+            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+                <i class="fas fa-users"></i> Data Customer
+            </a>
             <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}">
                 <i class="fas fa-cube"></i> Data Material
             </a>

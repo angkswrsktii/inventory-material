@@ -106,6 +106,24 @@
             </div>
 
             <div class="form-group">
+                <label class="form-label">Customer</label>
+                @if(isset($customers) && $customers->isNotEmpty())
+                <select name="customer_id" class="form-control">
+                    <option value="">-- Pilih Customer (opsional) --</option>
+                    @foreach($customers as $c)
+                        <option value="{{ $c->id }}" {{ old('customer_id') == $c->id ? 'selected' : '' }}>
+                            {{ $c->name }}{{ $c->contact_person ? ' - ' . $c->contact_person : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                @else
+                <input type="text" class="form-control" disabled placeholder="Belum ada data customer" style="opacity:.5;">
+                <div style="font-size:11px;color:var(--text-dim);margin-top:4px;"><a href="{{ route('customers.create') }}" style="color:var(--accent);">Tambah customer</a> terlebih dahulu.</div>
+                @endif
+                @error('customer_id') <div class="form-error">{{ $message }}</div> @enderror
+            </div>
+
+            <div class="form-group">
                 <label class="form-label">PIC (Person In Charge) <span class="required">*</span></label>
                 <input type="text" name="pic" class="form-control"
                        value="{{ old('pic') }}" placeholder="Nama pengambil" required>

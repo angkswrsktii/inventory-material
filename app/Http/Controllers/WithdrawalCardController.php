@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Material;
 use App\Models\StockCard;
 use App\Models\WithdrawalCard;
 use App\Models\WithdrawalItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class WithdrawalCardController extends Controller
@@ -50,8 +52,9 @@ class WithdrawalCardController extends Controller
             ->orderBy('name')
             ->get();
         $documentNo = WithdrawalCard::generateDocumentNo();
+        $customers = Customer::active()->orderBy('name')->get();
 
-        return view('withdrawal-cards.create', compact('materials', 'documentNo'));
+        return view('withdrawal-cards.create', compact('materials', 'documentNo', 'customers'));
     }
 
     public function store(Request $request)
@@ -77,10 +80,11 @@ class WithdrawalCardController extends Controller
                 'part_name' => $request->part_name,
                 'work_order' => $request->work_order,
                 'notes' => $request->notes,
+                'customer_id' => $request->customer_id ?: null,
                 'status' => 'approved',
-                'approved_by' => auth()->id(),
+                'approved_by' => Auth::id(),
                 'approved_at' => now(),
-                'created_by' => auth()->id(),
+                'created_by' => Auth::id(),
             ]);
 
             foreach ($request->items as $item) {
@@ -114,7 +118,7 @@ class WithdrawalCardController extends Controller
                     'source' => "Pengambilan: {$request->line} - {$request->part_name}",
                     'notes' => $request->notes,
                     'withdrawal_card_id' => $withdrawal->id,
-                    'created_by' => auth()->id(),
+                    'created_by' => Auth::id(),
                 ]);
             }
         });

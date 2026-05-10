@@ -44,7 +44,15 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Customer</label>
-                        <input type="text" name="customer" class="form-control" value="{{ old('customer', $material->customer) }}" placeholder="PT. BME">
+                        <select name="customer" class="form-control">
+                            <option value="">-- Pilih Customer --</option>
+                            @foreach($customers as $c)
+                                <option value="{{ $c->name }}" {{ old('customer', $material->customer) === $c->name ? 'selected' : '' }}>
+                                    {{ $c->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('customer') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
                         <label class="form-label">Satuan <span class="required">*</span></label>
