@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Material;
-use App\Models\StockCard;
-use App\Models\WithdrawalCard;
+use App\Models\Stock;
+use App\Models\Mutasi;
+use App\Models\GoodIssue;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -13,28 +14,29 @@ class DashboardController extends Controller
     {
         $stats = [
             'total_materials' => Material::count(),
-            'low_stock' => Material::whereColumn('current_stock', '<=', 'minimum_stock')
+            'low_stock' => Stock::whereColumn('current_stock', '<=', 'minimum_stock')
                 ->where('current_stock', '>', 0)->count(),
-            'empty_stock' => Material::where('current_stock', '<=', 0)->count(),
-            'today_in' => StockCard::where('type', 'in')->whereDate('transaction_date', today())->sum('quantity_in'),
-            'today_out' => StockCard::where('type', 'out')->whereDate('transaction_date', today())->sum('quantity_out'),
-            'monthly_withdrawals' => WithdrawalCard::whereMonth('withdrawal_date', now()->month)
-                ->whereYear('withdrawal_date', now()->year)->count(),
+            'empty_stock' => Stock::where('current_stock', '<=', 0)->count(),
+            'today_in' => Mutasi::where('type', 'in')->whereDate('created_at', today())->sum('quantity'),
+            'today_out' => Mutasi::where('type', 'out')->whereDate('created_at', today())->sum('quantity'),
+            'monthly_withdrawals' => GoodIssue::whereMonth('issue_date', now()->month)
+                ->whereYear('issue_date', now()->year)->count(),
         ];
 
-        $lowStockMaterials = Material::whereColumn('current_stock', '<=', 'minimum_stock')
+        $lowStocks = Stock::with(['material', 'part', 'warehouse'])
+            ->whereColumn('current_stock', '<=', 'minimum_stock')
             ->orderBy('current_stock')
             ->take(5)
             ->get();
 
-        $recentTransactions = StockCard::with('material')
-            ->orderBy('transaction_date', 'desc')
+        $recentTransactions = Mutasi::with(['material', 'part', 'warehouse'])
+            ->orderBy('created_at', 'desc')
             ->orderBy('id', 'desc')
             ->take(10)
             ->get();
 
-        $recentWithdrawals = WithdrawalCard::with(['items.material', 'creator'])
-            ->orderBy('withdrawal_date', 'desc')
+        $recentWithdrawals = GoodIssue::with(['items.material', 'issuer'])
+            ->orderBy('issue_date', 'desc')
             ->orderBy('id', 'desc')
             ->take(5)
             ->get();
@@ -45,11 +47,11 @@ class DashboardController extends Controller
             $date = now()->subDays($i);
             $chartData[] = [
                 'date' => $date->format('d M'),
-                'in' => StockCard::where('type', 'in')->whereDate('transaction_date', $date)->sum('quantity_in'),
-                'out' => StockCard::where('type', 'out')->whereDate('transaction_date', $date)->sum('quantity_out'),
+                'in' => Mutasi::where('type', 'in')->whereDate('created_at', $date)->sum('quantity'),
+                'out' => Mutasi::where('type', 'out')->whereDate('created_at', $date)->sum('quantity'),
             ];
         }
 
-        return view('dashboard', compact('stats', 'lowStockMaterials', 'recentTransactions', 'recentWithdrawals', 'chartData'));
+        return view('dashboard', compact('stats', 'lowStocks', 'recentTransactions', 'recentWithdrawals', 'chartData'));
     }
 }

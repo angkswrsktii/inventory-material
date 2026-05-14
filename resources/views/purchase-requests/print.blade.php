@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Print PR — {{ $purchaseRequest->document_no }}</title>
+    <title>Print PR — {{ $purchaseRequest->pr_number }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Arial', sans-serif; font-size: 12px; color: #222; background: #fff; padding: 24px; }
@@ -24,14 +24,12 @@
         td { padding: 6px 10px; border: 1px solid #ccc; vertical-align: top; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
-        tfoot td { background: #f5f5f5; font-weight: 600; }
 
-        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .status-badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
         .status-draft     { background:#eee; color:#555; }
-        .status-submitted { background:#fef3c7; color:#92400e; }
+        .status-pending   { background:#fef3c7; color:#92400e; }
         .status-approved  { background:#d1fae5; color:#065f46; }
         .status-rejected  { background:#fee2e2; color:#991b1b; }
-        .status-ordered   { background:#dbeafe; color:#1e40af; }
 
         .signatures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid #ccc; margin-top: 24px; }
         .sig-box { padding: 12px; border-right: 1px solid #ccc; text-align: center; }
@@ -63,10 +61,10 @@
     </div>
     <div class="doc-title">
         <h2>Purchase Request</h2>
-        <div class="doc-no">{{ $purchaseRequest->document_no }}</div>
+        <div class="doc-no">{{ $purchaseRequest->pr_number }}</div>
         <div style="margin-top:6px;">
-            <span class="status-badge status-{{ $purchaseRequest->status }}">
-                {{ $purchaseRequest->status_label }}
+            <span class="status-badge status-{{ strtolower($purchaseRequest->status) }}">
+                {{ $purchaseRequest->status }}
             </span>
         </div>
     </div>
@@ -75,85 +73,56 @@
 <div class="meta-grid">
     <div class="meta-label">Tanggal Request</div>
     <div class="meta-value">{{ $purchaseRequest->request_date->format('d F Y') }}</div>
+    
     <div class="meta-label">Nama Pemohon</div>
-    <div class="meta-value">{{ $purchaseRequest->requested_by_name }}</div>
-    <div class="meta-label">Departemen</div>
-    <div class="meta-value">{{ $purchaseRequest->department ?: '—' }}</div>
-    <div class="meta-label">Keperluan</div>
-    <div class="meta-value">{{ $purchaseRequest->purpose ?: '—' }}</div>
-    @if($purchaseRequest->notes)
-    <div class="meta-label">Catatan</div>
-    <div class="meta-value">{{ $purchaseRequest->notes }}</div>
-    @endif
-    @if($purchaseRequest->reviewer)
+    <div class="meta-value">{{ $purchaseRequest->requester->name ?? '—' }}</div>
+    
+    <div class="meta-label">Catatan / Keperluan</div>
+    <div class="meta-value">{{ $purchaseRequest->notes ?? '—' }}</div>
+    
+    @if($purchaseRequest->approver)
     <div class="meta-label">Disetujui oleh</div>
-    <div class="meta-value">{{ $purchaseRequest->reviewer->name }} — {{ $purchaseRequest->reviewed_at?->format('d M Y, H:i') }}</div>
+    <div class="meta-value">{{ $purchaseRequest->approver->name }} — {{ $purchaseRequest->approved_at?->format('d M Y, H:i') }}</div>
     @endif
 </div>
 
 <table>
     <thead>
         <tr>
-            <th style="width:30px;">#</th>
+            <th style="width:30px;" class="text-center">#</th>
             <th>Nama Material / Barang</th>
-            <th>Kode</th>
-            <th>Spesifikasi</th>
             <th class="text-center">Satuan</th>
             <th class="text-right">Qty Diminta</th>
-            @if(in_array($purchaseRequest->status, ['approved','ordered']))
-            <th class="text-right">Qty Disetujui</th>
-            @endif
-            <th class="text-right">Harga Est.</th>
-            <th class="text-right">Subtotal</th>
-            <th>Catatan</th>
+            <th>Catatan (Purpose)</th>
         </tr>
     </thead>
     <tbody>
-        @php $grandTotal = 0; @endphp
-        @foreach($purchaseRequest->items as $i => $item)
-        @php $grandTotal += $item->subtotal; @endphp
+        @forelse($purchaseRequest->items as $i => $item)
         <tr>
             <td class="text-center">{{ $i+1 }}</td>
-            <td>{{ $item->material_name }}</td>
-            <td style="font-family:monospace;font-size:11px;">{{ $item->material_code ?: '—' }}</td>
-            <td style="font-size:11px;">{{ $item->specification ?: '—' }}</td>
+            <td>{{ $item->material->name ?? 'Material Tidak Diketahui' }}</td>
             <td class="text-center">{{ $item->unit }}</td>
-            <td class="text-right">{{ number_format($item->quantity_requested, 2) }}</td>
-            @if(in_array($purchaseRequest->status, ['approved','ordered']))
-            <td class="text-right">{{ $item->quantity_approved !== null ? number_format($item->quantity_approved, 2) : '—' }}</td>
-            @endif
-            <td class="text-right">{{ $item->estimated_price ? 'Rp '.number_format($item->estimated_price, 0, ',', '.') : '—' }}</td>
-            <td class="text-right">{{ $item->estimated_price ? 'Rp '.number_format($item->subtotal, 0, ',', '.') : '—' }}</td>
-            <td style="font-size:11px;">{{ $item->item_notes ?: '—' }}</td>
+            <td class="text-right">{{ number_format($item->quantity, 2) }}</td>
+            <td style="font-size:11px;">{{ $item->notes ?? '—' }}</td>
         </tr>
-        @endforeach
-    </tbody>
-    <tfoot>
+        @empty
         <tr>
-            <td colspan="{{ in_array($purchaseRequest->status, ['approved','ordered']) ? 7 : 6 }}" class="text-right">Total Estimasi</td>
-            <td colspan="2" class="text-right">Rp {{ number_format($grandTotal, 0, ',', '.') }}</td>
-            <td></td>
+            <td colspan="5" class="text-center">Tidak ada item dalam Purchase Request ini.</td>
         </tr>
-    </tfoot>
+        @endforelse
+    </tbody>
 </table>
-
-@if($purchaseRequest->status === 'rejected' && $purchaseRequest->rejection_reason)
-<div style="border:1px solid #fca5a5;background:#fef2f2;padding:10px 14px;border-radius:4px;margin-bottom:16px;">
-    <strong style="color:#991b1b;">Alasan Penolakan:</strong>
-    <span style="color:#7f1d1d;"> {{ $purchaseRequest->rejection_reason }}</span>
-</div>
-@endif
 
 <div class="signatures">
     <div class="sig-box">
         <div class="sig-label">Dibuat oleh</div>
-        <div class="sig-name">{{ $purchaseRequest->creator?->name ?? $purchaseRequest->requested_by_name }}</div>
+        <div class="sig-name">{{ $purchaseRequest->requester?->name ?? '___________________' }}</div>
     </div>
     <div class="sig-box">
         <div class="sig-label">Kepala Gudang</div>
         <div class="sig-name">
-            @if($purchaseRequest->reviewer && $purchaseRequest->reviewer->isKepalaGudang())
-                {{ $purchaseRequest->reviewer->name }}
+            @if($purchaseRequest->approver && method_exists($purchaseRequest->approver, 'isKepalaGudang') && $purchaseRequest->approver->isKepalaGudang())
+                {{ $purchaseRequest->approver->name }}
             @else
                 ___________________
             @endif
@@ -162,8 +131,8 @@
     <div class="sig-box">
         <div class="sig-label">Pimpinan / Manager</div>
         <div class="sig-name">
-            @if($purchaseRequest->reviewer && $purchaseRequest->reviewer->isManagement())
-                {{ $purchaseRequest->reviewer->name }}
+            @if($purchaseRequest->approver && method_exists($purchaseRequest->approver, 'isManagement') && $purchaseRequest->approver->isManagement())
+                {{ $purchaseRequest->approver->name }}
             @else
                 ___________________
             @endif

@@ -107,25 +107,35 @@
             <th class="text-right">Total (Rp)</th>
         </tr>
     </thead>
-    <tbody>
+   <tbody>
+        @php $grandTotal = 0; @endphp
         @foreach($purchaseOrder->items as $i => $item)
+        @php $grandTotal += $item->price; @endphp
         <tr>
             <td class="text-center">{{ $i + 1 }}</td>
             <td>
-                <strong>{{ $item->material_name }}</strong>
-                @if($item->material_code)
-                    <br><small style="color:#888; font-family:monospace;">{{ $item->material_code }}</small>
+                <strong>{{ $item->material->name ?? '-' }}</strong>
+                @if($item->material && $item->material->code)
+                    <br><small style="color:#888; font-family:monospace;">{{ $item->material->code }}</small>
                 @endif
             </td>
             <td>{{ $item->specification ?: '—' }}</td>
             <td class="text-center">{{ $item->unit }}</td>
-            <td class="text-right">{{ number_format($item->quantity_ordered, 2) }}</td>
-            <td class="text-right">{{ number_format($item->quantity_received, 2) }}</td>
-            <td class="text-right">{{ $item->unit_price ? number_format($item->unit_price, 0, ',', '.') : '—' }}</td>
-            <td class="text-right">{{ $item->total_price ? number_format($item->total_price, 0, ',', '.') : '—' }}</td>
+            <td class="text-right">{{ number_format($item->quantity, 2) }}</td>
+            <td class="text-right">{{ $item->quantity_received ? number_format($item->quantity_received, 2) : '0.00' }}</td>
+            <td class="text-right">{{ $item->price_per_qty ? number_format($item->price_per_qty, 0, ',', '.') : '—' }}</td>
+            <td class="text-right">{{ $item->price ? number_format($item->price, 0, ',', '.') : '—' }}</td>
         </tr>
         @endforeach
     </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7" class="text-right" style="padding:10px 16px;">TOTAL:</td>
+            <td class="text-right" style="padding:10px 16px; font-size:14px;">
+                Rp {{ number_format($grandTotal, 0, ',', '.') }}
+            </td>
+        </tr>
+    </tfoot>
     <tfoot>
         <tr>
             <td colspan="7" class="text-right" style="padding:10px 16px;">TOTAL:</td>

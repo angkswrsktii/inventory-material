@@ -2,29 +2,29 @@
 
 namespace Database\Seeders;
 
+use App\Models\Supplier;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class SupplierSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('suppliers')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-
-        DB::table('suppliers')->insert([
-            ['name' => 'BME',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'GDM',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'ISTW',     'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'MPP',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'MSD',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'MZ',       'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'SGS',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'SPINDO',   'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'SPS',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'SSI',      'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
-            ['name' => 'TOP TUBE', 'contact_person' => null, 'phone' => null, 'email' => null, 'address' => null, 'is_active' => true, 'created_at' => now(), 'updated_at' => now()],
+        Supplier::create([
+            'code' => 'SUP001',
+            'name' => 'PT. Baja Nusantara',
+            'contact_person' => 'Budi Santoso',
+            'phone' => '081234567890',
+            'email' => 'info@bajanusantara.com',
+            'address' => 'Jl. Industri No. 1, Jakarta',
+        ]);
+        
+        Supplier::create([
+            'code' => 'SUP002',
+            'name' => 'CV. Makmur Jaya',
+            'contact_person' => 'Andi',
+            'phone' => '081298765432',
+            'email' => 'sales@makmurjaya.com',
+            'address' => 'Jl. Pahlawan No. 10, Surabaya',
         ]);
     }
 }

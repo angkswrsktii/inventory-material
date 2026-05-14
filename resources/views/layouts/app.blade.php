@@ -489,6 +489,7 @@
         .badge-warning { background: var(--warning-bg); color: var(--warning); }
         .badge-danger { background: var(--danger-bg); color: var(--danger); }
         .badge-info { background: rgba(96,165,250,0.1); color: var(--info); }
+        .badge-primary { background: rgba(16, 110, 225, 0.1); color: var(--info); }
         .badge-muted { background: var(--surface-3); color: var(--text-muted); }
         .badge-in { background: var(--success-bg); color: var(--success); }
         .badge-out { background: var(--danger-bg); color: var(--danger); }
@@ -732,37 +733,27 @@
             {{-- Master Data: hanya Pimpinan, Admin, Kepala Gudang --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <div class="nav-section">Master Data</div>
+            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}">
+                <i class="fas fa-cube"></i> Data Material
+            </a>
+            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}">
+                <i class="fas fa-cubes"></i> Data Part
+            </a>
             <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
                 <i class="fas fa-building"></i> Data Supplier
             </a>
             <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Data Customer
             </a>
-            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}">
-                <i class="fas fa-cube"></i> Data Material
+            <a href="{{ route('pics.index') }}" class="nav-item {{ request()->routeIs('pics.*') ? 'active' : '' }}">
+                <i class="fas fa-user-tag"></i> Data PIC
+            </a>
+            <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}">
+                <i class="fas fa-project-diagram"></i> Data Project
             </a>
             @endif
 
-            <div class="nav-section">Transaksi</div>
-
-            {{-- Kartu Stok: semua role bisa lihat --}}
-            <a href="{{ route('stock-cards.index') }}" class="nav-item {{ request()->routeIs('stock-cards.index') || request()->routeIs('stock-cards.show') ? 'active' : '' }}">
-                <i class="fas fa-table-list"></i> Kartu Stok
-            </a>
-
-            {{-- Penerimaan Barang: Pegawai & Kepala Gudang & Pimpinan --}}
-            <a href="{{ route('stock-cards.create') }}" class="nav-item {{ request()->routeIs('stock-cards.create') ? 'active' : '' }}">
-                <i class="fas fa-arrow-right-to-bracket"></i> Penerimaan Barang
-            </a>
-
-            {{-- Kartu Pengambilan: semua bisa ajukan --}}
-            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}">
-                <i class="fas fa-microscope"></i> Quality Control
-            </a>
-            <a href="{{ route('withdrawal-cards.index') }}" class="nav-item {{ request()->routeIs('withdrawal-cards.*') ? 'active' : '' }}">
-                <i class="fas fa-file-invoice"></i> Kartu Pengambilan
-            </a>
-
+            <div class="nav-section">Purchasing</div>
             {{-- Purchase Request: hanya Kepala Gudang, Pimpinan, Admin --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}">
@@ -777,6 +768,34 @@
             </a>
             @endif
 
+            <div class="nav-section">Inventory</div>
+            
+            <a href="{{ route('good-receipts.index') }}" class="nav-item {{ request()->routeIs('good-receipts.*') ? 'active' : '' }}">
+                <i class="fas fa-arrow-right-to-bracket"></i> Good Receipt
+            </a>
+            <a href="{{ route('good-issues.index') }}" class="nav-item {{ request()->routeIs('good-issues.*') ? 'active' : '' }}">
+                <i class="fas fa-arrow-right-from-bracket"></i> Good Issue
+            </a>
+         
+            <a href="{{ route('return-gi.index') }}" class="nav-item {{ request()->routeIs('return-gi.*') ? 'active' : '' }}">
+                <i class="fas fa-undo"></i> Retur GI
+            </a>
+            <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
+                <i class="fas fa-history"></i> Riwayat Mutasi
+            </a>
+            <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}">
+                <i class="fas fa-boxes-stacked"></i> Inventory Stock
+            </a>
+            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}">
+                <i class="fas fa-sliders-h"></i> Goods Adjustment
+            </a>
+
+            <div class="nav-section">Work Order</div>
+            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}">
+                <i class="fas fa-clipboard-check"></i> Quality Check
+            </a>
+
+
             {{-- Administrasi: hanya Pimpinan & Admin --}}
             @if(auth()->user()->isManagement())
             <div class="nav-section">Administrasi</div>
@@ -784,6 +803,8 @@
                 <i class="fas fa-users-gear"></i> Manajemen Akun
             </a>
             @endif
+           
+
 
             <div class="nav-section">Laporan</div>
             <a href="{{ route('reports.stock') }}" class="nav-item {{ request()->routeIs('reports.stock') ? 'active' : '' }}">

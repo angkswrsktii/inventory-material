@@ -10,45 +10,32 @@ class PurchaseOrder extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 't_purchase_orders';
+
     protected $fillable = [
-        'document_no',
-        'purchase_request_id',
+        'po_number',
+        't_purchase_request_id',
+        'm_supplier_id',
         'order_date',
-        'expected_date',
-        'supplier_id',
-        'supplier_name',
-        'supplier_contact',
-        'delivery_address',
-        'notes',
+        'expected_delivery_date',
         'status',
-        'total_amount',
-        'payment_terms',
+        'notes',
         'created_by',
-        'approved_by',
-        'approved_at',
     ];
 
     protected $casts = [
-        'order_date'    => 'date',
-        'expected_date' => 'date',
-        'approved_at'   => 'datetime',
-        'total_amount'  => 'decimal:2',
+        'order_date'             => 'date',
+        'expected_delivery_date' => 'date',
     ];
-
-    // ── Relations ─────────────────────────────────────────
-    public function supplier()
-    {
-        return $this->belongsTo(Supplier::class);
-    }
 
     public function purchaseRequest()
     {
-        return $this->belongsTo(PurchaseRequest::class);
+        return $this->belongsTo(PurchaseRequest::class, 't_purchase_request_id');
     }
 
-    public function items()
+    public function supplier()
     {
-        return $this->hasMany(PurchaseOrderItem::class);
+        return $this->belongsTo(Supplier::class, 'm_supplier_id');
     }
 
     public function creator()
@@ -56,69 +43,8 @@ class PurchaseOrder extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function approver()
+    public function items()
     {
-        return $this->belongsTo(User::class, 'approved_by');
-    }
-
-    // ── Helpers ───────────────────────────────────────────
-    public static function generateDocumentNo(): string
-    {
-        $prefix   = 'PO';
-        $date     = now()->format('Ymd');
-        $last     = static::whereDate('created_at', today())->orderByDesc('id')->first();
-        $sequence = $last ? (intval(substr($last->document_no, -4)) + 1) : 1;
-        return $prefix . '-' . $date . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
-    }
-
-    public function getStatusLabelAttribute(): string
-    {
-        return match($this->status) {
-            'draft'     => 'Draft',
-            'sent'      => 'Terkirim ke Supplier',
-            'partial'   => 'Sebagian Diterima',
-            'received'  => 'Sudah Diterima Semua',
-            'cancelled' => 'Dibatalkan',
-            default     => ucfirst($this->status),
-        };
-    }
-
-    public function getStatusColorAttribute(): string
-    {
-        return match($this->status) {
-            'draft'     => 'muted',
-            'sent'      => 'info',
-            'partial'   => 'warning',
-            'received'  => 'success',
-            'cancelled' => 'danger',
-            default     => 'muted',
-        };
-    }
-
-    public function getTotalAmountComputedAttribute(): float
-    {
-        return $this->items->sum(function ($item) {
-            return ($item->unit_price ?? 0) * $item->quantity_ordered;
-        });
-    }
-
-    public function canEdit(): bool
-    {
-        return in_array($this->status, ['draft']);
-    }
-
-    public function canSend(): bool
-    {
-        return $this->status === 'draft';
-    }
-
-    public function canCancel(): bool
-    {
-        return in_array($this->status, ['draft', 'sent']);
-    }
-
-    public function isFullyReceived(): bool
-    {
-        return $this->items->every(fn($item) => $item->quantity_received >= $item->quantity_ordered);
+        return $this->hasMany(PurchaseOrderItem::class, 't_purchase_order_id');
     }
 }

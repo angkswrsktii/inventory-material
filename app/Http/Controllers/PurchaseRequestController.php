@@ -12,127 +12,86 @@ use Illuminate\Support\Facades\Auth;
 
 class PurchaseRequestController extends Controller
 {
-    // ── INDEX ─────────────────────────────────────────────
     public function index(Request $request)
     {
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        $query = PurchaseRequest::with(['items', 'creator', 'reviewer'])
+        $query = PurchaseRequest::with(['items', 'requester', 'approver'])
             ->orderBy('request_date', 'desc')
             ->orderBy('id', 'desc');
 
         if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('document_no', 'like', "%{$request->search}%")
-                    ->orWhere('requested_by_name', 'like', "%{$request->search}%")
-                    ->orWhere('department', 'like', "%{$request->search}%")
-                    ->orWhere('purpose', 'like', "%{$request->search}%");
-            });
+            $query->where('pr_number', 'like', "%{$request->search}%");
         }
 
         if ($request->status) {
             $query->where('status', $request->status);
         }
 
-        if ($request->date_from) {
-            $query->whereDate('request_date', '>=', $request->date_from);
-        }
-
-        if ($request->date_to) {
-            $query->whereDate('request_date', '<=', $request->date_to);
-        }
-
-        // Karyawan hanya lihat PR miliknya sendiri
         if ($currentUser->isKaryawan()) {
-            $query->where('created_by', $currentUser->id);
+            $query->where('requester_id', $currentUser->id);
         }
 
-        $requests = $query->paginate(10)->withQueryString();
+        $purchaseRequests = $query->paginate(10)->withQueryString();
 
-        $stats = [
-            'draft'     => PurchaseRequest::where('status', 'draft')->count(),
-            'submitted' => PurchaseRequest::where('status', 'submitted')->count(),
-            'approved'  => PurchaseRequest::where('status', 'approved')->count(),
-            'ordered'   => PurchaseRequest::where('status', 'ordered')->count(),
-        ];
-
-        return view('purchase-requests.index', compact('requests', 'stats'));
+        return view('purchase-requests.index', compact('purchaseRequests'));
     }
 
-    // ── CREATE ────────────────────────────────────────────
     public function create()
     {
         $materials  = Material::where('is_active', true)->orderBy('name')->get();
-        $documentNo = PurchaseRequest::generateDocumentNo();
+        $latest = PurchaseRequest::latest('id')->first();
+        $nextId = $latest ? $latest->id + 1 : 1;
+        $autoNumber = 'PR-' . date('Ym') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
-        return view('purchase-requests.create', compact('materials', 'documentNo'));
+        return view('purchase-requests.create', compact('materials', 'autoNumber'));
     }
 
-    // ── STORE ─────────────────────────────────────────────
     public function store(Request $request)
     {
         $request->validate([
             'request_date'               => 'required|date',
-            'requested_by_name'          => 'required|string|max:100',
-            'department'                 => 'nullable|string|max:100',
-            'purpose'                    => 'nullable|string|max:500',
             'notes'                      => 'nullable|string',
             'items'                      => 'required|array|min:1',
-            'items.*.material_name'      => 'required|string|max:255',
-            'items.*.unit'               => 'required|string|max:50',
-            'items.*.quantity_requested' => 'required|numeric|min:0.01',
-            'items.*.estimated_price'    => 'nullable|numeric|min:0',
+            'items.*.m_material_id'      => 'required|exists:m_materials,id',
+            'items.*.quantity'           => 'required|numeric|min:0.01',
+            'items.*.purpose'            => 'required|string',
         ]);
 
-        $action = $request->input('action', 'draft');
+        DB::transaction(function () use ($request) {
+            $latest = PurchaseRequest::latest('id')->first();
+            $nextId = $latest ? $latest->id + 1 : 1;
+            $documentNo = 'PR-' . date('Ym') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
-        DB::transaction(function () use ($request, $action) {
             $pr = PurchaseRequest::create([
-                'document_no'       => PurchaseRequest::generateDocumentNo(),
+                'pr_number'         => $request->pr_number ?? $documentNo,
                 'request_date'      => $request->request_date,
-                'requested_by_name' => $request->requested_by_name,
-                'department'        => $request->department,
-                'purpose'           => $request->purpose,
                 'notes'             => $request->notes,
-                'status'            => $action === 'submit' ? 'submitted' : 'draft',
-                'created_by'        => Auth::id(),
+                'status'            => 'draft', // Diubah menjadi draft
+                'requester_id'      => Auth::id(),
             ]);
 
             foreach ($request->items as $item) {
+                $material = Material::find($item['m_material_id']);
                 PurchaseRequestItem::create([
-                    'purchase_request_id' => $pr->id,
-                    'material_id'         => $item['material_id'] ?: null,
-                    'material_name'       => $item['material_name'],
-                    'material_code'       => $item['material_code'] ?? null,
-                    'unit'                => $item['unit'],
-                    'specification'       => $item['specification'] ?? null,
-                    'quantity_requested'  => $item['quantity_requested'],
-                    'estimated_price'     => $item['estimated_price'] ?? null,
-                    'item_notes'          => $item['item_notes'] ?? null,
+                    't_purchase_request_id' => $pr->id,
+                    'm_material_id'         => $item['m_material_id'],
+                    'unit'                  => $material ? $material->unit : 'Pcs',
+                    'quantity'              => $item['quantity'],
+                    'notes'                 => $item['purpose'],
                 ]);
             }
         });
 
-        $msg = $action === 'submit'
-            ? 'Purchase Request berhasil diajukan dan menunggu review.'
-            : 'Purchase Request berhasil disimpan sebagai draft.';
-
-        return redirect()->route('purchase-requests.index')->with('success', $msg);
+        return redirect()->route('purchase-requests.index')->with('success', 'Purchase Request berhasil disimpan sebagai Draft.');
     }
 
-    // ── SHOW ──────────────────────────────────────────────
-    public function show(PurchaseRequest $purchaseRequest)
-    {
-        $purchaseRequest->load(['items.material', 'creator', 'reviewer']);
-        return view('purchase-requests.show', compact('purchaseRequest'));
-    }
-
-    // ── EDIT ──────────────────────────────────────────────
     public function edit(PurchaseRequest $purchaseRequest)
     {
-        if (!$purchaseRequest->canEdit()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat diedit.');
+        // Hanya Draft yang bisa diedit
+        if ($purchaseRequest->status !== 'draft') {
+            return back()->with('error', 'Hanya PR berstatus Draft yang dapat diedit. Kembalikan ke draft terlebih dahulu.');
         }
 
         $materials = Material::where('is_active', true)->orderBy('name')->get();
@@ -141,164 +100,116 @@ class PurchaseRequestController extends Controller
         return view('purchase-requests.edit', compact('purchaseRequest', 'materials'));
     }
 
-    // ── UPDATE ────────────────────────────────────────────
     public function update(Request $request, PurchaseRequest $purchaseRequest)
     {
-        if (!$purchaseRequest->canEdit()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat diedit.');
+        // Hanya Draft yang bisa diupdate
+        if ($purchaseRequest->status !== 'draft') {
+            return back()->with('error', 'Hanya PR berstatus Draft yang dapat diedit.');
         }
 
         $request->validate([
             'request_date'               => 'required|date',
-            'requested_by_name'          => 'required|string|max:100',
-            'department'                 => 'nullable|string|max:100',
-            'purpose'                    => 'nullable|string|max:500',
             'notes'                      => 'nullable|string',
             'items'                      => 'required|array|min:1',
-            'items.*.material_name'      => 'required|string|max:255',
-            'items.*.unit'               => 'required|string|max:50',
-            'items.*.quantity_requested' => 'required|numeric|min:0.01',
-            'items.*.estimated_price'    => 'nullable|numeric|min:0',
+            'items.*.m_material_id'      => 'required|exists:m_materials,id',
+            'items.*.quantity'           => 'required|numeric|min:0.01',
+            'items.*.purpose'            => 'required|string',
         ]);
 
-        $action = $request->input('action', 'draft');
-
-        DB::transaction(function () use ($request, $purchaseRequest, $action) {
+        DB::transaction(function () use ($request, $purchaseRequest) {
             $purchaseRequest->update([
-                'request_date'      => $request->request_date,
-                'requested_by_name' => $request->requested_by_name,
-                'department'        => $request->department,
-                'purpose'           => $request->purpose,
-                'notes'             => $request->notes,
-                'status'            => $action === 'submit' ? 'submitted' : 'draft',
+                'request_date' => $request->request_date,
+                'notes'        => $request->notes,
             ]);
 
             $purchaseRequest->items()->delete();
 
             foreach ($request->items as $item) {
+                $material = Material::find($item['m_material_id']);
                 PurchaseRequestItem::create([
-                    'purchase_request_id' => $purchaseRequest->id,
-                    'material_id'         => $item['material_id'] ?: null,
-                    'material_name'       => $item['material_name'],
-                    'material_code'       => $item['material_code'] ?? null,
-                    'unit'                => $item['unit'],
-                    'specification'       => $item['specification'] ?? null,
-                    'quantity_requested'  => $item['quantity_requested'],
-                    'estimated_price'     => $item['estimated_price'] ?? null,
-                    'item_notes'          => $item['item_notes'] ?? null,
+                    't_purchase_request_id' => $purchaseRequest->id,
+                    'm_material_id'         => $item['m_material_id'],
+                    'unit'                  => $material ? $material->unit : 'Pcs',
+                    'quantity'              => $item['quantity'],
+                    'notes'                 => $item['purpose'],
                 ]);
             }
         });
 
-        $msg = $action === 'submit'
-            ? 'Purchase Request berhasil diajukan dan menunggu review.'
-            : 'Purchase Request berhasil diperbarui.';
-
-        return redirect()->route('purchase-requests.show', $purchaseRequest)->with('success', $msg);
+        return redirect()->route('purchase-requests.index')->with('success', 'Purchase Request berhasil diperbarui.');
     }
 
-    // ── SUBMIT ────────────────────────────────────────────
+    public function show(PurchaseRequest $purchaseRequest)
+    {
+        $purchaseRequest->load(['items.material', 'requester', 'approver']);
+        return view('purchase-requests.show', compact('purchaseRequest'));
+    }
+
     public function submit(PurchaseRequest $purchaseRequest)
     {
-        if (!$purchaseRequest->canSubmit()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat diajukan.');
+        if ($purchaseRequest->status !== 'draft') {
+            return back()->with('error', 'Hanya draft yang dapat diajukan.');
         }
 
-        $purchaseRequest->update(['status' => 'submitted']);
-
+        $purchaseRequest->update(['status' => 'pending']);
         return back()->with('success', 'Purchase Request berhasil diajukan untuk di-review.');
     }
 
-    // ── APPROVE ───────────────────────────────────────────
+    // Fungsi baru untuk mengembalikan Pending ke Draft
+    public function revertToDraft(PurchaseRequest $purchaseRequest)
+    {
+        if ($purchaseRequest->status !== 'pending') {
+            return back()->with('error', 'Hanya PR berstatus Pending yang bisa dikembalikan ke Draft.');
+        }
+
+        $purchaseRequest->update(['status' => 'draft']);
+        return back()->with('success', 'PR berhasil dikembalikan ke Draft dan siap untuk diedit.');
+    }
+
     public function approve(Request $request, PurchaseRequest $purchaseRequest)
     {
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        if (!$purchaseRequest->canReview()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat di-approve. Status saat ini: ' . $purchaseRequest->status_label);
+        if ($purchaseRequest->status !== 'pending') {
+            return back()->with('error', 'Purchase Request tidak dapat di-approve.');
         }
 
         if (!$currentUser->canApprovePR()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk menyetujui PR. Hanya Pimpinan yang dapat menyetujui Purchase Request.');
+            return back()->with('error', 'Anda tidak memiliki akses untuk menyetujui PR.');
         }
 
-        $request->validate([
-            'approved_quantities'    => 'nullable|array',
-            'approved_quantities.*'  => 'nullable|numeric|min:0',
+        $purchaseRequest->update([
+            'status'      => 'approved',
+            'approved_by' => $currentUser->id,
+            'approved_at' => now(),
         ]);
-
-        DB::transaction(function () use ($request, $purchaseRequest, $currentUser) {
-            if ($request->approved_quantities) {
-                foreach ($request->approved_quantities as $itemId => $qty) {
-                    $purchaseRequest->items()->where('id', $itemId)->update([
-                        'quantity_approved' => $qty,
-                    ]);
-                }
-            } else {
-                $purchaseRequest->items()->update([
-                    'quantity_approved' => DB::raw('quantity_requested'),
-                ]);
-            }
-
-            $purchaseRequest->update([
-                'status'      => 'approved',
-                'reviewed_by' => $currentUser->id,
-                'reviewed_at' => now(),
-            ]);
-        });
 
         return back()->with('success', 'Purchase Request berhasil disetujui.');
     }
 
-    // ── REJECT ────────────────────────────────────────────
     public function reject(Request $request, PurchaseRequest $purchaseRequest)
     {
         /** @var User $currentUser */
         $currentUser = Auth::user();
 
-        if (!$purchaseRequest->canReview()) {
-            return back()->with('error', 'Purchase Request ini tidak dapat ditolak. Status saat ini: ' . $purchaseRequest->status_label);
+        if ($purchaseRequest->status !== 'pending') {
+            return back()->with('error', 'Purchase Request tidak dapat ditolak.');
         }
 
         if (!$currentUser->canApprovePR()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk menolak PR. Hanya Pimpinan yang dapat menolak Purchase Request.');
+            return back()->with('error', 'Anda tidak memiliki akses untuk menolak PR.');
         }
-
-        $request->validate([
-            'rejection_reason' => 'required|string|max:500',
-        ]);
 
         $purchaseRequest->update([
             'status'           => 'rejected',
-            'rejection_reason' => $request->rejection_reason,
-            'reviewed_by'      => $currentUser->id,
-            'reviewed_at'      => now(),
+            'approved_by'      => $currentUser->id,
+            'approved_at'      => now(),
         ]);
 
         return back()->with('success', 'Purchase Request telah ditolak.');
     }
 
-    // ── MARK ORDERED ──────────────────────────────────────
-    public function markOrdered(PurchaseRequest $purchaseRequest)
-    {
-        /** @var User $currentUser */
-        $currentUser = Auth::user();
-
-        if (!$purchaseRequest->canMarkOrdered()) {
-            return back()->with('error', 'Purchase Request ini belum disetujui.');
-        }
-
-        if (!$currentUser->canApprovePR()) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk tindakan ini. Hanya Pimpinan yang dapat melakukan ini.');
-        }
-
-        $purchaseRequest->update(['status' => 'ordered']);
-
-        return back()->with('success', 'Purchase Request ditandai sebagai sudah dipesan (PO).');
-    }
-
-    // ── DESTROY ───────────────────────────────────────────
     public function destroy(PurchaseRequest $purchaseRequest)
     {
         if (!in_array($purchaseRequest->status, ['draft', 'rejected'])) {
@@ -311,10 +222,14 @@ class PurchaseRequestController extends Controller
             ->with('success', 'Purchase Request berhasil dihapus.');
     }
 
-    // ── PRINT ─────────────────────────────────────────────
     public function print(PurchaseRequest $purchaseRequest)
     {
-        $purchaseRequest->load(['items.material', 'creator', 'reviewer']);
+        // Melakukan Eager Loading untuk relasi yang dibutuhkan pada halaman print.
+        // Ini menghindari masalah N+1 Query dan sama seperti yang Anda gunakan di method show().
+        $purchaseRequest->load(['items.material', 'requester', 'approver']);
+
+        // Mengembalikan file view blade print Anda.
+        // Asumsinya file html yang Anda bagikan disimpan di resources/views/purchase-requests/print.blade.php
         return view('purchase-requests.print', compact('purchaseRequest'));
     }
 }

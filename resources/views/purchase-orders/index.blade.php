@@ -1,154 +1,113 @@
 @extends('layouts.app')
-@section('title', 'Purchase Order')
-@section('topbar-title', 'Purchase Order')
+
+@section('title', 'Purchase Order (PO)')
+@section('topbar-title', 'Purchase Order (PO)')
+
+@section('topbar-actions')
+    <span style="font-size:12px; color: var(--text-muted);">
+        <i class="fas fa-clock"></i>
+        {{ now()->format('d M Y, H:i') }}
+    </span>
+@endsection
 
 @section('content')
 <div class="page-header">
     <div>
         <div class="page-title">Purchase Order</div>
-        <div class="page-subtitle">Dokumen pemesanan material ke supplier</div>
+        <div class="page-subtitle">Daftar pesanan pembelian ke supplier</div>
     </div>
-    @if(auth()->user()->isKepalaGudang() || auth()->user()->isPimpinan() || auth()->user()->isAdmin())
-    <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Buat PO
+    <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus"></i> Buat PO Baru
     </a>
-    @endif
 </div>
 
-{{-- Stats --}}
-<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;">
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px;">
-        <div style="width:40px;height:40px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:16px;">
-            <i class="fas fa-file-pen"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--text);">{{ $stats['draft'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Draft</div>
-        </div>
-    </div>
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px; border-color:rgba(96,165,250,0.2);">
-        <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,0.1);display:flex;align-items:center;justify-content:center;color:var(--info);font-size:16px;">
-            <i class="fas fa-paper-plane"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--info);">{{ $stats['sent'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Terkirim</div>
-        </div>
-    </div>
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px; border-color:var(--warning-bg);">
-        <div style="width:40px;height:40px;border-radius:10px;background:var(--warning-bg);display:flex;align-items:center;justify-content:center;color:var(--warning);font-size:16px;">
-            <i class="fas fa-truck"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--warning);">{{ $stats['partial'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Sebagian Diterima</div>
-        </div>
-    </div>
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px; border-color:var(--success-bg);">
-        <div style="width:40px;height:40px;border-radius:10px;background:var(--success-bg);display:flex;align-items:center;justify-content:center;color:var(--success);font-size:16px;">
-            <i class="fas fa-circle-check"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--success);">{{ $stats['received'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Selesai Diterima</div>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    {{-- Filter --}}
-    <div class="card-header">
-        <form method="GET" style="display:flex; gap:10px; flex-wrap:wrap; width:100%;">
-            <div class="search-input-wrap" style="flex:1; min-width:180px;">
-                <i class="fas fa-search"></i>
-                <input type="text" name="search" class="form-control"
-                       placeholder="Cari No. PO atau supplier..." value="{{ request('search') }}">
+<!-- Filter -->
+<div class="card" style="margin-bottom: 20px;">
+    <div class="card-body" style="padding: 16px 20px;">
+        <form method="GET" action="{{ route('purchase-orders.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px; position:relative;">
+                <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. PO..."
+                    style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <select name="status" class="form-control" style="width:160px;">
+           <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
                 <option value="">Semua Status</option>
-                <option value="draft"    {{ request('status') === 'draft'    ? 'selected' : '' }}>Draft</option>
-                <option value="sent"     {{ request('status') === 'sent'     ? 'selected' : '' }}>Terkirim</option>
-                <option value="partial"  {{ request('status') === 'partial'  ? 'selected' : '' }}>Sebagian Diterima</option>
-                <option value="received" {{ request('status') === 'received' ? 'selected' : '' }}>Selesai</option>
-                <option value="cancelled"{{ request('status') === 'cancelled'? 'selected' : '' }}>Dibatalkan</option>
+                <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                <option value="issued" {{ request('status') === 'issued' ? 'selected' : '' }}>Issued</option>
+                <option value="partial" {{ request('status') === 'partial' ? 'selected' : '' }}>Partial (GR)</option>
+                <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed (GR)</option>
+                <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
             </select>
-            <input type="date" name="date_from" class="form-control" style="width:150px;" value="{{ request('date_from') }}">
-            <input type="date" name="date_to"   class="form-control" style="width:150px;" value="{{ request('date_to') }}">
-            <button type="submit" class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
-            @if(request()->hasAny(['search','status','date_from','date_to']))
-                <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Reset</a>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            @if(request('search') || request('status'))
+                <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
             @endif
         </form>
     </div>
+</div>
 
+<!-- Table -->
+<div class="card">
     <div class="table-wrap">
         <table>
             <thead>
                 <tr>
+                    <th width="50">#</th>
                     <th>No. PO</th>
-                    <th>Tanggal Order</th>
+                    <th>No. PR</th>
                     <th>Supplier</th>
-                    <th>Dari PR</th>
-                    <th>Estimasi Terima</th>
-                    <th class="text-right">Total</th>
+                    <th>Tanggal PO</th>
+                    <th>Total Item</th>
                     <th>Status</th>
-                    <th>Dibuat Oleh</th>
-                    <th class="text-center">Aksi</th>
+                    <th width="110">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($orders as $po)
+                @forelse($purchaseOrders as $po)
                 <tr>
+                    <td style="color:var(--text-muted);">{{ $purchaseOrders->firstItem() + $loop->index }}</td>
                     <td>
-                        <span class="mono" style="color:var(--accent); font-size:12px;">{{ $po->document_no }}</span>
-                    </td>
-                    <td style="font-size:12px; color:var(--text-muted); white-space:nowrap;">
-                        {{ $po->order_date->format('d M Y') }}
-                    </td>
-                    <td>
-                        <div style="font-weight:500;">{{ $po->supplier_name }}</div>
-                        @if($po->supplier_contact)
-                            <div style="font-size:11px; color:var(--text-muted);">{{ $po->supplier_contact }}</div>
-                        @endif
-                    </td>
-                    <td>
-                        <a href="{{ route('purchase-requests.show', $po->purchase_request_id) }}"
-                           style="color:var(--accent); font-size:12px; text-decoration:none; font-family:monospace;">
-                            {{ $po->purchaseRequest->document_no ?? '-' }}
-                        </a>
-                    </td>
-                    <td style="font-size:12px; color:var(--text-muted);">
-                        {{ $po->expected_date ? $po->expected_date->format('d M Y') : '—' }}
-                    </td>
-                    <td class="text-right" style="font-weight:600;">
-                        @if($po->total_amount)
-                            Rp {{ number_format($po->total_amount, 0, ',', '.') }}
-                        @else
-                            <span style="color:var(--text-dim);">—</span>
-                        @endif
-                    </td>
-                    <td>
-                        <span class="badge badge-{{ $po->status_color }}">
-                            {{ $po->status_label }}
+                        <span style="font-family:'Syne',sans-serif; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-glow); padding:3px 8px; border-radius:4px; white-space:nowrap;">
+                            {{ $po->po_number }}
                         </span>
                     </td>
-                    <td style="font-size:12px; color:var(--text-muted);">
-                        {{ $po->creator->name ?? '—' }}
+                    <td>
+                        @if($po->purchaseRequest)
+                            <a href="{{ route('purchase-requests.show', $po->purchaseRequest) }}" class="mono" style="color:var(--text); text-decoration:none;">{{ $po->purchaseRequest->pr_number }}</a>
+                        @else
+                            -
+                        @endif
                     </td>
-                    <td class="text-center">
-                        <div style="display:flex; gap:6px; justify-content:center;">
-                            <a href="{{ route('purchase-orders.show', $po) }}" class="btn btn-ghost btn-xs" title="Detail">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('purchase-orders.print', $po) }}" target="_blank" class="btn btn-ghost btn-xs" title="Print">
-                                <i class="fas fa-print"></i>
-                            </a>
-                            @if($po->canSend() && (auth()->user()->isPimpinan() || auth()->user()->isAdmin()))
-                            <form action="{{ route('purchase-orders.send', $po) }}" method="POST"
-                                  onsubmit="return confirm('Tandai PO ini sebagai terkirim ke supplier?')">
-                                @csrf
-                                <button type="submit" class="btn btn-xs" style="background:var(--accent-glow);color:var(--accent);border:1px solid var(--border);" title="Kirim ke Supplier">
-                                    <i class="fas fa-paper-plane"></i>
+                    <td>{{ $po->supplier->name ?? '-' }}</td>
+                    <td style="color:var(--text-muted);">{{ $po->order_date->format('d M Y') }}</td>
+                    <td>{{ $po->items->count() }} Item</td>
+                    <td>
+                        @if($po->status === 'draft')
+                            <span class="badge badge-secondary" style="background:#e2e8f0; color:#475569;">Draft</span>
+                        @elseif($po->status === 'issued')
+                            <span class="badge badge-primary">Issued</span>
+                        @elseif($po->status === 'partial')
+                            <span class="badge badge-info">Partial (GR)</span>
+                        @elseif($po->status === 'completed')
+                            <span class="badge badge-success">Completed (GR)</span>
+                        @elseif($po->status === 'cancelled')
+                            <span class="badge badge-danger">Cancelled</span>
+                        @endif
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ route('purchase-orders.show', $po) }}" class="btn btn-ghost btn-sm" title="Detail"><i class="fas fa-eye"></i></a>
+                            
+                            @if($po->status === 'draft')
+                                <a href="{{ route('purchase-orders.edit', $po) }}" class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-pen"></i></a>
+                            @endif
+
+                            @if(in_array($po->status, ['draft', 'issued']))
+                            <form method="POST" action="{{ route('purchase-orders.cancel', $po) }}" onsubmit="return confirmCancel(this)">
+                                @csrf 
+                                <input type="hidden" name="cancel_reason" class="cancel-reason-input">
+                                <button type="submit" class="btn btn-ghost btn-sm" title="Cancel" style="color:var(--danger);">
+                                    <i class="fas fa-ban"></i>
                                 </button>
                             </form>
                             @endif
@@ -157,11 +116,12 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9">
-                        <div class="empty-state">
-                            <i class="fas fa-file-circle-plus"></i>
+                    <td colspan="8">
+                        <div class="empty-state" style="padding: 60px 20px;">
+                            <i class="fas fa-file-invoice-dollar"></i>
                             <h4>Belum Ada Purchase Order</h4>
-                            <p>Buat PO dari Purchase Request yang sudah disetujui</p>
+                            <p>Mulai buat pesanan pembelian ke supplier</p>
+                            <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Buat PO Baru</a>
                         </div>
                     </td>
                 </tr>
@@ -169,14 +129,18 @@
             </tbody>
         </table>
     </div>
-
-    @if($orders->hasPages())
-    <div class="pagination-wrap">
-        <div class="pagination-info">
-            Menampilkan {{ $orders->firstItem() }}–{{ $orders->lastItem() }} dari {{ $orders->total() }}
-        </div>
-        {{ $orders->links() }}
-    </div>
-    @endif
 </div>
+
+<script>
+    function confirmCancel(form) {
+        let reason = prompt('Masukkan alasan pembatalan PO ini (minimal 5 karakter):');
+        if (reason === null || reason.trim() === '') return false; 
+        if (reason.trim().length < 5) {
+            alert('Alasan pembatalan harus minimal 5 karakter!');
+            return false; 
+        }
+        form.querySelector('.cancel-reason-input').value = reason;
+        return true; 
+    }
+</script>
 @endsection

@@ -12,166 +12,177 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseOrderController extends Controller
 {
-    // ── INDEX ─────────────────────────────────────────────
     public function index(Request $request)
     {
-        $query = PurchaseOrder::with(['purchaseRequest', 'items', 'creator'])
+        $query = PurchaseOrder::with(['purchaseRequest', 'items', 'creator', 'supplier'])
             ->orderBy('order_date', 'desc')
             ->orderByDesc('id');
 
         if ($request->search) {
-            $query->where(function ($q) use ($request) {
-                $q->where('document_no', 'like', "%{$request->search}%")
-                  ->orWhere('supplier_name', 'like', "%{$request->search}%");
-            });
+            $query->where('po_number', 'like', "%{$request->search}%");
         }
 
         if ($request->status) {
             $query->where('status', $request->status);
         }
 
-        if ($request->date_from) {
-            $query->whereDate('order_date', '>=', $request->date_from);
-        }
+        $purchaseOrders = $query->paginate(10)->withQueryString();
 
-        if ($request->date_to) {
-            $query->whereDate('order_date', '<=', $request->date_to);
-        }
-
-        $orders = $query->paginate(10)->withQueryString();
-
-        $stats = [
-            'draft'    => PurchaseOrder::where('status', 'draft')->count(),
-            'sent'     => PurchaseOrder::where('status', 'sent')->count(),
-            'partial'  => PurchaseOrder::where('status', 'partial')->count(),
-            'received' => PurchaseOrder::where('status', 'received')->count(),
-        ];
-
-        return view('purchase-orders.index', compact('orders', 'stats'));
+        return view('purchase-orders.index', compact('purchaseOrders'));
     }
 
-    // ── CREATE ────────────────────────────────────────────
-    // PO hanya bisa dibuat dari PR yang sudah approved
     public function create(Request $request)
     {
-        // Load PR yang sudah disetujui (approved atau ordered)
-        $approvedPRs = PurchaseRequest::with('items')
-            ->whereIn('status', ['approved', 'ordered'])
+        // Pastikan with('items.material') agar nama material terbawa ke view
+        $purchaseRequests = PurchaseRequest::with('items.material') 
+            ->whereIn('status', ['approved'])
             ->orderByDesc('id')
             ->get();
 
-        // Kalau ada pr_id dari query string, preload PR tersebut
         $selectedPR = null;
         if ($request->pr_id) {
             $selectedPR = PurchaseRequest::with('items.material')
-                ->whereIn('status', ['approved', 'ordered'])
+                ->where('status', 'approved')
                 ->find($request->pr_id);
         }
 
-        $suppliers = Supplier::active()->orderBy('name')->get();
-        $documentNo = PurchaseOrder::generateDocumentNo();
-        return view('purchase-orders.create', compact('approvedPRs', 'selectedPR', 'documentNo', 'suppliers'));
+        $suppliers = Supplier::where('is_active', true)->orderBy('name')->get();
+        
+        $latest = PurchaseOrder::latest('id')->first();
+        $nextId = $latest ? $latest->id + 1 : 1;
+        $autoNumber = 'PO-' . date('Ym') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
+        return view('purchase-orders.create', compact('purchaseRequests', 'selectedPR', 'autoNumber', 'suppliers'));
     }
 
-    // ── STORE ─────────────────────────────────────────────
     public function store(Request $request)
     {
         $request->validate([
-            'purchase_request_id'       => 'required|exists:purchase_requests,id',
+            't_purchase_request_id'     => 'required|exists:t_purchase_requests,id',
             'order_date'                => 'required|date',
-            'expected_date'             => 'nullable|date|after_or_equal:order_date',
-            'supplier_id'               => 'required|exists:suppliers,id',
-            'supplier_contact'          => 'nullable|string|max:255',
-            'delivery_address'          => 'nullable|string',
-            'payment_terms'             => 'nullable|string|max:255',
+            'm_supplier_id'             => 'required|exists:m_suppliers,id',
             'notes'                     => 'nullable|string',
             'items'                     => 'required|array|min:1',
-            'items.*.material_name'     => 'required|string|max:255',
-            'items.*.unit'              => 'required|string|max:50',
-            'items.*.quantity_ordered'  => 'required|numeric|min:0.01',
-            'items.*.unit_price'        => 'nullable|numeric|min:0',
+            'items.*.m_material_id'     => 'required|exists:m_materials,id',
+            'items.*.quantity'          => 'required|numeric|min:0.01',
+            'items.*.price_per_qty'     => 'required|numeric|min:0',
+            'items.*.price'             => 'required|numeric|min:0', 
         ]);
 
-        $pr = PurchaseRequest::findOrFail($request->purchase_request_id);
-
-        if (!in_array($pr->status, ['approved', 'ordered'])) {
+        $pr = PurchaseRequest::findOrFail($request->t_purchase_request_id);
+        if ($pr->status !== 'approved') {
             return back()->with('error', 'Purchase Request harus berstatus Disetujui untuk membuat PO.');
         }
 
-        DB::transaction(function () use ($request, $pr) {
-            $total = 0;
-            foreach ($request->items as $item) {
-                $total += ($item['unit_price'] ?? 0) * $item['quantity_ordered'];
-            }
+        DB::transaction(function () use ($request) {
+            $latest = PurchaseOrder::latest('id')->first();
+            $nextId = $latest ? $latest->id + 1 : 1;
+            $documentNo = 'PO-' . date('Ym') . '-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
 
             $po = PurchaseOrder::create([
-                'document_no'          => PurchaseOrder::generateDocumentNo(),
-                'purchase_request_id'  => $pr->id,
-                'order_date'           => $request->order_date,
-                'expected_date'        => $request->expected_date,
-                'supplier_id'          => $request->supplier_id,
-                'supplier_name'        => Supplier::find($request->supplier_id)?->name,
-                'supplier_contact'     => $request->supplier_contact,
-                'delivery_address'     => $request->delivery_address,
-                'payment_terms'        => $request->payment_terms,
-                'notes'                => $request->notes,
-                'status'               => 'draft',
-                'total_amount'         => $total,
-                'created_by'           => Auth::id(),
+                'po_number'              => $request->po_number ?? $documentNo,
+                't_purchase_request_id'  => $request->t_purchase_request_id,
+                'order_date'             => $request->order_date,
+                'm_supplier_id'          => $request->m_supplier_id,
+                'notes'                  => $request->notes,
+                'status'                 => 'draft',
+                'created_by'             => Auth::id(),
             ]);
 
             foreach ($request->items as $item) {
+                // Di sini kita bisa ambil unit dari database agar presisi
+                $material = \App\Models\Material::find($item['m_material_id']);
+                
                 PurchaseOrderItem::create([
-                    'purchase_order_id'         => $po->id,
-                    'purchase_request_item_id'  => $item['purchase_request_item_id'] ?? null,
-                    'material_id'               => $item['material_id'] ?? null,
-                    'material_name'             => $item['material_name'],
-                    'material_code'             => $item['material_code'] ?? null,
-                    'unit'                      => $item['unit'],
-                    'specification'             => $item['specification'] ?? null,
-                    'quantity_ordered'          => $item['quantity_ordered'],
-                    'quantity_received'         => 0,
-                    'unit_price'                => $item['unit_price'] ?? null,
-                    'total_price'               => ($item['unit_price'] ?? 0) * $item['quantity_ordered'],
-                    'item_notes'                => $item['item_notes'] ?? null,
+                    't_purchase_order_id'       => $po->id,
+                    'm_material_id'             => $item['m_material_id'],
+                    'unit'                      => $material ? $material->unit : 'Pcs',
+                    'quantity'                  => $item['quantity'],
+                    'price_per_qty'             => $item['price_per_qty'],
+                    'price'                     => $item['price'], 
                 ]);
             }
-
-            // Update status PR menjadi ordered
-            $pr->update(['status' => 'ordered']);
         });
 
-        return redirect()->route('purchase-orders.index')
-            ->with('success', 'Purchase Order berhasil dibuat. Status PR otomatis berubah menjadi "Sudah PO".');
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order Draft berhasil dibuat.');
     }
 
-    // ── SHOW ──────────────────────────────────────────────
+    public function edit(PurchaseOrder $purchaseOrder)
+    {
+        if ($purchaseOrder->status !== 'draft') {
+            return back()->with('error', 'Hanya PO berstatus Draft yang dapat diedit.');
+        }
+
+        $purchaseOrder->load(['items.material', 'purchaseRequest']);
+        $suppliers = Supplier::where('is_active', true)->orderBy('name')->get();
+
+        return view('purchase-orders.edit', compact('purchaseOrder', 'suppliers'));
+    }
+
+    public function update(Request $request, PurchaseOrder $purchaseOrder)
+    {
+        if ($purchaseOrder->status !== 'draft') {
+            return back()->with('error', 'Hanya PO berstatus Draft yang dapat diedit.');
+        }
+
+        $request->validate([
+            'order_date'                => 'required|date',
+            'm_supplier_id'             => 'required|exists:m_suppliers,id',
+            'notes'                     => 'nullable|string',
+            'items'                     => 'required|array|min:1',
+            'items.*.id'                => 'required|exists:t_purchase_order_items,id',
+            'items.*.price_per_qty'     => 'required|numeric|min:0',
+            'items.*.price'             => 'required|numeric|min:0',
+        ]);
+
+        DB::transaction(function () use ($request, $purchaseOrder) {
+            $purchaseOrder->update([
+                'order_date'             => $request->order_date,
+                'm_supplier_id'          => $request->m_supplier_id,
+                'notes'                  => $request->notes,
+            ]);
+
+            foreach ($request->items as $itemData) {
+                $item = PurchaseOrderItem::find($itemData['id']);
+                if ($item && $item->t_purchase_order_id == $purchaseOrder->id) {
+                    $item->update([
+                        'price_per_qty' => $itemData['price_per_qty'],
+                        'price'         => $itemData['price'],
+                    ]);
+                }
+            }
+        });
+
+        return redirect()->route('purchase-orders.index')->with('success', 'Purchase Order berhasil diperbarui.');
+    }
+
     public function show(PurchaseOrder $purchaseOrder)
     {
-        $purchaseOrder->load(['purchaseRequest.items', 'items.material', 'creator', 'approver']);
+        $purchaseOrder->load(['purchaseRequest.items', 'items.material', 'creator', 'supplier']);
         return view('purchase-orders.show', compact('purchaseOrder'));
     }
 
-    // ── SEND (kirim ke supplier) ───────────────────────────
     public function send(PurchaseOrder $purchaseOrder)
     {
-        if (!$purchaseOrder->canSend()) {
+        if ($purchaseOrder->status !== 'draft') {
             return back()->with('error', 'PO ini tidak dapat dikirim.');
         }
 
-        $purchaseOrder->update([
-            'status'      => 'sent',
-            'approved_by' => Auth::id(),
-            'approved_at' => now(),
-        ]);
+        DB::transaction(function () use ($purchaseOrder) {
+            $purchaseOrder->update(['status' => 'issued']);
 
-        return back()->with('success', 'Purchase Order berhasil ditandai sebagai terkirim ke supplier.');
+            // PR ditandai completed saat PO sudah di-issue
+            if ($purchaseOrder->purchaseRequest) {
+                $purchaseOrder->purchaseRequest->update(['status' => 'completed']);
+            }
+        });
+
+        return back()->with('success', 'Purchase Order berhasil ditandai sebagai terkirim (Issued) ke supplier.');
     }
 
-    // ── CANCEL ────────────────────────────────────────────
     public function cancel(Request $request, PurchaseOrder $purchaseOrder)
     {
-        if (!$purchaseOrder->canCancel()) {
+        if (!in_array($purchaseOrder->status, ['draft', 'issued'])) {
             return back()->with('error', 'PO ini tidak dapat dibatalkan.');
         }
 
@@ -183,73 +194,21 @@ class PurchaseOrderController extends Controller
                 'notes'  => ($purchaseOrder->notes ? $purchaseOrder->notes . "\n" : '') . 'Dibatalkan: ' . $request->cancel_reason,
             ]);
 
-            // Kembalikan status PR ke approved agar bisa dibuat PO baru
-            $purchaseOrder->purchaseRequest->update(['status' => 'approved']);
-        });
-
-        return back()->with('success', 'Purchase Order berhasil dibatalkan. Status PR dikembalikan ke Disetujui.');
-    }
-
-    // ── RECEIVE (catat penerimaan barang) ─────────────────
-    public function receive(Request $request, PurchaseOrder $purchaseOrder)
-    {
-        if (!in_array($purchaseOrder->status, ['sent', 'partial'])) {
-            return back()->with('error', 'PO ini tidak dapat dicatat penerimaannya.');
-        }
-
-        $request->validate([
-            'quantities'   => 'required|array',
-            'quantities.*' => 'numeric|min:0',
-        ]);
-
-        DB::transaction(function () use ($request, $purchaseOrder) {
-            foreach ($purchaseOrder->items as $item) {
-                $qtyBaru = $request->quantities[$item->id] ?? 0;
-                if ($qtyBaru > 0) {
-                    $item->update([
-                        'quantity_received' => min(
-                            $item->quantity_ordered,
-                            ($item->quantity_received ?? 0) + $qtyBaru
-                        ),
-                    ]);
-                }
-            }
-
-            $purchaseOrder->load('items');
-
-            if ($purchaseOrder->isFullyReceived()) {
-                $purchaseOrder->update(['status' => 'received']);
-            } else {
-                $anyReceived = $purchaseOrder->items->some(fn($i) => ($i->quantity_received ?? 0) > 0);
-                if ($anyReceived) {
-                    $purchaseOrder->update(['status' => 'partial']);
-                }
+            // Kembalikan PR ke approved agar bisa dibuat PO lagi jika PO ini batal
+            if ($purchaseOrder->purchaseRequest) {
+                $purchaseOrder->purchaseRequest->update(['status' => 'approved']);
             }
         });
 
-        // Kumpulkan data untuk redirect ke input stok
-        $purchaseOrder->load(['items.material', 'supplier']);
-        $firstItem = $purchaseOrder->items->first();
-
-        return redirect()->route('stock-cards.create', [
-            'from_po'       => $purchaseOrder->document_no,
-            'supplier_name' => $purchaseOrder->supplier?->name ?? $purchaseOrder->supplier_name,
-            'material_id'   => $firstItem?->material_id,
-            'quantity'      => $request->quantities[$firstItem?->id] ?? null,
-            'po_items'      => json_encode(
-                $purchaseOrder->items->map(fn($i) => [
-                    'material_id' => $i->material_id,
-                    'qty'         => $request->quantities[$i->id] ?? 0,
-                ])->filter(fn($i) => $i['qty'] > 0)->values()
-            ),
-        ])->with('success', 'Penerimaan barang berhasil dicatat. Silakan lengkapi kartu stok.');
-
+        return back()->with('success', 'Purchase Order berhasil dibatalkan.');
     }
 
-    // ── PRINT ─────────────────────────────────────────────
     public function print(PurchaseOrder $purchaseOrder)
     {
-        $purchaseOrder->load(['purchaseRequest', 'items.material', 'creator', 'approver']);
+        // Memuat relasi yang dibutuhkan untuk halaman print agar tidak N+1 query
+        $purchaseOrder->load(['purchaseRequest', 'items.material', 'creator', 'supplier']);
+
+        // Mengembalikan view print. Asumsi file disimpan di resources/views/purchase-orders/print.blade.php
         return view('purchase-orders.print', compact('purchaseOrder'));
     }
 }

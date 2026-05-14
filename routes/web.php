@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaterialController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\StockCardController;
 use App\Http\Controllers\WithdrawalCardController;
 use App\Http\Controllers\ReportController;
@@ -11,6 +12,12 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductionQcController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\PartController;
+use App\Http\Controllers\GoodReceiptController;
+use App\Http\Controllers\GoodIssueController;
+use App\Http\Controllers\InventoryStockController;
+use App\Http\Controllers\MutasiController;
+use App\Http\Controllers\ReturnGiController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -20,34 +27,73 @@ Route::middleware(['auth'])->group(function () {
     // Materials
     Route::resource('materials', MaterialController::class);
 
-    // Stock Cards
-    Route::get('stock-cards', [StockCardController::class, 'index'])->name('stock-cards.index');
-    Route::get('stock-cards/create', [StockCardController::class, 'create'])->name('stock-cards.create');
-    Route::post('stock-cards', [StockCardController::class, 'store'])->name('stock-cards.store');
-    Route::get('stock-cards/material/{material}', [StockCardController::class, 'show'])->name('stock-cards.show');
+    // Parts
+    Route::resource('parts', PartController::class);
 
-    // Withdrawal Cards
-    Route::resource('withdrawal-cards', WithdrawalCardController::class)->except(['edit', 'update']);
+    // Inventory Stocks
+    Route::resource('inventory-stocks', InventoryStockController::class)->only(['index', 'show']);
 
-    // ── PURCHASE REQUESTS ─────────────────────────────────
+    // project
+    Route::resource('projects', ProjectController::class)->except(['show', 'destroy']);
+    // Mutasi
+    Route::get('mutasi', [MutasiController::class, 'index'])->name('mutasi.index');
+    
+    // Good Receipts
+    Route::resource('good-receipts', GoodReceiptController::class);
+    Route::get('good-receipts/print/{id}', [GoodReceiptController::class, 'index'])->name('reports.print.good-receipt');
+
+    // Good Issues
+    Route::resource('good-issues', GoodIssueController::class);
+    Route::get('/good-issues/{goodIssue}/print', [App\Http\Controllers\GoodIssueController::class, 'print'])
+    ->name('reports.print.good-issue');
+
+    // Return GI
+    Route::get('return-gi/{returnGi}/print', [ReturnGiController::class, 'print'])->name('return-gi.print');
+Route::resource('return-gi', ReturnGiController::class);
+
+  // ── PURCHASE REQUESTS ─────────────────────────────────
     // Kepala Gudang bisa buat PR, Pimpinan approve
     Route::resource('purchase-requests', PurchaseRequestController::class);
+
+    // goods adjustment
+    Route::post('goods-adjustment/update-material', [App\Http\Controllers\GoodsAdjustmentController::class, 'updateMaterialData'])->name('goods-adjustment.update-material');
+    Route::resource('goods-adjustment', App\Http\Controllers\GoodsAdjustmentController::class)->only(['index', 'create', 'store']);
+    
+    // Aksi alur status PR
     Route::post('purchase-requests/{purchaseRequest}/submit',       [PurchaseRequestController::class, 'submit'])->name('purchase-requests.submit');
     Route::post('purchase-requests/{purchaseRequest}/approve',      [PurchaseRequestController::class, 'approve'])->name('purchase-requests.approve');
     Route::post('purchase-requests/{purchaseRequest}/reject',       [PurchaseRequestController::class, 'reject'])->name('purchase-requests.reject');
+    
+    // Aksi untuk mengembalikan status pending menjadi draft agar bisa diedit kembali
+    Route::post('purchase-requests/{purchaseRequest}/revert-draft', [PurchaseRequestController::class, 'revertToDraft'])->name('purchase-requests.revert-draft');
+    
+    // Aksi ke status akhir (Pastikan method di controller sesuai, apakah markOrdered atau markCompleted)
     Route::post('purchase-requests/{purchaseRequest}/mark-ordered', [PurchaseRequestController::class, 'markOrdered'])->name('purchase-requests.mark-ordered');
+    
+    // Fitur cetak dokumen
     Route::get('purchase-requests/{purchaseRequest}/print',         [PurchaseRequestController::class, 'print'])->name('purchase-requests.print');
 
-    // ── PURCHASE ORDERS ───────────────────────────────────
-    // Kepala Gudang buat PO, Pimpinan send/approve
-    Route::get('purchase-orders',                           [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
-    Route::get('purchase-orders/create',                    [PurchaseOrderController::class, 'create'])->name('purchase-orders.create');
-    Route::post('purchase-orders',                          [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
-    Route::get('purchase-orders/{purchaseOrder}',           [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
-    Route::post('purchase-orders/{purchaseOrder}/send',     [PurchaseOrderController::class, 'send'])->name('purchase-orders.send');
-    Route::post('purchase-orders/{purchaseOrder}/cancel',   [PurchaseOrderController::class, 'cancel'])->name('purchase-orders.cancel');
-    Route::post('purchase-orders/{purchaseOrder}/receive',  [PurchaseOrderController::class, 'receive'])->name('purchase-orders.receive');
-    Route::get('purchase-orders/{purchaseOrder}/print',     [PurchaseOrderController::class, 'print'])->name('purchase-orders.print');
+// ── PURCHASE ORDERS ───────────────────────────────────
+    Route::prefix('purchase-orders')->name('purchase-orders.')->controller(PurchaseOrderController::class)->group(function () {
+    
+        // CRUD Dasar
+        Route::get('/', 'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        
+        // ➔ TAMBAHAN BARU: Rute untuk menampilkan form edit dan menyimpan perubahannya
+        Route::get('/{purchaseOrder}/edit', 'edit')->name('edit');
+        Route::put('/{purchaseOrder}', 'update')->name('update'); 
+        
+        Route::get('/{purchaseOrder}', 'show')->name('show');
+        
+        // Custom Actions (Metode Bisnis Logik)
+        Route::post('/{purchaseOrder}/send', 'send')->name('send'); 
+        Route::post('/{purchaseOrder}/cancel', 'cancel')->name('cancel'); 
+        Route::post('/{purchaseOrder}/receive', 'receive')->name('receive');
+        Route::get('/{purchaseOrder}/print', 'print')->name('print'); 
+        
+    });
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
@@ -66,6 +112,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::patch('customers/{customer}/toggle-active', [CustomerController::class, 'toggleActive'])->name('customers.toggle-active');
 
+    // ── PICS ──────────────────────────────────────────────
+    Route::resource('pics', \App\Http\Controllers\PicController::class);
+    Route::patch('pics/{pic}/toggle-active', [\App\Http\Controllers\PicController::class, 'toggleActive'])->name('pics.toggle-active');
+
     // ── QC Produksi ──────────────────────────────────────
     Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');
     Route::get('production-qc/create',                  [ProductionQcController::class, 'create'])->name('production-qc.create');
@@ -74,6 +124,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('production-qc/{productionQc}/approve', [ProductionQcController::class, 'approve'])->name('production-qc.approve');
     Route::post('production-qc/{productionQc}/reject',  [ProductionQcController::class, 'reject'])->name('production-qc.reject');
     Route::delete('production-qc/{productionQc}',       [ProductionQcController::class, 'destroy'])->name('production-qc.destroy');
+    // Tambahkan route ini sebelum route resource jika menggunakan resource
+    Route::get('production-qc/{productionQc}/print', [ProductionQcController::class, 'print'])->name('production-qc.print');
+    Route::post('production-qc/{productionQc}/approve', [ProductionQcController::class, 'approve'])->name('production-qc.approve');
+
+    Route::resource('production-qc', ProductionQcController::class);
 
     // User management (pimpinan/admin only — middleware di controller)
     Route::get('users',                         [UserController::class, 'index'])->name('users.index');

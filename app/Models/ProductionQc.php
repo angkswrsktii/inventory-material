@@ -2,77 +2,56 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductionQc extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 't_production_qcs';
+
     protected $fillable = [
-        'document_no', 'qc_date', 'withdrawal_card_id', 'gedung',
-        'qty_produksi', 'qty_sfg', 'qty_ng', 'ng_notes',
-        'status', 'notes', 'created_by', 'approved_by', 'approved_at',
+        'wo_number',
+        'm_part_id',
+        't_good_issue_id',
+        'checked_by',
+        'qc_date',
+        'quantity_passed',
+        'quantity_failed',
+        'quantity_failed_retur',
+        'notes',
+        'status',
     ];
 
     protected $casts = [
-        'qc_date'      => 'date',
-        'approved_at'  => 'datetime',
-        'qty_produksi' => 'decimal:2',
-        'qty_sfg'      => 'decimal:2',
-        'qty_ng'       => 'decimal:2',
+        'qc_date'               => 'date',
+        'quantity_passed'       => 'decimal:2',
+        'quantity_failed'       => 'decimal:2',
+        'quantity_failed_retur' => 'decimal:2', // Pastikan kolom ini ada di database
     ];
 
-    public function withdrawalCard()
+    // Accessor untuk Total Not Good (Gabungan NG Biasa dan NG Retur)
+    protected $appends = ['total_ng'];
+
+    public function getTotalNgAttribute()
     {
-        return $this->belongsTo(WithdrawalCard::class);
+        return $this->quantity_failed + $this->quantity_failed_retur;
     }
 
-    public function creator()
+    public function part()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(Part::class, 'm_part_id');
     }
 
-    public function approver()
+    public function goodIssue()
     {
-        return $this->belongsTo(User::class, 'approved_by');
+        return $this->belongsTo(GoodIssue::class, 't_good_issue_id');
     }
 
-    public function getStatusLabelAttribute(): string
+    public function checker()
     {
-        return match($this->status) {
-            'draft'    => 'Draft',
-            'approved' => 'Disetujui',
-            'rejected' => 'Ditolak',
-            default    => ucfirst($this->status),
-        };
-    }
-
-    public function getStatusColorAttribute(): string
-    {
-        return match($this->status) {
-            'draft'    => 'warning',
-            'approved' => 'success',
-            'rejected' => 'danger',
-            default    => 'muted',
-        };
-    }
-
-    public function getNgPercentageAttribute(): float
-    {
-        if (!$this->qty_produksi) return 0;
-        return round(($this->qty_ng / $this->qty_produksi) * 100, 2);
-    }
-
-    public static function generateDocumentNo(): string
-    {
-        $today  = now()->format('Ymd');
-        $prefix = "QC-{$today}";
-        $last   = static::withTrashed()
-            ->where('document_no', 'like', "{$prefix}%")
-            ->orderByDesc('id')->first();
-        $seq = $last ? ((int) substr($last->document_no, -4)) + 1 : 1;
-        return $prefix . '-' . str_pad($seq, 4, '0', STR_PAD_LEFT);
+        return $this->belongsTo(User::class, 'checked_by');
     }
 }

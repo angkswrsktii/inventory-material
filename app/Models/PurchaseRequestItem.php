@@ -9,37 +9,27 @@ class PurchaseRequestItem extends Model
 {
     use HasFactory;
 
+    protected $table = 't_purchase_request_items';
+
     protected $fillable = [
-        'purchase_request_id',
-        'material_id',
-        'material_name',
-        'material_code',
+        't_purchase_request_id',
+        'm_material_id',
+        'quantity',
         'unit',
-        'specification',
-        'quantity_requested',
-        'quantity_approved',
-        'estimated_price',
-        'item_notes',
+        'notes',
     ];
 
     protected $casts = [
-        'quantity_requested' => 'decimal:2',
-        'quantity_approved'  => 'decimal:2',
-        'estimated_price'    => 'decimal:2',
+        'quantity' => 'decimal:2',
     ];
 
     public function purchaseRequest()
     {
-        return $this->belongsTo(PurchaseRequest::class);
+        return $this->belongsTo(PurchaseRequest::class, 't_purchase_request_id');
     }
 
     public function material()
     {
-        return $this->belongsTo(Material::class);
-    }
-
-    public function getSubtotalAttribute(): float
-    {
-        return ($this->estimated_price ?? 0) * $this->quantity_requested;
+        return $this->belongsTo(Material::class, 'm_material_id');
     }
 }

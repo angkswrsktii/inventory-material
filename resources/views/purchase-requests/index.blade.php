@@ -1,6 +1,8 @@
 @extends('layouts.app')
-@section('title', 'Purchase Request')
-@section('topbar-title', 'Purchase Request')
+
+@section('title', 'Purchase Request (PR)')
+@section('topbar-title', 'Purchase Request (PR)')
+
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">
         <i class="fas fa-clock"></i>
@@ -12,148 +14,96 @@
 <div class="page-header">
     <div>
         <div class="page-title">Purchase Request</div>
-        <div class="page-subtitle">Pengajuan permintaan pembelian material</div>
+        <div class="page-subtitle">Daftar permintaan pembelian material</div>
     </div>
-    <a href="{{ route('purchase-requests.create') }}" class="btn btn-primary">
+    <a href="{{ route('purchase-requests.create') }}" class="btn btn-primary btn-sm">
         <i class="fas fa-plus"></i> Buat PR Baru
     </a>
 </div>
 
-{{-- Stats Row --}}
-<div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;">
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px;">
-        <div style="width:40px;height:40px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:16px;">
-            <i class="fas fa-file-pen"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--text);">{{ $stats['draft'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Draft</div>
-        </div>
-    </div>
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px; border-color:var(--warning-bg);">
-        <div style="width:40px;height:40px;border-radius:10px;background:var(--warning-bg);display:flex;align-items:center;justify-content:center;color:var(--warning);font-size:16px;">
-            <i class="fas fa-clock"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--warning);">{{ $stats['submitted'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Menunggu Review</div>
-        </div>
-    </div>
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px; border-color:var(--success-bg);">
-        <div style="width:40px;height:40px;border-radius:10px;background:var(--success-bg);display:flex;align-items:center;justify-content:center;color:var(--success);font-size:16px;">
-            <i class="fas fa-check-circle"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--success);">{{ $stats['approved'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Disetujui</div>
-        </div>
-    </div>
-    <div class="card" style="padding:16px 20px; display:flex; align-items:center; gap:14px; border-color:rgba(96,165,250,0.15);">
-        <div style="width:40px;height:40px;border-radius:10px;background:rgba(96,165,250,0.1);display:flex;align-items:center;justify-content:center;color:var(--info);font-size:16px;">
-            <i class="fas fa-cart-shopping"></i>
-        </div>
-        <div>
-            <div style="font-size:22px;font-weight:700;color:var(--info);">{{ $stats['ordered'] }}</div>
-            <div style="font-size:11px;color:var(--text-muted);">Sudah Dipesan</div>
-        </div>
-    </div>
-</div>
-
-{{-- Table Card --}}
-<div class="card">
-    <div class="card-header" style="flex-wrap:wrap; gap:12px;">
-        <form method="GET" class="search-bar" style="flex:1; min-width:0;">
-            <div class="search-input-wrap">
-                <i class="fas fa-search"></i>
-                <input type="text" name="search" class="form-control"
-                       placeholder="Cari no. dokumen, pemohon, departemen..." value="{{ request('search') }}">
+<!-- Filter -->
+<div class="card" style="margin-bottom: 20px;">
+    <div class="card-body" style="padding: 16px 20px;">
+        <form method="GET" action="{{ route('purchase-requests.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div style="flex:1; min-width:200px; position:relative;">
+                <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. PR..."
+                    style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <select name="status" class="form-control" style="width:170px;">
+            <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
                 <option value="">Semua Status</option>
-                <option value="draft"     {{ request('status') === 'draft'     ? 'selected' : '' }}>Draft</option>
-                <option value="submitted" {{ request('status') === 'submitted' ? 'selected' : '' }}>Menunggu Review</option>
-                <option value="approved"  {{ request('status') === 'approved'  ? 'selected' : '' }}>Disetujui</option>
-                <option value="rejected"  {{ request('status') === 'rejected'  ? 'selected' : '' }}>Ditolak</option>
-                <option value="ordered"   {{ request('status') === 'ordered'   ? 'selected' : '' }}>Sudah Dipesan</option>
+                <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
+                <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed (PO)</option>
             </select>
-            <input type="date" name="date_from" class="form-control" style="width:150px;" value="{{ request('date_from') }}">
-            <input type="date" name="date_to"   class="form-control" style="width:150px;" value="{{ request('date_to') }}">
-            <button type="submit" class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
-            @if(request()->hasAny(['search','status','date_from','date_to']))
-                <a href="{{ route('purchase-requests.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i></a>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            @if(request('search') || request('status'))
+                <a href="{{ route('purchase-requests.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
             @endif
         </form>
     </div>
+</div>
 
+<!-- Table -->
+<div class="card">
     <div class="table-wrap">
         <table>
             <thead>
                 <tr>
-                    <th>No. Dokumen</th>
-                    <th>Tanggal</th>
-                    <th>Pemohon</th>
-                    <th>Departemen</th>
-                    <th>Keperluan</th>
-                    <th class="text-center">Item</th>
-                    <th class="text-center">Status</th>
-                    <th class="text-center">Aksi</th>
+                    <th width="50">#</th>
+                    <th>No. PR</th>
+                    <th>Tanggal PR</th>
+                    <th>Dibuat Oleh</th>
+                    <th>Status</th>
+                    <th>Catatan</th>
+                    <th width="110">Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($requests as $pr)
+                @forelse($purchaseRequests as $pr)
                 <tr>
+                    <td style="color:var(--text-muted);">{{ $purchaseRequests->firstItem() + $loop->index }}</td>
                     <td>
-                        <span class="mono" style="color:var(--accent); font-size:12px;">{{ $pr->document_no }}</span>
-                    </td>
-                    <td style="white-space:nowrap; font-size:12px; color:var(--text-muted);">
-                        {{ $pr->request_date->format('d M Y') }}
-                    </td>
-                    <td style="font-weight:500;">{{ $pr->requested_by_name }}</td>
-                    <td>
-                        @if($pr->department)
-                            <span class="badge badge-muted">{{ $pr->department }}</span>
-                        @else
-                            <span style="color:var(--text-dim);">—</span>
-                        @endif
-                    </td>
-                    <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12.5px; color:var(--text-muted);">
-                        {{ $pr->purpose ?: '—' }}
-                    </td>
-                    <td class="text-center">
-                        <span class="badge badge-info">{{ $pr->items->count() }} item</span>
-                    </td>
-                    <td class="text-center">
-                        @php $color = $pr->status_color @endphp
-                        <span class="badge badge-{{ $color }}">
-                            @if($pr->status === 'draft')     <i class="fas fa-file-pen"></i>
-                            @elseif($pr->status === 'submitted') <i class="fas fa-clock"></i>
-                            @elseif($pr->status === 'approved')  <i class="fas fa-check"></i>
-                            @elseif($pr->status === 'rejected')  <i class="fas fa-times"></i>
-                            @elseif($pr->status === 'ordered')   <i class="fas fa-cart-shopping"></i>
-                            @endif
-                            {{ $pr->status_label }}
+                        <span style="font-family:'Syne',sans-serif; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-glow); padding:3px 8px; border-radius:4px; white-space:nowrap;">
+                            {{ $pr->pr_number }}
                         </span>
                     </td>
-                    <td class="text-center">
-                        <div style="display:flex; gap:6px; justify-content:center;">
-                            <a href="{{ route('purchase-requests.show', $pr) }}" class="btn btn-ghost btn-xs" title="Detail">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            @if($pr->canEdit())
-                            <a href="{{ route('purchase-requests.edit', $pr) }}" class="btn btn-ghost btn-xs" title="Edit">
-                                <i class="fas fa-pen"></i>
-                            </a>
+                    <td style="color:var(--text-muted);">{{ $pr->request_date->format('d M Y') }}</td>
+                    <td>{{ $pr->creator->name ?? '-' }}</td>
+                    <td>
+                        @if($pr->status === 'draft')
+                            <span class="badge badge-secondary" style="background:#e2e8f0; color:#475569;">Draft</span>
+                        @elseif($pr->status === 'pending')
+                            <span class="badge badge-warning">Pending</span>
+                        @elseif($pr->status === 'approved')
+                            <span class="badge badge-success">Approved</span>
+                        @elseif($pr->status === 'rejected')
+                            <span class="badge badge-danger">Rejected</span>
+                        @elseif($pr->status === 'completed')
+                            <span class="badge badge-primary">Completed (PO)</span>
+                        @endif
+                    </td>
+                    <td>
+                        @if($pr->notes)
+                            <div style="font-size:12px; color:var(--text-muted);">{{ Str::limit($pr->notes, 30) }}</div>
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td>
+                        <div style="display:flex; gap:6px;">
+                            <a href="{{ route('purchase-requests.show', $pr) }}" class="btn btn-ghost btn-sm" title="Detail"><i class="fas fa-eye"></i></a>
+                            
+                            @if($pr->status === 'draft')
+                            <a href="{{ route('purchase-requests.edit', $pr) }}" class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-pen"></i></a>
                             @endif
-                            <a href="{{ route('purchase-requests.print', $pr) }}" target="_blank" class="btn btn-ghost btn-xs" title="Print">
-                                <i class="fas fa-print"></i>
-                            </a>
-                            @if($pr->canEdit())
-                            <form action="{{ route('purchase-requests.destroy', $pr) }}" method="POST"
-                                  onsubmit="return confirm('Yakin hapus PR ini?')">
+
+                            @if(in_array($pr->status, ['draft', 'rejected']))
+                            <form method="POST" action="{{ route('purchase-requests.destroy', $pr) }}" onsubmit="return confirm('Yakin hapus PR ini?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-xs btn-danger" title="Hapus">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                <button type="submit" class="btn btn-ghost btn-sm" title="Hapus" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>
                             @endif
                         </div>
@@ -161,11 +111,12 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8">
-                        <div class="empty-state">
-                            <i class="fas fa-cart-plus"></i>
+                    <td colspan="7">
+                        <div class="empty-state" style="padding: 60px 20px;">
+                            <i class="fas fa-file-invoice"></i>
                             <h4>Belum Ada Purchase Request</h4>
-                            <p>Buat permintaan pembelian pertama Anda</p>
+                            <p>Mulai buat permintaan pembelian pertama kamu</p>
+                            <a href="{{ route('purchase-requests.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Buat PR Baru</a>
                         </div>
                     </td>
                 </tr>
@@ -174,12 +125,14 @@
         </table>
     </div>
 
-    @if($requests->hasPages())
-    <div class="pagination-wrap">
-        <div class="pagination-info">
-            Menampilkan {{ $requests->firstItem() }}–{{ $requests->lastItem() }} dari {{ $requests->total() }}
+    @if($purchaseRequests->hasPages())
+    <div style="padding: 16px 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:13px; color:var(--text-muted);">
+            Menampilkan {{ $purchaseRequests->firstItem() }}–{{ $purchaseRequests->lastItem() }} dari {{ $purchaseRequests->total() }} PR
         </div>
-        {{ $requests->links() }}
+        <div style="display:flex; gap:6px;">
+            {{ $purchaseRequests->links() }}
+        </div>
     </div>
     @endif
 </div>

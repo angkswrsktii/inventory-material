@@ -10,29 +10,24 @@ class Customer extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'm_customers';
+
     protected $fillable = [
         'name',
+        'code',
         'contact_person',
         'phone',
         'email',
         'address',
-        'npwp',
-        'notes',
         'is_active',
-        'created_by',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
 
-    public function creator()
+    public function parts()
     {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
+        return $this->hasMany(Part::class, 'm_customer_id');
     }
 }

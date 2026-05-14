@@ -14,7 +14,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Selamat Datang 👋</div>
-        <div class="page-subtitle">Overview sistem manajemen persediaan raw material</div>
+        <div class="page-subtitle">Overview sistem manajemen persediaan material dan part</div>
     </div>
 </div>
 
@@ -48,7 +48,7 @@
     <div class="stat-card purple">
         <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
         <div class="stat-value">{{ $stats['monthly_withdrawals'] }}</div>
-        <div class="stat-label">Pengambilan Bulan Ini</div>
+        <div class="stat-label">Good Issue Bulan Ini</div>
     </div>
 </div>
 
@@ -67,25 +67,29 @@
     <div class="card">
         <div class="card-header">
             <span class="card-title"><i class="fas fa-triangle-exclamation" style="color:var(--warning);margin-right:8px;"></i>Alert Stok Rendah</span>
-            <a href="{{ route('materials.index') }}?status=low" class="btn btn-ghost btn-sm">Lihat Semua</a>
+            <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
         </div>
-        @if($lowStockMaterials->count())
+        @if($lowStocks->count())
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Material</th>
+                            <th>Item</th>
+                            <th>Gudang</th>
                             <th class="text-right">Stok</th>
                             <th class="text-right">Min.</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($lowStockMaterials as $m)
+                        @foreach($lowStocks as $m)
                         <tr>
                             <td>
-                                <div style="font-weight:500;">{{ $m->name }}</div>
-                                <div style="font-size:11px; color:var(--text-muted);">{{ $m->code }}</div>
+                                <div style="font-weight:500;">{{ $m->material->name ?? $m->part->part_name ?? '-' }}</div>
+                                <div style="font-size:11px; color:var(--text-muted);">{{ $m->material->code ?? $m->part->part_no ?? '-' }}</div>
+                            </td>
+                            <td>
+                                {{ $m->warehouse->name ?? '-' }}
                             </td>
                             <td class="text-right" style="font-weight:600; color: {{ $m->current_stock <= 0 ? 'var(--danger)' : 'var(--warning)' }}">
                                 {{ number_format($m->current_stock, 2) }}
@@ -107,7 +111,7 @@
             <div class="empty-state">
                 <i class="fas fa-check-circle" style="color:var(--success);"></i>
                 <h4>Semua Stok Normal</h4>
-                <p>Tidak ada material dengan stok rendah</p>
+                <p>Tidak ada stok barang yang rendah</p>
             </div>
         @endif
     </div>
@@ -117,16 +121,17 @@
     <!-- Recent Transactions -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-right-left" style="color:var(--accent);margin-right:8px;"></i>Transaksi Terbaru</span>
-            <a href="{{ route('stock-cards.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
+            <span class="card-title"><i class="fas fa-right-left" style="color:var(--accent);margin-right:8px;"></i>Mutasi Terbaru</span>
+            <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
         </div>
         @if($recentTransactions->count())
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Tanggal</th>
-                            <th>Material</th>
+                            <th>Waktu</th>
+                            <th>Item</th>
+                            <th>Gudang</th>
                             <th>Tipe</th>
                             <th class="text-right">Qty</th>
                             <th class="text-right">Saldo</th>
@@ -135,8 +140,9 @@
                     <tbody>
                         @foreach($recentTransactions as $tx)
                         <tr>
-                            <td style="white-space:nowrap; font-size:12px; color:var(--text-muted);">{{ $tx->transaction_date->format('d M Y') }}</td>
-                            <td>{{ Str::limit($tx->material->name ?? '-', 25) }}</td>
+                            <td style="white-space:nowrap; font-size:12px; color:var(--text-muted);">{{ $tx->created_at->format('d M Y H:i') }}</td>
+                            <td>{{ Str::limit($tx->material->name ?? $tx->part->part_name ?? '-', 25) }}</td>
+                            <td>{{ $tx->warehouse->name ?? '-' }}</td>
                             <td>
                                 @if($tx->type === 'in')
                                     <span class="badge badge-in"><i class="fas fa-arrow-down fa-xs"></i> Masuk</span>
@@ -146,9 +152,9 @@
                             </td>
                             <td class="text-right">
                                 @if($tx->type === 'in')
-                                    <span class="stock-in">+{{ number_format($tx->quantity_in, 2) }}</span>
+                                    <span class="stock-in">+{{ number_format($tx->quantity, 2) }}</span>
                                 @else
-                                    <span class="stock-out">-{{ number_format($tx->quantity_out, 2) }}</span>
+                                    <span class="stock-out">-{{ number_format($tx->quantity, 2) }}</span>
                                 @endif
                             </td>
                             <td class="text-right" style="font-weight:500;">{{ number_format($tx->balance, 2) }}</td>
@@ -160,7 +166,7 @@
         @else
             <div class="empty-state" style="padding:40px;">
                 <i class="fas fa-inbox"></i>
-                <h4>Belum Ada Transaksi</h4>
+                <h4>Belum Ada Mutasi</h4>
             </div>
         @endif
     </div>
@@ -168,26 +174,24 @@
     <!-- Recent Withdrawals -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent-2);margin-right:8px;"></i>Pengambilan Terbaru</span>
-            <a href="{{ route('withdrawal-cards.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
+            <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent-2);margin-right:8px;"></i>Good Issue Terbaru</span>
+            <a href="{{ route('good-issues.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
         </div>
         @if($recentWithdrawals->count())
         <div style="padding: 12px;">
             @foreach($recentWithdrawals as $w)
-            <a href="{{ route('withdrawal-cards.show', $w) }}" style="text-decoration:none;">
+            <a href="{{ route('good-issues.show', $w) }}" style="text-decoration:none;">
                 <div style="padding: 12px; background: var(--surface-2); border-radius: var(--radius-sm); margin-bottom: 8px; border: 1px solid var(--border); transition: border-color .2s;"
                      onmouseover="this.style.borderColor='var(--border-active)'" onmouseout="this.style.borderColor='var(--border)'">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
-                            <div style="font-size:12px; color: var(--accent); font-weight:600; font-family:'Syne',sans-serif;">{{ $w->document_no }}</div>
-                            <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:2px;">{{ $w->part_name }}</div>
+                            <div style="font-size:12px; color: var(--accent); font-weight:600; font-family:'Syne',sans-serif;">{{ $w->gi_number }}</div>
+                            <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:2px;">{{ $w->purpose ?? 'Pengeluaran Barang' }}</div>
                         </div>
-                        <span class="badge badge-success">{{ ucfirst($w->status) }}</span>
                     </div>
                     <div style="margin-top:8px; display:flex; gap:16px; font-size:11px; color:var(--text-muted);">
-                        <span><i class="fas fa-calendar-alt"></i> {{ $w->withdrawal_date->format('d M Y') }}</span>
-                        <span><i class="fas fa-user"></i> {{ $w->pic }}</span>
-                        <span><i class="fas fa-industry"></i> {{ $w->line }}</span>
+                        <span><i class="fas fa-calendar-alt"></i> {{ $w->issue_date->format('d M Y') }}</span>
+                        <span><i class="fas fa-user"></i> {{ $w->issuer->name ?? '-' }}</span>
                     </div>
                 </div>
             </a>
@@ -196,7 +200,7 @@
         @else
             <div class="empty-state" style="padding:40px;">
                 <i class="fas fa-inbox"></i>
-                <h4>Belum Ada Pengambilan</h4>
+                <h4>Belum Ada Good Issue</h4>
             </div>
         @endif
     </div>

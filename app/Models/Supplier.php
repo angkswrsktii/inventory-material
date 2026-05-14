@@ -10,37 +10,24 @@ class Supplier extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'm_suppliers';
+
     protected $fillable = [
         'name',
+        'code',
         'contact_person',
         'phone',
         'email',
         'address',
-        'npwp',
-        'bank_name',
-        'bank_account',
-        'bank_account_name',
         'is_active',
-        'notes',
-        'created_by',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
 
-    public function creator()
+    public function materials()
     {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function purchaseOrders()
-    {
-        return $this->hasMany(PurchaseOrder::class);
-    }
-
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
+        return $this->hasMany(Material::class, 'm_supplier_id');
     }
 }

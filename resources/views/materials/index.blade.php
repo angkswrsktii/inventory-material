@@ -21,40 +21,6 @@
     </a>
 </div>
 
-<!-- Stats -->
-<div class="stats-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 24px;">
-    <div class="stat-card blue">
-        <div class="stat-icon"><i class="fas fa-cube"></i></div>
-        <div class="stat-value">{{ $stats['total'] }}</div>
-        <div class="stat-label">Total Material</div>
-    </div>
-    <div class="stat-card green">
-        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-        <div class="stat-value">{{ $stats['normal'] }}</div>
-        <div class="stat-label">Stok Normal</div>
-    </div>
-    <div class="stat-card yellow">
-        <div class="stat-icon"><i class="fas fa-triangle-exclamation"></i></div>
-        <div class="stat-value">{{ $stats['low'] }}</div>
-        <div class="stat-label">Stok Rendah</div>
-    </div>
-    <div class="stat-card red">
-        <div class="stat-icon"><i class="fas fa-ban"></i></div>
-        <div class="stat-value">{{ $stats['empty'] }}</div>
-        <div class="stat-label">Stok Kosong</div>
-    </div>
-</div>
-
-@if(session('success'))
-    <div style="background:var(--success-bg); border:1px solid var(--success); color:var(--success); padding:12px 16px; border-radius:var(--radius-sm); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
-    </div>
-@endif
-@if(session('error'))
-    <div style="background:var(--danger-bg); border:1px solid var(--danger); color:var(--danger); padding:12px 16px; border-radius:var(--radius-sm); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
-        <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
-    </div>
-@endif
 
 <!-- Filter -->
 <div class="card" style="margin-bottom: 20px;">
@@ -65,14 +31,8 @@
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, kode, supplier..."
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
-                <option value="">Semua Status</option>
-                <option value="normal" {{ request('status') == 'normal' ? 'selected' : '' }}>Normal</option>
-                <option value="low" {{ request('status') == 'low' ? 'selected' : '' }}>Stok Rendah</option>
-                <option value="empty" {{ request('status') == 'empty' ? 'selected' : '' }}>Stok Kosong</option>
-            </select>
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
-            @if(request('search') || request('status'))
+            @if(request('search'))
                 <a href="{{ route('materials.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
             @endif
         </form>
@@ -90,8 +50,7 @@
                     <th>Nama Material</th>
                     <th>Spesifikasi</th>
                     <th>Supplier</th>
-                    <th class="text-right">Min. Stok</th>
-                    <th class="text-right">Stok Saat Ini</th>
+                    <th>Dimensi / Panjang</th>
                     <th>Status</th>
                     <th width="110">Aksi</th>
                 </tr>
@@ -112,18 +71,19 @@
                         @endif
                     </td>
                     <td style="color:var(--text-muted); font-size:13px;">{{ $material->specification ?? '-' }}</td>
-                    <td style="color:var(--text-muted); font-size:13px;">{{ $material->supplier ?? '-' }}</td>
-                    <td class="text-right" style="color:var(--text-muted);">{{ number_format($material->minimum_stock, 2) }} {{ $material->unit }}</td>
-                    <td class="text-right" style="font-weight:600; color: {{ $material->current_stock <= 0 ? 'var(--danger)' : ($material->current_stock <= $material->minimum_stock ? 'var(--warning)' : 'var(--success)') }}">
-                        {{ number_format($material->current_stock, 2) }} {{ $material->unit }}
+                    <td style="color:var(--text-muted); font-size:13px;">{{ $material->supplier->name ?? '-' }}</td>
+                    <td style="color:var(--text-muted); font-size:13px;">
+                        @if($material->panjang_material)
+                            {{ number_format($material->panjang_material, 2) }} {{ $material->unit }}
+                        @else
+                            -
+                        @endif
                     </td>
                     <td>
-                        @if($material->current_stock <= 0)
-                            <span class="badge badge-danger"><i class="fas fa-ban fa-xs"></i> Kosong</span>
-                        @elseif($material->current_stock <= $material->minimum_stock)
-                            <span class="badge badge-warning"><i class="fas fa-triangle-exclamation fa-xs"></i> Rendah</span>
+                        @if($material->is_active)
+                            <span class="badge badge-success"><i class="fas fa-check fa-xs"></i> Aktif</span>
                         @else
-                            <span class="badge badge-success"><i class="fas fa-check fa-xs"></i> Normal</span>
+                            <span class="badge badge-danger"><i class="fas fa-times fa-xs"></i> Non-Aktif</span>
                         @endif
                     </td>
                     <td>
@@ -139,7 +99,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9">
+                    <td colspan="8">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-cube"></i>
                             <h4>Belum Ada Material</h4>
