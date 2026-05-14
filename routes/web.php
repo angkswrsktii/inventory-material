@@ -100,8 +100,12 @@ Route::resource('return-gi', ReturnGiController::class);
         Route::get('stock',        [ReportController::class, 'stockReport'])->name('stock');
         Route::get('transactions', [ReportController::class, 'transactionReport'])->name('transactions');
         Route::get('withdrawals',  [ReportController::class, 'withdrawalReport'])->name('withdrawals');
-        Route::get('print/stock-card/{material}',         [ReportController::class, 'printStockCard'])->name('print.stock-card');
-        Route::get('print/withdrawal/{withdrawalCard}',   [ReportController::class, 'printWithdrawal'])->name('print.withdrawal');
+        
+        // Perbaikan nama route menjadi 'print.stock' agar sesuai dengan tombol di view
+        Route::get('print/stock-card/{material}', [ReportController::class, 'printStockCard'])->name('print.stock');
+        
+        // Perbaikan parameter menjadi {goodIssue} agar Route Model Binding Laravel berfungsi
+        Route::get('print/withdrawal/{goodIssue}', [ReportController::class, 'printWithdrawal'])->name('print.withdrawal');
     });
 
     // ── SUPPLIERS ─────────────────────────────────────────

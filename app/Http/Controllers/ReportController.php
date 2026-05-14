@@ -3,48 +3,61 @@
 namespace App\Http\Controllers;
 
 use App\Models\Material;
-use App\Models\StockCard;
-use App\Models\WithdrawalCard;
+use App\Models\Mutasi;
+use App\Models\GoodIssue;
 use Illuminate\Http\Request;
 
 class ReportController extends Controller
 {
     public function stockReport(Request $request)
     {
-        $materials = Material::withCount('stockCards')
-            ->orderBy('name')
-            ->get();
+        // Ambil material beserta total stok dari seluruh gudang
+        $materials = Material::with('stocks', 'supplier')->orderBy('name')->get();
 
-        return view('reports.stock', compact('materials'));
+        $chartLabels = [];
+        $chartData = [];
+        $chartColors = [];
+
+        foreach ($materials as $m) {
+            // Kalkulasi stok dan min stok (sesuai rumus 10 * cut_per_day)
+            $m->total_stock = $m->stocks->sum('current_stock');
+            $m->min_stock = ($m->cut_per_day ?? 0.1) * 10;
+
+            // Ambil 15 material dengan stok terbanyak untuk ditampilkan di grafik
+            if (count($chartLabels) < 15 && $m->total_stock > 0) {
+                $chartLabels[] = $m->name;
+                $chartData[] = $m->total_stock;
+                // Merah jika di bawah min_stock, Hijau jika aman
+                $chartColors[] = $m->total_stock <= $m->min_stock ? '#ef4444' : '#10b981';
+            }
+        }
+
+        return view('reports.stock', compact('materials', 'chartLabels', 'chartData', 'chartColors'));
     }
 
     public function transactionReport(Request $request)
     {
-        $query = StockCard::with('material')
-            ->orderBy('transaction_date', 'desc');
+        $query = Mutasi::with('material')->orderBy('created_at', 'desc');
 
         if ($request->material_id) {
-            $query->where('material_id', $request->material_id);
+            $query->where('m_material_id', $request->material_id);
         }
-
         if ($request->type) {
             $query->where('type', $request->type);
         }
-
         if ($request->date_from) {
-            $query->whereDate('transaction_date', '>=', $request->date_from);
+            $query->whereDate('created_at', '>=', $request->date_from);
         }
-
         if ($request->date_to) {
-            $query->whereDate('transaction_date', '<=', $request->date_to);
+            $query->whereDate('created_at', '<=', $request->date_to);
         }
 
         $transactions = $query->paginate(20)->withQueryString();
         $materials = Material::orderBy('name')->get();
 
         $summary = [
-            'total_in' => $query->clone()->sum('quantity_in'),
-            'total_out' => $query->clone()->sum('quantity_out'),
+            'total_in'  => $query->clone()->where('type', 'in')->sum('quantity'),
+            'total_out' => $query->clone()->where('type', 'out')->sum('quantity'),
         ];
 
         return view('reports.transactions', compact('transactions', 'materials', 'summary'));
@@ -52,19 +65,19 @@ class ReportController extends Controller
 
     public function withdrawalReport(Request $request)
     {
-        $query = WithdrawalCard::with(['items.material', 'creator'])
-            ->orderBy('withdrawal_date', 'desc');
+        $query = GoodIssue::with(['items.material', 'pic', 'part', 'issuer'])
+            ->orderBy('issue_date', 'desc');
 
         if ($request->date_from) {
-            $query->whereDate('withdrawal_date', '>=', $request->date_from);
+            $query->whereDate('issue_date', '>=', $request->date_from);
         }
-
         if ($request->date_to) {
-            $query->whereDate('withdrawal_date', '<=', $request->date_to);
+            $query->whereDate('issue_date', '<=', $request->date_to);
         }
-
-        if ($request->line) {
-            $query->where('line', 'like', "%{$request->line}%");
+        if ($request->pic) {
+            $query->whereHas('pic', function($q) use ($request) {
+                $q->where('name', 'like', "%{$request->pic}%");
+            });
         }
 
         $withdrawals = $query->paginate(15)->withQueryString();
@@ -74,17 +87,17 @@ class ReportController extends Controller
 
     public function printStockCard(Material $material)
     {
-        $stockCards = $material->stockCards()
-            ->orderBy('transaction_date', 'asc')
+        $stockCards = Mutasi::where('m_material_id', $material->id)
+            ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc')
             ->get();
 
         return view('reports.print-stock-card', compact('material', 'stockCards'));
     }
 
-    public function printWithdrawal(WithdrawalCard $withdrawalCard)
+    public function printWithdrawal(GoodIssue $goodIssue)
     {
-        $withdrawalCard->load(['items.material', 'creator', 'approver']);
-        return view('reports.print-withdrawal', compact('withdrawalCard'));
+        $goodIssue->load(['items.material', 'issuer', 'receiver', 'pic', 'part']);
+        return view('reports.print-withdrawal', compact('goodIssue'));
     }
 }

@@ -1,12 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Laporan Stok')
 @section('topbar-title', 'Laporan Stok')
-@section('topbar-actions')
-    <span style="font-size:12px; color: var(--text-muted);">
-        <i class="fas fa-clock"></i>
-        {{ now()->format('d M Y, H:i') }}
-    </span>
-@endsection
 
 @section('content')
 <div class="page-header">
@@ -19,9 +13,19 @@
     </button>
 </div>
 
+<!-- GRAFIK CHART.JS -->
+<div class="card no-print" style="margin-bottom: 20px;">
+    <div class="card-header">
+        <span class="card-title"><i class="fas fa-chart-pie" style="color:var(--accent);margin-right:8px;"></i>Grafik Top Stok Material</span>
+    </div>
+    <div class="card-body" style="height: 300px; padding: 20px;">
+        <canvas id="stockChart"></canvas>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
-        <span class="card-title"><i class="fas fa-chart-bar" style="color:var(--accent);margin-right:8px;"></i>Rekap Stok per Material</span>
+        <span class="card-title"><i class="fas fa-table" style="color:var(--accent);margin-right:8px;"></i>Rekap Stok per Material</span>
         <span style="font-size:12px; color:var(--text-muted);">Per tanggal: {{ now()->format('d M Y, H:i') }}</span>
     </div>
     <div class="table-wrap">
@@ -31,7 +35,6 @@
                     <th>No</th>
                     <th>Kode</th>
                     <th>Nama Material</th>
-                    <th>Spesifikasi</th>
                     <th>Supplier</th>
                     <th>Satuan</th>
                     <th class="text-right">Stok Min.</th>
@@ -46,52 +49,62 @@
                     <td style="color:var(--text-dim);">{{ $i + 1 }}</td>
                     <td><span class="mono" style="color:var(--accent); font-size:11px;">{{ $m->code }}</span></td>
                     <td style="font-weight:500;">{{ $m->name }}</td>
-                    <td style="font-size:12px; color:var(--text-muted);">{{ $m->specification ?: '—' }}</td>
-                    <td style="font-size:12.5px;">{{ $m->supplier ?: '—' }}</td>
+                    <td style="font-size:12.5px;">{{ $m->supplier->name ?? '—' }}</td>
                     <td><span class="badge badge-muted">{{ $m->unit }}</span></td>
-                    <td class="text-right" style="color:var(--text-muted);">{{ number_format($m->minimum_stock, 2) }}</td>
+                    <td class="text-right" style="color:var(--text-muted);">{{ number_format($m->min_stock, 2) }}</td>
                     <td class="text-right">
                         <span style="font-weight:700; font-size:15px;
-                            color:{{ $m->current_stock <= 0 ? 'var(--danger)' : ($m->current_stock <= $m->minimum_stock ? 'var(--warning)' : 'var(--success)') }}">
-                            {{ number_format($m->current_stock, 2) }}
+                            color:{{ $m->total_stock <= 0 ? 'var(--danger)' : ($m->total_stock <= $m->min_stock ? 'var(--warning)' : 'var(--success)') }}">
+                            {{ number_format($m->total_stock, 2) }}
                         </span>
                     </td>
                     <td>
-                        @if($m->current_stock <= 0)
+                        @if($m->total_stock <= 0)
                             <span class="badge badge-danger"><i class="fas fa-ban"></i> Kosong</span>
-                        @elseif($m->current_stock <= $m->minimum_stock)
+                        @elseif($m->total_stock <= $m->min_stock)
                             <span class="badge badge-warning"><i class="fas fa-triangle-exclamation"></i> Rendah</span>
                         @else
                             <span class="badge badge-success"><i class="fas fa-check"></i> Normal</span>
                         @endif
                     </td>
                     <td class="text-center no-print">
-                        <a href="{{ route('stock-cards.show', $m) }}" class="btn btn-ghost btn-xs">
-                            <i class="fas fa-table-list"></i> Kartu Stok
+                        <a href="{{ route('reports.print.stock', $m) }}" target="_blank" class="btn btn-ghost btn-xs">
+                            <i class="fas fa-print"></i> Kartu Stok
                         </a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10">
+                    <td colspan="9">
                         <div class="empty-state"><i class="fas fa-inbox"></i><h4>Belum Ada Material</h4></div>
                     </td>
                 </tr>
                 @endforelse
             </tbody>
-            @if($materials->count())
-            <tfoot>
-                <tr style="background:var(--surface-2);">
-                    <td colspan="6" style="font-weight:600; padding:12px 16px; color:var(--text-muted);">TOTAL</td>
-                    <td class="text-right" style="font-weight:600;"></td>
-                    <td class="text-right" style="font-weight:700; color:var(--accent);">
-                        {{ number_format($materials->sum('current_stock'), 2) }}
-                    </td>
-                    <td colspan="2"></td>
-                </tr>
-            </tfoot>
-            @endif
         </table>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    const stockChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {!! json_encode($chartLabels) !!},
+            datasets: [{
+                label: 'Total Stok Saat Ini',
+                data: {!! json_encode($chartData) !!},
+                backgroundColor: {!! json_encode($chartColors) !!},
+                borderRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
 @endsection
