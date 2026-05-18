@@ -3,9 +3,8 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MaterialController;
 use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\StockCardController;
-use App\Http\Controllers\WithdrawalCardController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\GoodsAdjustmentController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\SupplierController;
@@ -13,8 +12,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductionQcController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PartController;
-use App\Http\Controllers\GoodReceiptController;
 use App\Http\Controllers\GoodIssueController;
+use App\Http\Controllers\GoodReceiptController;
 use App\Http\Controllers\InventoryStockController;
 use App\Http\Controllers\MutasiController;
 use App\Http\Controllers\ReturnGiController;
@@ -33,76 +32,76 @@ Route::middleware(['auth'])->group(function () {
     // Inventory Stocks
     Route::resource('inventory-stocks', InventoryStockController::class)->only(['index', 'show']);
 
-    // project
+    // Project
     Route::resource('projects', ProjectController::class)->except(['show', 'destroy']);
+
     // Mutasi
     Route::get('mutasi', [MutasiController::class, 'index'])->name('mutasi.index');
-    
+
     // Good Receipts
     Route::resource('good-receipts', GoodReceiptController::class);
     Route::get('good-receipts/print/{id}', [GoodReceiptController::class, 'index'])->name('reports.print.good-receipt');
 
     // Good Issues
     Route::resource('good-issues', GoodIssueController::class);
-    Route::get('/good-issues/{goodIssue}/print', [App\Http\Controllers\GoodIssueController::class, 'print'])
-    ->name('reports.print.good-issue');
+    Route::get('/good-issues/{goodIssue}/print', [GoodIssueController::class, 'print'])
+        ->name('reports.print.good-issue');
 
     // Return GI
     Route::get('return-gi/{returnGi}/print', [ReturnGiController::class, 'print'])->name('return-gi.print');
-Route::resource('return-gi', ReturnGiController::class);
+    Route::resource('return-gi', ReturnGiController::class);
 
-  // ── PURCHASE REQUESTS ─────────────────────────────────
+    // ── PURCHASE REQUESTS ─────────────────────────────────
     // Kepala Gudang bisa buat PR, Pimpinan approve
     Route::resource('purchase-requests', PurchaseRequestController::class);
 
     // goods adjustment
-    Route::post('goods-adjustment/update-material', [App\Http\Controllers\GoodsAdjustmentController::class, 'updateMaterialData'])->name('goods-adjustment.update-material');
-    Route::resource('goods-adjustment', App\Http\Controllers\GoodsAdjustmentController::class)->only(['index', 'create', 'store']);
-    
+    Route::post('goods-adjustment/update-material', [GoodsAdjustmentController::class, 'updateMaterialData'])->name('goods-adjustment.update-material');
+    Route::resource('goods-adjustment',GoodsAdjustmentController::class)->only(['index', 'create', 'store']);
+
     // Aksi alur status PR
     Route::post('purchase-requests/{purchaseRequest}/submit',       [PurchaseRequestController::class, 'submit'])->name('purchase-requests.submit');
     Route::post('purchase-requests/{purchaseRequest}/approve',      [PurchaseRequestController::class, 'approve'])->name('purchase-requests.approve');
     Route::post('purchase-requests/{purchaseRequest}/reject',       [PurchaseRequestController::class, 'reject'])->name('purchase-requests.reject');
-    
+
     // Aksi untuk mengembalikan status pending menjadi draft agar bisa diedit kembali
     Route::post('purchase-requests/{purchaseRequest}/revert-draft', [PurchaseRequestController::class, 'revertToDraft'])->name('purchase-requests.revert-draft');
-    
+
     // Aksi ke status akhir (Pastikan method di controller sesuai, apakah markOrdered atau markCompleted)
     Route::post('purchase-requests/{purchaseRequest}/mark-ordered', [PurchaseRequestController::class, 'markOrdered'])->name('purchase-requests.mark-ordered');
-    
+
     // Fitur cetak dokumen
     Route::get('purchase-requests/{purchaseRequest}/print',         [PurchaseRequestController::class, 'print'])->name('purchase-requests.print');
 
-// ── PURCHASE ORDERS ───────────────────────────────────
+    // ── PURCHASE ORDERS ───────────────────────────────────
     Route::prefix('purchase-orders')->name('purchase-orders.')->controller(PurchaseOrderController::class)->group(function () {
-    
+
         // CRUD Dasar
         Route::get('/', 'index')->name('index');
         Route::get('/create', 'create')->name('create');
         Route::post('/', 'store')->name('store');
-        
+
         // ➔ TAMBAHAN BARU: Rute untuk menampilkan form edit dan menyimpan perubahannya
         Route::get('/{purchaseOrder}/edit', 'edit')->name('edit');
-        Route::put('/{purchaseOrder}', 'update')->name('update'); 
-        
+        Route::put('/{purchaseOrder}', 'update')->name('update');
+
         Route::get('/{purchaseOrder}', 'show')->name('show');
-        
+
         // Custom Actions (Metode Bisnis Logik)
-        Route::post('/{purchaseOrder}/send', 'send')->name('send'); 
-        Route::post('/{purchaseOrder}/cancel', 'cancel')->name('cancel'); 
+        Route::post('/{purchaseOrder}/send', 'send')->name('send');
+        Route::post('/{purchaseOrder}/cancel', 'cancel')->name('cancel');
         Route::post('/{purchaseOrder}/receive', 'receive')->name('receive');
-        Route::get('/{purchaseOrder}/print', 'print')->name('print'); 
-        
+        Route::get('/{purchaseOrder}/print', 'print')->name('print');
     });
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('stock',        [ReportController::class, 'stockReport'])->name('stock');
         Route::get('withdrawals',  [ReportController::class, 'withdrawalReport'])->name('withdrawals');
-        
+
         // Perbaikan nama route menjadi 'print.stock' agar sesuai dengan tombol di view
         Route::get('print/stock-card/{material}', [ReportController::class, 'printStockCard'])->name('print.stock');
-        
+
         // Perbaikan parameter menjadi {goodIssue} agar Route Model Binding Laravel berfungsi
         Route::get('print/withdrawal/{goodIssue}', [ReportController::class, 'printWithdrawal'])->name('print.withdrawal');
     });
