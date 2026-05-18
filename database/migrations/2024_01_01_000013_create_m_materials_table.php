@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('m_materials', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('m_supplier_id')->nullable()->constrained('m_suppliers')->nullOnDelete();
+            $table->unsignedBigInteger('m_supplier_id')->nullable();
             $table->string('code')->unique();
             $table->string('name');
             $table->string('specification')->nullable();
@@ -20,6 +20,17 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->softDeletes();
+            $table->unsignedInteger('project_id')->nullable();
+            $table->decimal('bq', 10, 0)->nullable();
+            $table->decimal('cut_per_day', 10, 0)->nullable();
+        });
+
+        // FK dipisah agar tidak trigger errno 150 di beberapa versi MySQL/MariaDB
+        Schema::table('m_materials', function (Blueprint $table) {
+            $table->foreign('m_supplier_id')
+                  ->references('id')
+                  ->on('m_suppliers')
+                  ->nullOnDelete();
         });
     }
 

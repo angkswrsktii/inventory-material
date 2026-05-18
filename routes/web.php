@@ -98,7 +98,6 @@ Route::resource('return-gi', ReturnGiController::class);
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('stock',        [ReportController::class, 'stockReport'])->name('stock');
-        Route::get('transactions', [ReportController::class, 'transactionReport'])->name('transactions');
         Route::get('withdrawals',  [ReportController::class, 'withdrawalReport'])->name('withdrawals');
         
         // Perbaikan nama route menjadi 'print.stock' agar sesuai dengan tombol di view

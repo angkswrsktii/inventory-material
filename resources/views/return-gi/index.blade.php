@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Retur Good Issue')
-@section('topbar-title', 'Retur Good Issue')
+@section('title', 'Recycle Good Issue')
+@section('topbar-title', 'Recycle Good Issue')
 
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Retur Good Issue</div>
+        <div class="page-title">Recycle Good Issue</div>
         <div class="page-subtitle">Pengembalian material sisa atau NG dari Work Order (QC) ke Gudang</div>
     </div>
     <a href="{{ route('return-gi.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Buat Retur Baru
+        <i class="fas fa-plus"></i> Buat Recycle Baru
     </a>
 </div>
 
@@ -79,7 +79,7 @@
                     <td colspan="6">
                         <div class="empty-state" style="padding: 60px 20px; text-align:center;">
                             <i class="fas fa-undo" style="font-size:24px; color:var(--text-dim); margin-bottom:10px;"></i>
-                            <h4>Belum Ada Retur GI</h4>
+                            <h4>Belum Ada Recycle Good Issue</h4>
                             <p style="color:var(--text-dim); font-size:13px;">Mulai catat pengembalian material dari WO (QC)</p>
                         </div>
                     </td>

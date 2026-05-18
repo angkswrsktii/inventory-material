@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Cetak Retur GI - {{ $returnGi->return_number }}</title>
+    <title>Cetak Recycle Good Issue - {{ $returnGi->return_number }}</title>
     <style>
         body { 
             font-family: Arial, sans-serif; 

@@ -33,22 +33,22 @@ class MaterialController extends Controller
     public function create()
     {
         $suppliers = Supplier::where('is_active', true)->orderBy('name')->get();
-        $projects = Project::get();
+        $projects  = Project::orderBy('name')->get();
         return view('materials.create', compact('suppliers', 'projects'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'm_supplier_id' => 'nullable|exists:m_suppliers,id',
-            'project_id' => 'nullable|exists:m_project,id',
-            'code' => 'required|string|max:50|unique:m_materials,code',
-            'name' => 'required|string|max:255',
-            'specification' => 'nullable|string|max:500',
-            'unit' => 'required|string|max:50',
+            'm_supplier_id'    => 'nullable|exists:m_suppliers,id',
+            'project_id'       => 'nullable|exists:m_project,id',
+            'code'             => 'required|string|max:50|unique:m_materials,code',
+            'name'             => 'required|string|max:255',
+            'specification'    => 'nullable|string|max:500',
+            'unit'             => 'required|string|max:50',
             'panjang_material' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean',
+            'description'      => 'nullable|string',
+            'is_active'        => 'boolean',
         ]);
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
@@ -68,20 +68,22 @@ class MaterialController extends Controller
     public function edit(Material $material)
     {
         $suppliers = Supplier::where('is_active', true)->orderBy('name')->get();
-        return view('materials.edit', compact('material', 'suppliers'));
+        $projects  = Project::orderBy('name')->get(); // FIX: sebelumnya tidak di-pass ke view
+        return view('materials.edit', compact('material', 'suppliers', 'projects'));
     }
 
     public function update(Request $request, Material $material)
     {
         $validated = $request->validate([
-            'm_supplier_id' => 'nullable|exists:m_suppliers,id',
-            'code' => ['required', 'string', 'max:50', Rule::unique('m_materials', 'code')->ignore($material->id)],
-            'name' => 'required|string|max:255',
-            'specification' => 'nullable|string|max:500',
-            'unit' => 'required|string|max:50',
+            'm_supplier_id'    => 'nullable|exists:m_suppliers,id',
+            'project_id'       => 'nullable|exists:m_project,id', // FIX: sebelumnya tidak ada
+            'code'             => ['required', 'string', 'max:50', Rule::unique('m_materials', 'code')->ignore($material->id)],
+            'name'             => 'required|string|max:255',
+            'specification'    => 'nullable|string|max:500',
+            'unit'             => 'required|string|max:50',
             'panjang_material' => 'nullable|numeric|min:0',
-            'description' => 'nullable|string',
-            'is_active' => 'boolean',
+            'description'      => 'nullable|string',
+            'is_active'        => 'boolean',
         ]);
 
         $validated['is_active'] = $request->has('is_active') ? true : false;
@@ -94,7 +96,6 @@ class MaterialController extends Controller
 
     public function destroy(Material $material)
     {
-        // Pengecekan apakah masih ada stock
         $hasStock = $material->stocks()->where('current_stock', '>', 0)->exists();
         if ($hasStock) {
             return back()->with('error', 'Material tidak dapat dihapus karena masih memiliki stok di gudang.');

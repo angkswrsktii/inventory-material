@@ -53,10 +53,14 @@
                         <label class="form-label">PIC Pemotong <span class="required">*</span></label>
                         <select name="m_pic_id" class="form-control" required>
                             <option value="">-- Pilih PIC --</option>
-                            @foreach($pics as $pic)
-                                <option value="{{ $pic->id }}" {{ old('m_pic_id') == $pic->id ? 'selected' : '' }}>
-                                    {{ $pic->name }} - {{ $pic->position }}
-                                </option>
+                            @foreach($users as $u)
+                                @if(auth()->user()->isKaryawan() && auth()->id() === $u->id)
+                                    <option value="{{ $u->id }}" selected disabled>{{ $u->name }} ({{ $u->role_label }})</option>
+                                @else
+                                    <option value="{{ $u->id }}" {{ old('m_pic_id', auth()->user()->isKaryawan() ? auth()->id() : '') == $u->id ? 'selected' : '' }}>
+                                        {{ $u->name }} ({{ $u->role_label }})
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
                         @error('m_pic_id') <div class="form-error">{{ $message }}</div> @enderror

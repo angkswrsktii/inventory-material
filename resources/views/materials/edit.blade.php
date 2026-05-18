@@ -51,16 +51,16 @@
                         @error('m_supplier_id') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Material Type</label>
-                        <select name="material_type_id" class="form-control">
+                        <label class="form-label">Project</label>
+                        <select name="project_id" class="form-control">
                             <option value="">-- Pilih Project --</option>
-                            @foreach($materialType ?? [] as $mt)
-                                <option value="{{ $mt->material_type_id }}" {{ old('material_type_id') == $mt->material_type_id ? 'selected' : '' }}>
-                                    {{ $mt->material_type_name }}
+                            @foreach($projects ?? [] as $mt)
+                                <option value="{{ $mt->id }}" {{ old('project_id', $material->project_id) == $mt->id ? 'selected' : '' }}>
+                                    {{ $mt->name }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('material_type_id') <div class="form-error">{{ $message }}</div> @enderror
+                        @error('project_id') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
                         <label class="form-label">Satuan <span class="required">*</span></label>

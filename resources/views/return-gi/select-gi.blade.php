@@ -1,10 +1,10 @@
 @extends('layouts.app')
-@section('title', 'Pilih Good Issue untuk Retur')
-@section('topbar-title', 'Retur Good Issue')
+@section('title', 'Pilih Good Issue untuk Recycle')
+@section('topbar-title', 'Recycle Good Issue')
 
 @section('content')
 <div class="breadcrumb">
-    <a href="{{ route('return-gi.index') }}">Retur GI</a>
+    <a href="{{ route('return-gi.index') }}">Recycle Good Issue</a>
     <span class="sep">/</span>
     <span>Buat Retur Baru</span>
 </div>

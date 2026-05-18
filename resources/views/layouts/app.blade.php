@@ -745,9 +745,7 @@
             <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
                 <i class="fas fa-users"></i> Data Customer
             </a>
-            <a href="{{ route('pics.index') }}" class="nav-item {{ request()->routeIs('pics.*') ? 'active' : '' }}">
-                <i class="fas fa-user-tag"></i> Data PIC
-            </a>
+
             <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}">
                 <i class="fas fa-project-diagram"></i> Data Project
             </a>
@@ -778,7 +776,7 @@
             </a>
          
             <a href="{{ route('return-gi.index') }}" class="nav-item {{ request()->routeIs('return-gi.*') ? 'active' : '' }}">
-                <i class="fas fa-undo"></i> Retur GI
+                <i class="fas fa-undo"></i> Recycle Good Issue
             </a>
             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
                 <i class="fas fa-history"></i> Riwayat Mutasi
@@ -809,9 +807,6 @@
             <div class="nav-section">Laporan</div>
             <a href="{{ route('reports.stock') }}" class="nav-item {{ request()->routeIs('reports.stock') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar"></i> Laporan Stok
-            </a>
-            <a href="{{ route('reports.transactions') }}" class="nav-item {{ request()->routeIs('reports.transactions') ? 'active' : '' }}">
-                <i class="fas fa-right-left"></i> Laporan Transaksi
             </a>
             <a href="{{ route('reports.withdrawals') }}" class="nav-item {{ request()->routeIs('reports.withdrawals') ? 'active' : '' }}">
                 <i class="fas fa-file-lines"></i> Laporan Pengambilan

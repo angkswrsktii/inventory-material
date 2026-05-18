@@ -11,25 +11,40 @@ return new class extends Migration
         Schema::create('t_good_receipts', function (Blueprint $table) {
             $table->id();
             $table->string('gr_number')->unique();
-            $table->foreignId('t_purchase_order_id')->nullable()->constrained('t_purchase_orders')->nullOnDelete();
-            $table->foreignId('m_warehouse_id')->constrained('m_warehouses');
+            $table->unsignedBigInteger('t_purchase_order_id')->nullable();
+            $table->unsignedBigInteger('m_warehouse_id');
             $table->date('receipt_date');
             $table->string('delivery_note_number')->nullable();
             $table->text('notes')->nullable();
-            $table->foreignId('received_by')->constrained('m_users');
+            $table->unsignedBigInteger('received_by');
+            $table->unsignedBigInteger('m_pic_id')->nullable();
+            $table->integer('m_project_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
 
+        Schema::table('t_good_receipts', function (Blueprint $table) {
+            $table->foreign('t_purchase_order_id')->references('id')->on('t_purchase_orders')->nullOnDelete();
+            $table->foreign('m_warehouse_id')->references('id')->on('m_warehouses');
+            $table->foreign('received_by')->references('id')->on('m_users');
+            // m_pic_id FK ditambahkan di 2026_05_10_174118 setelah m_pics dibuat
+        });
+
         Schema::create('t_good_receipt_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('t_good_receipt_id')->constrained('t_good_receipts')->cascadeOnDelete();
-            $table->foreignId('t_purchase_order_item_id')->nullable()->constrained('t_purchase_order_items')->nullOnDelete();
-            $table->foreignId('m_material_id')->constrained('m_materials');
+            $table->unsignedBigInteger('t_good_receipt_id');
+            $table->unsignedBigInteger('t_purchase_order_item_id')->nullable();
+            $table->unsignedBigInteger('m_material_id');
             $table->decimal('quantity', 10, 2);
             $table->string('unit')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
+        });
+
+        Schema::table('t_good_receipt_items', function (Blueprint $table) {
+            $table->foreign('t_good_receipt_id')->references('id')->on('t_good_receipts')->cascadeOnDelete();
+            $table->foreign('t_purchase_order_item_id')->references('id')->on('t_purchase_order_items')->nullOnDelete();
+            $table->foreign('m_material_id')->references('id')->on('m_materials');
         });
     }
 

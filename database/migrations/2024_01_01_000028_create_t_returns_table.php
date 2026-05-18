@@ -11,23 +11,30 @@ return new class extends Migration
         Schema::create('t_returns', function (Blueprint $table) {
             $table->id();
             $table->string('return_number')->unique();
-            $table->foreignId('t_good_issue_id')->constrained('t_good_issues');
-            $table->foreignId('t_production_qc_id')->nullable()->constrained('t_production_qcs');
+            $table->unsignedBigInteger('t_good_issue_id');
+            $table->unsignedBigInteger('t_production_qc_id')->nullable();
             $table->date('return_date');
             $table->text('notes')->nullable();
-            $table->foreignId('returned_by')->constrained('m_users');
+            $table->unsignedBigInteger('returned_by');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('t_good_issue_id')->references('id')->on('t_good_issues');
+            $table->foreign('t_production_qc_id')->references('id')->on('t_production_qcs');
+            $table->foreign('returned_by')->references('id')->on('m_users');
         });
 
         Schema::create('t_return_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('t_return_id')->constrained('t_returns')->cascadeOnDelete();
-            $table->foreignId('m_material_id')->constrained('m_materials');
-            $table->decimal('quantity', 10, 2);
-            $table->string('unit')->nullable();
+            $table->unsignedBigInteger('t_return_id');
+            $table->unsignedBigInteger('m_material_id');
+            $table->decimal('quantity', 10, 2)->default(0);
+            $table->string('unit')->default('Pcs');
             $table->text('notes')->nullable();
             $table->timestamps();
+
+            $table->foreign('t_return_id')->references('id')->on('t_returns')->onDelete('cascade');
+            $table->foreign('m_material_id')->references('id')->on('m_materials');
         });
     }
 

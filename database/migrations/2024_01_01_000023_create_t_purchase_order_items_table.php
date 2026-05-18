@@ -10,13 +10,19 @@ return new class extends Migration
     {
         Schema::create('t_purchase_order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('t_purchase_order_id')->constrained('t_purchase_orders')->cascadeOnDelete();
-            $table->foreignId('m_material_id')->constrained('m_materials');
+            $table->unsignedBigInteger('t_purchase_order_id');
+            $table->unsignedBigInteger('m_material_id');
             $table->decimal('quantity', 10, 2);
             $table->decimal('price', 15, 2)->nullable();
             $table->string('unit')->nullable();
             $table->text('notes')->nullable();
             $table->timestamps();
+            $table->decimal('price_per_qty', 15, 0)->nullable();
+        });
+
+        Schema::table('t_purchase_order_items', function (Blueprint $table) {
+            $table->foreign('t_purchase_order_id')->references('id')->on('t_purchase_orders')->cascadeOnDelete();
+            $table->foreign('m_material_id')->references('id')->on('m_materials');
         });
     }
 

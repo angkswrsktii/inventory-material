@@ -35,34 +35,6 @@ class ReportController extends Controller
         return view('reports.stock', compact('materials', 'chartLabels', 'chartData', 'chartColors'));
     }
 
-    public function transactionReport(Request $request)
-    {
-        $query = Mutasi::with('material')->orderBy('created_at', 'desc');
-
-        if ($request->material_id) {
-            $query->where('m_material_id', $request->material_id);
-        }
-        if ($request->type) {
-            $query->where('type', $request->type);
-        }
-        if ($request->date_from) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-        if ($request->date_to) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $transactions = $query->paginate(20)->withQueryString();
-        $materials = Material::orderBy('name')->get();
-
-        $summary = [
-            'total_in'  => $query->clone()->where('type', 'in')->sum('quantity'),
-            'total_out' => $query->clone()->where('type', 'out')->sum('quantity'),
-        ];
-
-        return view('reports.transactions', compact('transactions', 'materials', 'summary'));
-    }
-
     public function withdrawalReport(Request $request)
     {
         $query = GoodIssue::with(['items.material', 'pic', 'part', 'issuer'])
