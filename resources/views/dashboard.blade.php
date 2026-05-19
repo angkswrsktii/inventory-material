@@ -52,7 +52,7 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+<div class="dash-grid-2col">
     <!-- Chart -->
     <div class="card">
         <div class="card-header">
@@ -117,7 +117,7 @@
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px;">
+<div class="dash-grid-main">
     <!-- Recent Transactions -->
     <div class="card">
         <div class="card-header">

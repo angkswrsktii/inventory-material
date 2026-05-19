@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Inventory') — Material App</title>
+    <title>@yield('title', 'Dashboard') — Nexstock</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,6 +35,7 @@
             --danger-bg: rgba(248,113,113,0.1);
             --info: #60a5fa;
             --sidebar-w: 220px;
+            --sidebar-collapsed-w: 68px;
             --header-h: 60px;
             --radius: 12px;
             --radius-sm: 8px;
@@ -284,7 +285,8 @@
         .topbar-actions {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            margin-left: auto;
         }
 
         /* === CONTENT === */
@@ -697,10 +699,323 @@
 
         .tooltip-wrap { position: relative; }
 
+        /* === SIDEBAR TOGGLE === */
+        .sidebar-toggle-btn {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .sidebar-toggle-btn:hover {
+            background: var(--surface-3);
+            color: var(--text);
+            border-color: var(--border-active);
+        }
+
+        /* Collapsed sidebar */
+        body.sidebar-collapsed .sidebar {
+            width: var(--sidebar-collapsed-w);
+        }
+        body.sidebar-collapsed .main {
+            margin-left: var(--sidebar-collapsed-w);
+        }
+        body.sidebar-collapsed .logo-text,
+        body.sidebar-collapsed .logo-sub,
+        body.sidebar-collapsed .nav-section,
+        body.sidebar-collapsed .nav-item span,
+        body.sidebar-collapsed .nav-badge,
+        body.sidebar-collapsed .user-name,
+        body.sidebar-collapsed .user-role {
+            display: none;
+        }
+        body.sidebar-collapsed .sidebar-logo {
+            padding: 20px;
+            justify-content: center;
+        }
+        body.sidebar-collapsed .nav-item {
+            justify-content: center;
+            padding: 10px;
+            margin: 1px 6px;
+        }
+        body.sidebar-collapsed .nav-item i {
+            width: auto;
+            font-size: 16px;
+        }
+        body.sidebar-collapsed .nav-item.active::before {
+            left: -6px;
+        }
+        body.sidebar-collapsed .user-card {
+            justify-content: center;
+            gap: 0;
+        }
+        body.sidebar-collapsed .sidebar-footer {
+            padding: 16px 10px;
+        }
+        body.sidebar-collapsed .user-avatar {
+            margin: 0 auto;
+        }
+        body.sidebar-collapsed .logout-btn {
+            display: none;
+        }
+
+        /* Tooltip untuk collapsed mode */
+        body.sidebar-collapsed .nav-item {
+            position: relative;
+        }
+        body.sidebar-collapsed .nav-item::after {
+            content: attr(data-label);
+            position: absolute;
+            left: calc(var(--sidebar-collapsed-w) - 4px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--surface-3);
+            color: var(--text);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            border: 1px solid var(--border);
+            pointer-events: none;
+            opacity: 0;
+            z-index: 200;
+            transition: opacity 0.15s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        body.sidebar-collapsed .nav-item:hover::after {
+            opacity: 1;
+        }
+
+        /* Sidebar & main transition */
+        .sidebar, .main {
+            transition: width 0.25s ease, margin-left 0.25s ease;
+        }
+
+        /* === CLOCK === */
+        .topbar-clock {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            line-height: 1.2;
+            margin-right: 4px;
+        }
+        .clock-time {
+            font-family: 'Syne', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .clock-date {
+            font-size: 10.5px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+
+        /* === DASHBOARD GRIDS === */
+        .dash-grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .dash-grid-main {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        /* === SIDEBAR OVERLAY (mobile backdrop) === */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 99;
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.active { display: block; }
+
+        /* ================================================================
+           RESPONSIVE BREAKPOINTS
+           ----------------------------------------------------------------
+           > 1024px  : Desktop  — sidebar selalu visible, toggle = icon-only
+           768–1024px: Tablet   — sidebar default collapsed (icon-only)
+           < 768px   : Mobile   — sidebar off-canvas, muncul via overlay
+        ================================================================ */
+
+        /* ── TABLET (768px – 1024px) ── */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            /* Default collapsed di tablet */
+            body:not(.sidebar-mobile-open) .sidebar {
+                width: var(--sidebar-collapsed-w);
+            }
+            body:not(.sidebar-mobile-open) .main {
+                margin-left: var(--sidebar-collapsed-w);
+            }
+            body:not(.sidebar-mobile-open) .logo-text,
+            body:not(.sidebar-mobile-open) .logo-sub,
+            body:not(.sidebar-mobile-open) .nav-section,
+            body:not(.sidebar-mobile-open) .nav-item span,
+            body:not(.sidebar-mobile-open) .nav-badge,
+            body:not(.sidebar-mobile-open) .user-name,
+            body:not(.sidebar-mobile-open) .user-role,
+            body:not(.sidebar-mobile-open) .logout-btn {
+                display: none;
+            }
+            body:not(.sidebar-mobile-open) .sidebar-logo {
+                padding: 20px;
+                justify-content: center;
+            }
+            body:not(.sidebar-mobile-open) .nav-item {
+                justify-content: center;
+                padding: 10px;
+                margin: 1px 6px;
+            }
+            body:not(.sidebar-mobile-open) .nav-item i {
+                width: auto;
+                font-size: 16px;
+            }
+            body:not(.sidebar-mobile-open) .user-card {
+                justify-content: center;
+            }
+            body:not(.sidebar-mobile-open) .sidebar-footer {
+                padding: 16px 10px;
+            }
+
+            /* Saat toggle dibuka di tablet → sidebar full width */
+            body.sidebar-mobile-open .sidebar {
+                width: var(--sidebar-w);
+                z-index: 200;
+            }
+            body.sidebar-mobile-open .sidebar-overlay { display: block; }
+
+            /* Stats grid 2 kolom di tablet */
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+
+            /* Dashboard grids 1 kolom di tablet */
+            .dash-grid-2col,
+            .dash-grid-main { grid-template-columns: 1fr; }
+
+            /* Form row 1 kolom */
+            .form-row { grid-template-columns: 1fr; }
+
+            /* Content padding lebih kecil */
+            .content { padding: 20px; }
+
+            /* Clock date hidden di tablet kecil */
+            .clock-date { display: none; }
+        }
+
+        /* ── MOBILE (< 768px) ── */
+        @media (max-width: 767px) {
+            /* Sidebar off-canvas: sembunyikan ke kiri */
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-w) !important;
+                transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), width 0s;
+                z-index: 200;
+                box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+            }
+
+            /* Sidebar terbuka */
+            body.sidebar-mobile-open .sidebar {
+                transform: translateX(0);
+            }
+            body.sidebar-mobile-open .sidebar-overlay { display: block; }
+
+            /* Main full width di mobile */
+            .main {
+                margin-left: 0 !important;
+                transition: none;
+            }
+
+            /* Topbar */
+            .topbar {
+                padding: 0 14px;
+                gap: 10px;
+            }
+            .topbar-title {
+                font-size: 14px;
+            }
+
+            /* Sembunyikan jam detik & tanggal di mobile kecil */
+            .clock-date { display: none; }
+            .clock-time { font-size: 12px; }
+
+            /* Stats 1 kolom */
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+            /* Dashboard grids semua jadi 1 kolom */
+            .dash-grid-2col,
+            .dash-grid-main { grid-template-columns: 1fr; gap: 14px; }
+
+            /* Page header stack vertikal */
+            .page-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .page-header .btn { width: 100%; justify-content: center; }
+
+            /* Card body padding lebih kecil */
+            .card-body { padding: 16px; }
+            .card-header { padding: 14px 16px; }
+
+            /* Content padding */
+            .content { padding: 14px; }
+
+            /* Form row 1 kolom */
+            .form-row { grid-template-columns: 1fr; }
+
+            /* Table scroll */
+            .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            table { min-width: 540px; }
+
+            /* Pagination */
+            .pagination-wrap { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+            /* Search bar stack */
+            .search-bar { flex-direction: column; align-items: stretch; }
+            .search-input-wrap { min-width: unset; }
+
+            /* Breadcrumb kecil */
+            .breadcrumb { font-size: 11.5px; }
+
+            /* Stat value lebih kecil */
+            .stat-value { font-size: 22px; }
+            .stat-card { padding: 14px; }
+
+            /* Sembunyikan elemen non-esensial */
+            .no-mobile { display: none !important; }
+        }
+
+        /* ── MOBILE XS (< 480px) ── */
+        @media (max-width: 479px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .topbar-clock { display: none; }
+            .topbar-title { font-size: 13px; }
+            .page-title { font-size: 18px; }
+        }
+
+        /* ── DESKTOP LARGE (> 1280px) ── */
+        @media (min-width: 1280px) {
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
+            .content { padding: 32px; }
+        }
 
         /* Print */
         @media print {
@@ -714,101 +1029,104 @@
     @stack('styles')
 </head>
 <body>
+    <!-- Sidebar Overlay (mobile/tablet backdrop) -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="logo-icon"><i class="fas fa-boxes-stacked"></i></div>
             <div>
-                <div class="logo-text">Material App</div>
-                <div class="logo-sub">Inventory System</div>
+                <div class="logo-text">Nexstock</div>
+                <div class="logo-sub">SIM Inventory</div>
             </div>
         </div>
 
         <nav class="sidebar-nav">
             <div class="nav-section">Main</div>
-            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i class="fas fa-chart-squares"></i> Dashboard
+            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" data-label="Dashboard">
+                <i class="fas fa-gauge-high"></i> <span>Dashboard</span>
             </a>
 
             {{-- Master Data: hanya Pimpinan, Admin, Kepala Gudang --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <div class="nav-section">Master Data</div>
-            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}">
-                <i class="fas fa-cube"></i> Data Material
+            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}" data-label="Data Material">
+                <i class="fas fa-cube"></i> <span>Data Material</span>
             </a>
-            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}">
-                <i class="fas fa-cubes"></i> Data Part
+            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}" data-label="Data Part">
+                <i class="fas fa-cubes"></i> <span>Data Part</span>
             </a>
-            <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
-                <i class="fas fa-building"></i> Data Supplier
+            <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" data-label="Data Supplier">
+                <i class="fas fa-building"></i> <span>Data Supplier</span>
             </a>
-            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
-                <i class="fas fa-users"></i> Data Customer
+            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}" data-label="Data Customer">
+                <i class="fas fa-users"></i> <span>Data Customer</span>
             </a>
 
-            <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}">
-                <i class="fas fa-project-diagram"></i> Data Project
+            <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}" data-label="Data Project">
+                <i class="fas fa-diagram-project"></i> <span>Data Project</span>
             </a>
             @endif
 
             <div class="nav-section">Purchasing</div>
             {{-- Purchase Request: hanya Kepala Gudang, Pimpinan, Admin --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
-            <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}">
-                <i class="fas fa-cart-plus"></i> Purchase Request
+            <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}" data-label="Purchase Request">
+                <i class="fas fa-cart-plus"></i> <span>Purchase Request</span>
             </a>
             @endif
 
             {{-- Purchase Order: hanya Kepala Gudang, Pimpinan, Admin --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
-            <a href="{{ route('purchase-orders.index') }}" class="nav-item {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}">
-                <i class="fas fa-file-invoice-dollar"></i> Purchase Order
+            <a href="{{ route('purchase-orders.index') }}" class="nav-item {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}" data-label="Purchase Order">
+                <i class="fas fa-file-invoice-dollar"></i> <span>Purchase Order</span>
             </a>
             @endif
 
             {{-- Good Receipt group --}}
             <div class="nav-section">Good Receipt</div>
-            <a href="{{ route('good-receipts.index') }}" class="nav-item {{ request()->routeIs('good-receipts.*') ? 'active' : '' }}">
-                <i class="fas fa-arrow-right-to-bracket"></i> Good Receipt
+            <a href="{{ route('good-receipts.index') }}" class="nav-item {{ request()->routeIs('good-receipts.*') ? 'active' : '' }}" data-label="Good Receipt">
+                <i class="fas fa-arrow-right-to-bracket"></i> <span>Good Receipt</span>
             </a>
-            <a href="{{ route('reports.receiving') }}" class="nav-item {{ request()->routeIs('reports.receiving') ? 'active' : '' }}">
-                <i class="fas fa-file-invoice"></i> Receiving Report
+            <a href="{{ route('reports.receiving') }}" class="nav-item {{ request()->routeIs('reports.receiving') ? 'active' : '' }}" data-label="Receiving Report">
+                <i class="fas fa-file-invoice"></i> <span>Receiving Report</span>
             </a>
 
             {{-- Good Issue group --}}
             <div class="nav-section">Good Issue</div>
-            <a href="{{ route('good-issues.index') }}" class="nav-item {{ request()->routeIs('good-issues.*') ? 'active' : '' }}">
-                <i class="fas fa-arrow-right-from-bracket"></i> Good Issue
+            <a href="{{ route('good-issues.index') }}" class="nav-item {{ request()->routeIs('good-issues.*') ? 'active' : '' }}" data-label="Good Issue">
+                <i class="fas fa-arrow-right-from-bracket"></i> <span>Good Issue</span>
             </a>
-            <a href="{{ route('reports.disbursal') }}" class="nav-item {{ request()->routeIs('reports.disbursal') ? 'active' : '' }}">
-                <i class="fas fa-file-lines"></i> Disbursal Report
+            <a href="{{ route('reports.disbursal') }}" class="nav-item {{ request()->routeIs('reports.disbursal') ? 'active' : '' }}" data-label="Disbursal Report">
+                <i class="fas fa-file-lines"></i> <span>Disbursal Report</span>
             </a>
-            <a href="{{ route('return-gi.index') }}" class="nav-item {{ request()->routeIs('return-gi.*') ? 'active' : '' }}">
-                <i class="fas fa-undo"></i> Recycle Good Issue
+            <a href="{{ route('return-gi.index') }}" class="nav-item {{ request()->routeIs('return-gi.*') ? 'active' : '' }}" data-label="Recycle Good Issue">
+                <i class="fas fa-undo"></i> <span>Recycle Good Issue</span>
             </a>
 
             <div class="nav-section">Inventory</div>
-            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}">
-                <i class="fas fa-sliders-h"></i> Goods Adjustment
+            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}" data-label="Goods Adjustment">
+                <i class="fas fa-sliders"></i> <span>Goods Adjustment</span>
             </a>
-            <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}">
-                <i class="fas fa-boxes-stacked"></i> Inventory Stock
+            <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}" data-label="Inventory Stock">
+                <i class="fas fa-boxes-stacked"></i> <span>Inventory Stock</span>
             </a>
-             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Riwayat Mutasi
+             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}" data-label="Riwayat Mutasi">
+                <i class="fas fa-clock-rotate-left"></i> <span>Riwayat Mutasi</span>
             </a>
 
             <div class="nav-section">Work Order</div>
-            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}">
-                <i class="fas fa-clipboard-check"></i> Quality Check
+            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}" data-label="Quality Check">
+                <i class="fas fa-clipboard-check"></i> <span>Quality Check</span>
             </a>
 
 
             {{-- Administrasi: hanya Pimpinan & Admin --}}
             @if(auth()->user()->isManagement())
             <div class="nav-section">Administrasi</div>
-            <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                <i class="fas fa-users-gear"></i> Manajemen Akun
+            <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" data-label="Manajemen Akun">
+                <i class="fas fa-users-gear"></i> <span>Manajemen Akun</span>
             </a>
             @endif
            
@@ -822,7 +1140,7 @@
                     <div class="user-name">{{ auth()->user()->name ?? 'Admin' }}</div>
                     <div class="user-role">{{ auth()->user()->role_label }}</div>
                 </div>
-                <a href="{{ route('logout') }}" style="margin-left:auto; color: var(--text-muted);"
+                <a href="{{ route('logout') }}" class="logout-btn" style="margin-left:auto; color: var(--text-muted);"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
                    title="Logout">
                     <i class="fas fa-arrow-right-from-bracket"></i>
@@ -837,10 +1155,19 @@
     <!-- Main Content -->
     <div class="main">
         <header class="topbar">
-            <div class="topbar-title">@yield('topbar-title', 'Dashboard')</div>
-            <button class="theme-toggle" id="themeToggle" title="Ganti Tema" onclick="toggleTheme()">
-                <i class="fas fa-moon" id="themeIcon"></i>
+            <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Menu" onclick="toggleSidebar()">
+                <i class="fas fa-bars" id="toggleIcon"></i>
             </button>
+            <div class="topbar-title">@yield('topbar-title', 'Dashboard')</div>
+            <div class="topbar-actions">
+                <div class="topbar-clock">
+                    <div class="clock-time" id="clockTime">00:00:00</div>
+                    <div class="clock-date" id="clockDate">-</div>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Ganti Tema" onclick="toggleTheme()">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
         </header>
 
         <main class="content">
@@ -866,7 +1193,7 @@
 
     <script>
         // ── Theme Toggle ──────────────────────────────────
-        const THEME_KEY = 'materialapp_theme';
+        const THEME_KEY = 'nexstock_theme';
 
         function applyTheme(theme) {
             const icon = document.getElementById('themeIcon');
@@ -891,6 +1218,79 @@
             const saved = localStorage.getItem(THEME_KEY) || 'dark';
             applyTheme(saved);
         })();
+
+        // ── Sidebar Toggle (responsive-aware) ─────────────
+        const SIDEBAR_KEY = 'nexstock_sidebar';
+
+        function isMobile()  { return window.innerWidth < 768; }
+        function isTablet()  { return window.innerWidth >= 768 && window.innerWidth <= 1024; }
+        function isDesktop() { return window.innerWidth > 1024; }
+
+        function closeSidebar() {
+            document.body.classList.remove('sidebar-mobile-open');
+            document.body.classList.remove('sidebar-collapsed');
+            if (isDesktop()) {
+                document.body.classList.add('sidebar-collapsed');
+                localStorage.setItem(SIDEBAR_KEY, 'collapsed');
+            }
+        }
+
+        function toggleSidebar() {
+            if (isMobile() || isTablet()) {
+                // Mobile & tablet: pakai off-canvas class
+                const open = document.body.classList.toggle('sidebar-mobile-open');
+                // Di tablet: juga kelola collapsed state
+                if (isTablet()) {
+                    if (open) {
+                        document.body.classList.remove('sidebar-collapsed');
+                    }
+                }
+            } else {
+                // Desktop: collapsed icon-only
+                const collapsed = document.body.classList.toggle('sidebar-collapsed');
+                localStorage.setItem(SIDEBAR_KEY, collapsed ? 'collapsed' : 'expanded');
+            }
+        }
+
+        // Tutup sidebar saat resize ke mobile/tablet
+        window.addEventListener('resize', () => {
+            if (isMobile() || isTablet()) {
+                document.body.classList.remove('sidebar-collapsed');
+            } else {
+                document.body.classList.remove('sidebar-mobile-open');
+            }
+        });
+
+        // Apply saved sidebar state (hanya desktop)
+        (function () {
+            if (isDesktop()) {
+                const saved = localStorage.getItem(SIDEBAR_KEY) || 'expanded';
+                if (saved === 'collapsed') {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            }
+        })();
+
+        // ── Clock ─────────────────────────────────────────
+        const DAYS   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+        const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+
+        function updateClock() {
+            const now = new Date();
+            const hh  = String(now.getHours()).padStart(2,'0');
+            const mm  = String(now.getMinutes()).padStart(2,'0');
+            const ss  = String(now.getSeconds()).padStart(2,'0');
+            const day = DAYS[now.getDay()];
+            const dd  = now.getDate();
+            const mon = MONTHS[now.getMonth()];
+            const yr  = now.getFullYear();
+
+            document.getElementById('clockTime').textContent = `${hh}:${mm}:${ss}`;
+            document.getElementById('clockDate').textContent = `${day}, ${dd} ${mon} ${yr}`;
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>

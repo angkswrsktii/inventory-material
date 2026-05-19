@@ -141,7 +141,7 @@
 </div>
 
 <div class="print-footer">
-    Dicetak pada {{ now()->format('d F Y, H:i') }} — {{ config('app.name', 'Material App') }}
+    Dicetak pada {{ now()->format('d F Y, H:i') }} — {{ config('app.name', 'Nexstock') }}
 </div>
 
 </body>
