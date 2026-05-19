@@ -49,7 +49,7 @@ class GoodReceipt extends Model
 
     public function pic()
     {
-        return $this->belongsTo(Pic::class, 'm_pic_id');
+        return $this->belongsTo(User::class, 'm_pic_id');
     }
 
     public function project()

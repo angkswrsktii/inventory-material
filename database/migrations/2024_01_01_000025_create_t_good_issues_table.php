@@ -28,8 +28,8 @@ return new class extends Migration
             $table->foreign('m_warehouse_id')->references('id')->on('m_warehouses');
             $table->foreign('m_part_id')->references('id')->on('m_parts')->nullOnDelete();
             $table->foreign('issued_by')->references('id')->on('m_users');
-            $table->foreign('received_by')->references('id')->on('m_users');
-            // m_pic_id FK ditambahkan di 2026_05_10_174118 setelah m_pics dibuat
+            $table->foreign('received_by')->references('id')->on('m_users')->nullOnDelete();
+            $table->foreign('m_pic_id')->references('id')->on('m_users')->nullOnDelete();
         });
     }
 

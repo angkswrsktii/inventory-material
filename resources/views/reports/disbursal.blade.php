@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', 'Laporan Pengeluaran GI')
+@section('title', 'Disbursal Report')
 @section('content')
 
 <div class="page-header">
     <div>
-        <div class="page-title">Laporan Pengeluaran (Good Issue)</div>
-        <div class="page-subtitle">Rekap dokumen pengeluaran material ke area produksi</div>
+        <div class="page-title">Disbursal Report</div>
+        <div class="page-subtitle">Rekap dokumen pengeluaran material (Good Issue)</div>
     </div>
     <button onclick="window.print()" class="btn btn-ghost no-print"><i class="fas fa-print"></i> Print</button>
 </div>

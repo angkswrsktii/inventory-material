@@ -96,13 +96,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Reports
     Route::prefix('reports')->name('reports.')->group(function () {
-        Route::get('stock',        [ReportController::class, 'stockReport'])->name('stock');
-        Route::get('withdrawals',  [ReportController::class, 'withdrawalReport'])->name('withdrawals');
-
-        // Perbaikan nama route menjadi 'print.stock' agar sesuai dengan tombol di view
-        Route::get('print/stock-card/{material}', [ReportController::class, 'printStockCard'])->name('print.stock');
-
-        // Perbaikan parameter menjadi {goodIssue} agar Route Model Binding Laravel berfungsi
+        Route::get('receiving',  [ReportController::class, 'receivingReport'])->name('receiving');
+        Route::get('disbursal',  [ReportController::class, 'disbursalReport'])->name('disbursal');
         Route::get('print/withdrawal/{goodIssue}', [ReportController::class, 'printWithdrawal'])->name('print.withdrawal');
     });
 
@@ -113,10 +108,6 @@ Route::middleware(['auth'])->group(function () {
     // ── CUSTOMERS ─────────────────────────────────────────
     Route::resource('customers', CustomerController::class);
     Route::patch('customers/{customer}/toggle-active', [CustomerController::class, 'toggleActive'])->name('customers.toggle-active');
-
-    // ── PICS ──────────────────────────────────────────────
-    Route::resource('pics', \App\Http\Controllers\PicController::class);
-    Route::patch('pics/{pic}/toggle-active', [\App\Http\Controllers\PicController::class, 'toggleActive'])->name('pics.toggle-active');
 
     // ── QC Produksi ──────────────────────────────────────
     Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');

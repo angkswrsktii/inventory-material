@@ -766,26 +766,36 @@
             </a>
             @endif
 
-            <div class="nav-section">Inventory</div>
-            
+            {{-- Good Receipt group --}}
+            <div class="nav-section">Good Receipt</div>
             <a href="{{ route('good-receipts.index') }}" class="nav-item {{ request()->routeIs('good-receipts.*') ? 'active' : '' }}">
                 <i class="fas fa-arrow-right-to-bracket"></i> Good Receipt
             </a>
+            <a href="{{ route('reports.receiving') }}" class="nav-item {{ request()->routeIs('reports.receiving') ? 'active' : '' }}">
+                <i class="fas fa-file-invoice"></i> Receiving Report
+            </a>
+
+            {{-- Good Issue group --}}
+            <div class="nav-section">Good Issue</div>
             <a href="{{ route('good-issues.index') }}" class="nav-item {{ request()->routeIs('good-issues.*') ? 'active' : '' }}">
                 <i class="fas fa-arrow-right-from-bracket"></i> Good Issue
             </a>
-         
+            <a href="{{ route('reports.disbursal') }}" class="nav-item {{ request()->routeIs('reports.disbursal') ? 'active' : '' }}">
+                <i class="fas fa-file-lines"></i> Disbursal Report
+            </a>
             <a href="{{ route('return-gi.index') }}" class="nav-item {{ request()->routeIs('return-gi.*') ? 'active' : '' }}">
                 <i class="fas fa-undo"></i> Recycle Good Issue
             </a>
-            <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
-                <i class="fas fa-history"></i> Riwayat Mutasi
+
+            <div class="nav-section">Inventory</div>
+            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}">
+                <i class="fas fa-sliders-h"></i> Goods Adjustment
             </a>
             <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}">
                 <i class="fas fa-boxes-stacked"></i> Inventory Stock
             </a>
-            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}">
-                <i class="fas fa-sliders-h"></i> Goods Adjustment
+             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}">
+                <i class="fas fa-history"></i> Riwayat Mutasi
             </a>
 
             <div class="nav-section">Work Order</div>
@@ -803,14 +813,6 @@
             @endif
            
 
-
-            <div class="nav-section">Laporan</div>
-            <a href="{{ route('reports.stock') }}" class="nav-item {{ request()->routeIs('reports.stock') ? 'active' : '' }}">
-                <i class="fas fa-chart-bar"></i> Laporan Stok
-            </a>
-            <a href="{{ route('reports.withdrawals') }}" class="nav-item {{ request()->routeIs('reports.withdrawals') ? 'active' : '' }}">
-                <i class="fas fa-file-lines"></i> Laporan Pengambilan
-            </a>
         </nav>
 
         <div class="sidebar-footer">

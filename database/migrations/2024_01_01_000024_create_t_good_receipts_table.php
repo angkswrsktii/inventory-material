@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreign('t_purchase_order_id')->references('id')->on('t_purchase_orders')->nullOnDelete();
             $table->foreign('m_warehouse_id')->references('id')->on('m_warehouses');
             $table->foreign('received_by')->references('id')->on('m_users');
-            // m_pic_id FK ditambahkan di 2026_05_10_174118 setelah m_pics dibuat
+            $table->foreign('m_pic_id')->references('id')->on('m_users')->nullOnDelete();
         });
 
         Schema::create('t_good_receipt_items', function (Blueprint $table) {

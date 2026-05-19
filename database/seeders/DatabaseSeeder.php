@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             MaterialStockSeeder::class,
             ProjectSeeder::class,
-            PicSeeder::class,
         ]);
     }
 }
