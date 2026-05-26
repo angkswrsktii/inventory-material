@@ -13,7 +13,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">{{ $goodReceipt->gr_number }}</div>
-        <div class="page-subtitle">Detail penerimaan barang</div>
+        <div class="page-subtitle">Detail penerimaan Material</div>
     </div>
     <div style="display:flex; gap:10px;">
         <a href="{{ route('reports.print.good-receipt', $goodReceipt) }}" target="_blank" class="btn btn-secondary">

@@ -73,7 +73,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Alasan / Keterangan <span class="required">*</span></label>
-                    <textarea name="notes" class="form-control" rows="3" placeholder="Contoh: Stok opname, selisih hitung fisik, barang rusak, dll..." required>{{ old('notes') }}</textarea>
+                    <textarea name="notes" class="form-control" rows="3" placeholder="Contoh: Stok opname, selisih hitung fisik, Material rusak, dll..." required>{{ old('notes') }}</textarea>
                 </div>
             </div>
         </div>

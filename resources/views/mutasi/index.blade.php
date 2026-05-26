@@ -92,7 +92,7 @@
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-history"></i>
                             <h4>Belum Ada Riwayat Mutasi</h4>
-                            <p>Data mutasi akan muncul saat ada transaksi penerimaan atau pengeluaran barang.</p>
+                            <p>Data mutasi akan muncul saat ada transaksi penerimaan atau pengeluaran Material.</p>
                         </div>
                     </td>
                 </tr>

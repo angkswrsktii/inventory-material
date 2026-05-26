@@ -64,7 +64,6 @@
             --info: #2563eb;
         }
 
-        /* ── THEME TOGGLE BUTTON ── */
         .theme-toggle {
             width: 36px;
             height: 36px;
@@ -84,6 +83,35 @@
             background: var(--surface-3);
             color: var(--text);
             border-color: var(--border-active);
+        }
+
+        /* Language Switcher */
+        .lang-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .lang-btn:hover {
+            background: var(--surface-3);
+            color: var(--text);
+            border-color: var(--border-active);
+        }
+        .lang-btn.lang-active {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1038,95 +1066,92 @@
             <div class="logo-icon"><i class="fas fa-boxes-stacked"></i></div>
             <div>
                 <div class="logo-text">Nexstock</div>
-                <div class="logo-sub">SIM Inventory</div>
+                <div class="logo-sub">{{ __('app.brand.subtitle') }}</div>
             </div>
         </div>
 
         <nav class="sidebar-nav">
-            <div class="nav-section">Main</div>
-            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" data-label="Dashboard">
-                <i class="fas fa-gauge-high"></i> <span>Dashboard</span>
+            <div class="nav-section">{{ __('app.nav.main') }}</div>
+            <a href="{{ route('dashboard') }}" class="nav-item {{ request()->routeIs('dashboard') ? 'active' : '' }}" data-label="{{ __('app.nav.dashboard') }}">
+                <i class="fas fa-gauge-high"></i> <span>{{ __('app.nav.dashboard') }}</span>
             </a>
 
-            {{-- Master Data: hanya Pimpinan, Admin, Kepala Gudang --}}
+            {{-- Database: hanya Pimpinan, Admin, Kepala Gudang --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
-            <div class="nav-section">Master Data</div>
-            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}" data-label="Data Material">
-                <i class="fas fa-cube"></i> <span>Data Material</span>
+            <div class="nav-section">{{ __('app.nav.master_data') }}</div>
+            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_material') }}">
+                <i class="fas fa-cube"></i> <span>{{ __('app.nav.data_material') }}</span>
             </a>
-            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}" data-label="Data Part">
-                <i class="fas fa-cubes"></i> <span>Data Part</span>
+            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_part') }}">
+                <i class="fas fa-cubes"></i> <span>{{ __('app.nav.data_part') }}</span>
             </a>
-            <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" data-label="Data Supplier">
-                <i class="fas fa-building"></i> <span>Data Supplier</span>
+            <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_supplier') }}">
+                <i class="fas fa-building"></i> <span>{{ __('app.nav.data_supplier') }}</span>
             </a>
-            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}" data-label="Data Customer">
-                <i class="fas fa-users"></i> <span>Data Customer</span>
+            <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_customer') }}">
+                <i class="fas fa-users"></i> <span>{{ __('app.nav.data_customer') }}</span>
             </a>
 
-            <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}" data-label="Data Project">
-                <i class="fas fa-diagram-project"></i> <span>Data Project</span>
+            <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_project') }}">
+                <i class="fas fa-diagram-project"></i> <span>{{ __('app.nav.data_project') }}</span>
             </a>
             @endif
 
-            <div class="nav-section">Purchasing</div>
+            <div class="nav-section">{{ __('app.nav.purchasing') }}</div>
             {{-- Purchase Request: hanya Kepala Gudang, Pimpinan, Admin --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
-            <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}" data-label="Purchase Request">
-                <i class="fas fa-cart-plus"></i> <span>Purchase Request</span>
+            <a href="{{ route('purchase-requests.index') }}" class="nav-item {{ request()->routeIs('purchase-requests.*') ? 'active' : '' }}" data-label="{{ __('app.nav.purchase_request') }}">
+                <i class="fas fa-cart-plus"></i> <span>{{ __('app.nav.purchase_request') }}</span>
             </a>
             @endif
 
             {{-- Purchase Order: hanya Kepala Gudang, Pimpinan, Admin --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
-            <a href="{{ route('purchase-orders.index') }}" class="nav-item {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}" data-label="Purchase Order">
-                <i class="fas fa-file-invoice-dollar"></i> <span>Purchase Order</span>
+            <a href="{{ route('purchase-orders.index') }}" class="nav-item {{ request()->routeIs('purchase-orders.*') ? 'active' : '' }}" data-label="{{ __('app.nav.purchase_order') }}">
+                <i class="fas fa-file-invoice-dollar"></i> <span>{{ __('app.nav.purchase_order') }}</span>
             </a>
             @endif
 
             {{-- Good Receipt group --}}
-            <div class="nav-section">Good Receipt</div>
-            <a href="{{ route('good-receipts.index') }}" class="nav-item {{ request()->routeIs('good-receipts.*') ? 'active' : '' }}" data-label="Good Receipt">
-                <i class="fas fa-arrow-right-to-bracket"></i> <span>Good Receipt</span>
+            <div class="nav-section">{{ __('app.nav.good_receipt') }}</div>
+            <a href="{{ route('good-receipts.index') }}" class="nav-item {{ request()->routeIs('good-receipts.*') ? 'active' : '' }}" data-label="{{ __('app.nav.good_receipt') }}">
+                <i class="fas fa-arrow-right-to-bracket"></i> <span>{{ __('app.nav.good_receipt') }}</span>
             </a>
-            <a href="{{ route('reports.receiving') }}" class="nav-item {{ request()->routeIs('reports.receiving') ? 'active' : '' }}" data-label="Receiving Report">
-                <i class="fas fa-file-invoice"></i> <span>Receiving Report</span>
+            <a href="{{ route('reports.receiving') }}" class="nav-item {{ request()->routeIs('reports.receiving') ? 'active' : '' }}" data-label="{{ __('app.nav.receiving_report') }}">
+                <i class="fas fa-file-invoice"></i> <span>{{ __('app.nav.receiving_report') }}</span>
             </a>
 
             {{-- Good Issue group --}}
-            <div class="nav-section">Good Issue</div>
-            <a href="{{ route('good-issues.index') }}" class="nav-item {{ request()->routeIs('good-issues.*') ? 'active' : '' }}" data-label="Good Issue">
-                <i class="fas fa-arrow-right-from-bracket"></i> <span>Good Issue</span>
+            <div class="nav-section">{{ __('app.nav.good_issue') }}</div>
+            <a href="{{ route('good-issues.index') }}" class="nav-item {{ request()->routeIs('good-issues.*') ? 'active' : '' }}" data-label="{{ __('app.nav.good_issue') }}">
+                <i class="fas fa-arrow-right-from-bracket"></i> <span>{{ __('app.nav.good_issue') }}</span>
             </a>
-            <a href="{{ route('reports.disbursal') }}" class="nav-item {{ request()->routeIs('reports.disbursal') ? 'active' : '' }}" data-label="Disbursal Report">
-                <i class="fas fa-file-lines"></i> <span>Disbursal Report</span>
-            </a>
-            <a href="{{ route('return-gi.index') }}" class="nav-item {{ request()->routeIs('return-gi.*') ? 'active' : '' }}" data-label="Recycle Good Issue">
-                <i class="fas fa-undo"></i> <span>Recycle Good Issue</span>
+            <a href="{{ route('reports.disbursal') }}" class="nav-item {{ request()->routeIs('reports.disbursal') ? 'active' : '' }}" data-label="{{ __('app.nav.disbursal_report') }}">
+                <i class="fas fa-file-lines"></i> <span>{{ __('app.nav.disbursal_report') }}</span>
             </a>
 
-            <div class="nav-section">Inventory</div>
-            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}" data-label="Goods Adjustment">
-                <i class="fas fa-sliders"></i> <span>Goods Adjustment</span>
+            <div class="nav-section">{{ __('app.nav.inventory') }}</div>
+            <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}" data-label="{{ __('app.nav.goods_adjustment') }}">
+                <i class="fas fa-sliders"></i> <span>{{ __('app.nav.goods_adjustment') }}</span>
             </a>
-            <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}" data-label="Inventory Stock">
-                <i class="fas fa-boxes-stacked"></i> <span>Inventory Stock</span>
+            <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}" data-label="{{ __('app.nav.inventory_stock') }}">
+                <i class="fas fa-boxes-stacked"></i> <span>{{ __('app.nav.inventory_stock') }}</span>
             </a>
-             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}" data-label="Riwayat Mutasi">
-                <i class="fas fa-clock-rotate-left"></i> <span>Riwayat Mutasi</span>
+             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}" data-label="{{ __('app.nav.mutation_history') }}">
+                <i class="fas fa-clock-rotate-left"></i> <span>{{ __('app.nav.mutation_history') }}</span>
             </a>
 
-            <div class="nav-section">Work Order</div>
-            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}" data-label="Quality Check">
-                <i class="fas fa-clipboard-check"></i> <span>Quality Check</span>
+            <div class="nav-section">{{ __('app.nav.work_order') }}</div>
+            <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}" data-label="{{ __('app.nav.quality_check') }}">
+                <i class="fas fa-clipboard-check"></i> <span>{{ __('app.nav.quality_check') }}</span>
             </a>
 
 
             {{-- Administrasi: hanya Pimpinan & Admin --}}
             @if(auth()->user()->isManagement())
-            <div class="nav-section">Administrasi</div>
-            <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" data-label="Manajemen Akun">
-                <i class="fas fa-users-gear"></i> <span>Manajemen Akun</span>
+            <div class="nav-section">{{ __('app.nav.administration') }}</div>
+            <a href="{{ route('users.index') }}" class="nav-item {{ request()->routeIs('users.*') ? 'active' : '' }}" data-label="{{ __('app.nav.account_mgmt') }}">
+                <i class="fas fa-users-gear"></i> <span>{{ __('app.nav.account_mgmt') }}</span>
             </a>
             @endif
            
@@ -1142,7 +1167,7 @@
                 </div>
                 <a href="{{ route('logout') }}" class="logout-btn" style="margin-left:auto; color: var(--text-muted);"
                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                   title="Logout">
+                   title="{{ __('app.nav.logout') }}">
                     <i class="fas fa-arrow-right-from-bracket"></i>
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
@@ -1155,16 +1180,27 @@
     <!-- Main Content -->
     <div class="main">
         <header class="topbar">
-            <button class="sidebar-toggle-btn" id="sidebarToggle" title="Toggle Menu" onclick="toggleSidebar()">
+            <button class="sidebar-toggle-btn" id="sidebarToggle" title="{{ __('app.topbar.toggle_menu') }}" onclick="toggleSidebar()">
                 <i class="fas fa-bars" id="toggleIcon"></i>
             </button>
-            <div class="topbar-title">@yield('topbar-title', 'Dashboard')</div>
+            <div class="topbar-title">@yield('topbar-title', __('app.nav.dashboard'))</div>
             <div class="topbar-actions">
                 <div class="topbar-clock">
                     <div class="clock-time" id="clockTime">00:00:00</div>
                     <div class="clock-date" id="clockDate">-</div>
                 </div>
-                <button class="theme-toggle" id="themeToggle" title="Ganti Tema" onclick="toggleTheme()">
+
+                {{-- Language Switcher --}}
+                <div class="lang-switcher" style="display:flex;gap:4px;align-items:center;">
+                    <a href="{{ route('lang.switch', 'id') }}"
+                       class="lang-btn {{ app()->getLocale() === 'id' ? 'lang-active' : '' }}"
+                       title="Bahasa Indonesia">ID</a>
+                    <a href="{{ route('lang.switch', 'en') }}"
+                       class="lang-btn {{ app()->getLocale() === 'en' ? 'lang-active' : '' }}"
+                       title="English">EN</a>
+                </div>
+
+                <button class="theme-toggle" id="themeToggle" title="{{ __('app.topbar.toggle_theme') }}" onclick="toggleTheme()">
                     <i class="fas fa-moon" id="themeIcon"></i>
                 </button>
             </div>
@@ -1272,8 +1308,8 @@
         })();
 
         // ── Clock ─────────────────────────────────────────
-        const DAYS   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-        const MONTHS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+        const DAYS   = {!! json_encode(__('app.days')) !!};
+        const MONTHS = {!! json_encode(__('app.months')) !!};
 
         function updateClock() {
             const now = new Date();
@@ -1291,6 +1327,23 @@
 
         updateClock();
         setInterval(updateClock, 1000);
+
+        // ── Sidebar: scroll ke menu yang aktif saat load ───
+        (function () {
+            const nav        = document.querySelector('.sidebar-nav');
+            const activeItem = nav ? nav.querySelector('.nav-item.active') : null;
+            if (!nav || !activeItem) return;
+
+            // Hitung posisi item aktif relatif terhadap nav container
+            const navRect    = nav.getBoundingClientRect();
+            const itemRect   = activeItem.getBoundingClientRect();
+            const itemTop    = activeItem.offsetTop;
+            const navHeight  = nav.clientHeight;
+
+            // Scroll agar item aktif berada di tengah area nav
+            const scrollTo   = itemTop - (navHeight / 2) + (activeItem.clientHeight / 2);
+            nav.scrollTop    = Math.max(0, scrollTo);
+        })();
     </script>
 </body>
 </html>

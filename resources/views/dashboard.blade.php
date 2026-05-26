@@ -14,7 +14,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Selamat Datang 👋</div>
-        <div class="page-subtitle">Overview sistem manajemen persediaan material dan part</div>
+        <div class="page-subtitle">Overview sistem informasi manajemen inventori</div>
     </div>
 </div>
 
@@ -28,12 +28,12 @@
     <div class="stat-card green">
         <div class="stat-icon"><i class="fas fa-arrow-right-to-bracket"></i></div>
         <div class="stat-value">{{ number_format($stats['today_in'], 0) }}</div>
-        <div class="stat-label">Barang Masuk Hari Ini</div>
+        <div class="stat-label">Material Masuk Hari Ini</div>
     </div>
     <div class="stat-card red">
         <div class="stat-icon"><i class="fas fa-arrow-right-from-bracket"></i></div>
         <div class="stat-value">{{ number_format($stats['today_out'], 0) }}</div>
-        <div class="stat-label">Barang Keluar Hari Ini</div>
+        <div class="stat-label">Material Keluar Hari Ini</div>
     </div>
     <div class="stat-card yellow">
         <div class="stat-icon"><i class="fas fa-triangle-exclamation"></i></div>
@@ -111,7 +111,7 @@
             <div class="empty-state">
                 <i class="fas fa-check-circle" style="color:var(--success);"></i>
                 <h4>Semua Stok Normal</h4>
-                <p>Tidak ada stok barang yang rendah</p>
+                <p>Tidak ada stok Material yang rendah</p>
             </div>
         @endif
     </div>
@@ -186,7 +186,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
                             <div style="font-size:12px; color: var(--accent); font-weight:600; font-family:'Syne',sans-serif;">{{ $w->gi_number }}</div>
-                            <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:2px;">{{ $w->purpose ?? 'Pengeluaran Barang' }}</div>
+                            <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:2px;">{{ $w->purpose ?? 'Pengeluaran Material' }}</div>
                         </div>
                     </div>
                     <div style="margin-top:8px; display:flex; gap:16px; font-size:11px; color:var(--text-muted);">

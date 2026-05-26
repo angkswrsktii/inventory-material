@@ -98,7 +98,7 @@
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-boxes-stacked"></i>
                             <h4>Belum Ada Stok Tersedia</h4>
-                            <p>Stok akan terbentuk otomatis ketika ada penerimaan barang atau pengeluaran barang.</p>
+                            <p>Stok akan terbentuk otomatis ketika ada penerimaan Material atau pengeluaran Material.</p>
                         </div>
                     </td>
                 </tr>

@@ -134,3 +134,11 @@ Route::middleware(['auth'])->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+// ── Language Switcher ─────────────────────────────────────────────────────────
+Route::get('/lang/{locale}', function (string $locale) {
+    $supported = ['id', 'en'];
+    if (in_array($locale, $supported)) {
+        \Illuminate\Support\Facades\Session::put('locale', $locale);
+    }
+    return redirect()->back();
+})->name('lang.switch');

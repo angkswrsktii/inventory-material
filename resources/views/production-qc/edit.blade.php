@@ -54,26 +54,56 @@
                     <input type="date" name="qc_date" class="form-control" style="width: 200px;" value="{{ old('qc_date', $productionQc->qc_date->format('Y-m-d')) }}" required>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px; margin-bottom: 20px; background:var(--surface-2); padding:15px; border-radius:8px;">
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label class="form-label" style="color:var(--success);">
-                            <i class="fas fa-check-circle"></i> OK (Good Part)
-                        </label>
-                        <input type="number" name="quantity_passed" class="form-control" value="{{ old('quantity_passed', $productionQc->quantity_passed) }}" min="0" step="0.01" required style="border-color:var(--success); font-size: 16px; font-weight: bold;">
-                    </div>
-                    
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label class="form-label" style="color:var(--danger);">
-                            <i class="fas fa-times-circle"></i> NG (Buang)
-                        </label>
-                        <input type="number" name="quantity_failed" id="qtyFailed" class="form-control" value="{{ old('quantity_failed', $productionQc->quantity_failed) }}" min="0" step="0.01" required oninput="calculateTotalNG()" style="border-color:var(--danger); font-size: 16px; font-weight: bold;">
-                    </div>
+                {{-- Quantity Grid --}}
+                <div style="background:var(--surface-2); padding:18px; border-radius:10px; margin-bottom:20px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:14px;">
 
-                    <div class="form-group" style="margin-bottom:0;">
-                        <label class="form-label" style="color:var(--warning);">
-                            <i class="fas fa-recycle"></i> NG (Jadi Material)
-                        </label>
-                        <input type="number" name="quantity_failed_retur" id="qtyRetur" class="form-control" value="{{ old('quantity_failed_retur', $productionQc->quantity_failed_retur) }}" min="0" step="0.01" required oninput="calculateTotalNG()" style="border-color:var(--warning); font-size: 16px; font-weight: bold;">
+                        {{-- OK (Good Part) --}}
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label" style="color:var(--success); font-weight:600;">
+                                <i class="fas fa-check-circle"></i> OK (Good Part)
+                            </label>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <input type="number" name="quantity_passed" id="qtyPassed"
+                                       class="form-control"
+                                       value="{{ old('quantity_passed', $productionQc->quantity_passed) }}"
+                                       min="0" step="0.01" required
+                                       style="border-color:var(--success); font-size:18px; font-weight:700; flex:1;">
+                                <select name="unit_passed" id="unitPassed" onchange="syncUnit('unitPassed','unitFailed')"
+                                        style="height:42px; border-radius:8px; border:1px solid var(--border); background:var(--surface-3); color:var(--text); padding:0 10px; font-size:13px; cursor:pointer; min-width:80px;">
+                                    @foreach(['pcs','kg','liter','meter','set','box','roll','unit'] as $u)
+                                        <option value="{{ $u }}" {{ old('unit_passed', $productionQc->unit ?? 'pcs') === $u ? 'selected' : '' }}>{{ $u }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div style="font-size:11px;color:var(--text-dim);margin-top:5px;">
+                                <i class="fas fa-arrow-up" style="font-size:9px;"></i> Menambah stok Part
+                            </div>
+                        </div>
+
+                        {{-- NG (Buang) --}}
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label" style="color:var(--danger); font-weight:600;">
+                                <i class="fas fa-times-circle"></i> NG (Buang/Scrap)
+                            </label>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <input type="number" name="quantity_failed" id="qtyFailed"
+                                       class="form-control"
+                                       value="{{ old('quantity_failed', $productionQc->quantity_failed) }}"
+                                       min="0" step="0.01" required oninput="calculateTotalNG()"
+                                       style="border-color:var(--danger); font-size:18px; font-weight:700; flex:1;">
+                                <select name="unit_failed" id="unitFailed" onchange="syncUnit('unitFailed','unitPassed')"
+                                        style="height:42px; border-radius:8px; border:1px solid var(--border); background:var(--surface-3); color:var(--text); padding:0 10px; font-size:13px; cursor:pointer; min-width:80px;">
+                                    @foreach(['pcs','kg','liter','meter','set','box','roll','unit'] as $u)
+                                        <option value="{{ $u }}" {{ old('unit_failed', $productionQc->unit ?? 'pcs') === $u ? 'selected' : '' }}>{{ $u }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div style="font-size:11px;color:var(--text-dim);margin-top:5px;">
+                                <i class="fas fa-ban" style="font-size:9px;"></i> NG yang tidak bisa dipakai
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -102,8 +132,11 @@
     <script>
         function calculateTotalNG() {
             let ng1 = parseFloat(document.getElementById('qtyFailed').value) || 0;
-            let ng2 = parseFloat(document.getElementById('qtyRetur').value) || 0;
-            document.getElementById('displayTotalNG').innerText = (ng1 + ng2).toFixed(2);
+            document.getElementById('displayTotalNG').innerText = ng1.toFixed(2);
+        }
+
+        function syncUnit(sourceId, targetId) {
+            document.getElementById(targetId).value = document.getElementById(sourceId).value;
         }
     </script>
 </div>

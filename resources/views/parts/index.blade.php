@@ -14,7 +14,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Data Part</div>
-        <div class="page-subtitle">Manajemen master data part (produk)</div>
+        <div class="page-subtitle">Manajemen Database part (produk)</div>
     </div>
      <a href="{{ route('parts.create') }}" class="btn btn-primary btn-sm">
         <i class="fas fa-plus"></i> Tambah Part

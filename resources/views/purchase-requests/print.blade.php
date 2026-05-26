@@ -90,7 +90,7 @@
     <thead>
         <tr>
             <th style="width:30px;" class="text-center">#</th>
-            <th>Nama Material / Barang</th>
+            <th>Nama Material / Material</th>
             <th class="text-center">Satuan</th>
             <th class="text-right">Qty Diminta</th>
             <th>Catatan (Purpose)</th>

@@ -20,8 +20,8 @@ class ReturnGiController extends Controller
 
         if ($request->search) {
             $query->where('return_number', 'like', "%{$request->search}%")
-                  ->orWhereHas('goodIssue', fn($g) => $g->where('gi_number', 'like', "%{$request->search}%"))
-                  ->orWhereHas('productionQc', fn($q) => $q->where('wo_number', 'like', "%{$request->search}%"));
+                ->orWhereHas('goodIssue', fn($g) => $g->where('gi_number', 'like', "%{$request->search}%"))
+                ->orWhereHas('productionQc', fn($q) => $q->where('wo_number', 'like', "%{$request->search}%"));
         }
 
         $returns = $query->paginate(15)->withQueryString();
@@ -31,10 +31,10 @@ class ReturnGiController extends Controller
 
     public function create(Request $request)
     {
-        // Ambil data QC yang sudah Approved, ada barang yang diretur (NG Retur > 0), 
+        // Ambil data QC yang sudah Approved, ada Material yang diretur (NG Retur > 0), 
         // dan belum pernah dibuatkan dokumen Return sebelumnya.
         $returnedQcIds = ReturnGi::whereNotNull('t_production_qc_id')->pluck('t_production_qc_id');
-        
+
         $availableQcs = ProductionQc::with(['goodIssue.pic', 'part'])
             ->where('status', 'approved')
             ->where('quantity_failed_retur', '>', 0)

@@ -14,7 +14,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Data Material</div>
-        <div class="page-subtitle">Manajemen master data raw material</div>
+        <div class="page-subtitle">Manajemen Database raw material</div>
     </div>
      <a href="{{ route('materials.create') }}" class="btn btn-primary btn-sm">
         <i class="fas fa-plus"></i> Tambah Material

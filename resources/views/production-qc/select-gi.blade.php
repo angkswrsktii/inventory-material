@@ -12,7 +12,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Pilih Good Issue</div>
-        <div class="page-subtitle">Pilih riwayat pengeluaran barang (Good Issue) yang akan diproses Work Order-nya</div>
+        <div class="page-subtitle">Pilih riwayat pengeluaran Material (Good Issue) yang akan diproses Work Order-nya</div>
     </div>
 </div>
 

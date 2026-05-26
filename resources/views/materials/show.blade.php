@@ -36,7 +36,7 @@
         <div style="padding:0;">
             @php
                 $rows = [
-                    ['Kode Barang',      $material->code],
+                    ['Kode Material',      $material->code],
                     ['Nama Material',    $material->name],
                     ['Spesifikasi',      $material->specification ?: '-'],
                     ['Satuan',           $material->unit],

@@ -11,7 +11,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Buat Purchase Order (PO)</div>
+        <div class="page-title">Buat Purchase Order</div>
         <div class="page-subtitle">Pesan material ke supplier</div>
     </div>
 </div>

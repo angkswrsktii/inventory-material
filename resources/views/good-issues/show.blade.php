@@ -13,7 +13,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">{{ $goodIssue->gi_number }}</div>
-        <div class="page-subtitle">Detail pengeluaran barang</div>
+        <div class="page-subtitle">Detail pengeluaran Material</div>
     </div>
     <div style="display:flex; gap:10px;">
         <a href="{{ route('reports.print.good-issue', $goodIssue) }}" target="_blank" class="btn btn-secondary">

@@ -5,7 +5,7 @@
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Master Data Project</div>
+        <div class="page-title">Database Project</div>
         <div class="page-subtitle">Kelola daftar project yang digunakan pada sistem</div>
     </div>
     <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm">

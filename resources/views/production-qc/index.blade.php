@@ -6,7 +6,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Work Order (Quality Check)</div>
-        <div class="page-subtitle">Quality control barang hasil produksi dari Good Issue</div>
+        <div class="page-subtitle">Quality control Material hasil produksi dari Good Issue</div>
     </div>
     <a href="{{ route('production-qc.create') }}" class="btn btn-primary btn-sm">
         <i class="fas fa-plus"></i> Buat Work Order Baru

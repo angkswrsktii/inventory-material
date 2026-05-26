@@ -11,8 +11,8 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Penerimaan Barang (GR)</div>
-        <div class="page-subtitle">Catat penerimaan barang dari supplier berdasarkan Purchase Order</div>
+        <div class="page-title">Penerimaan Material (GR)</div>
+        <div class="page-subtitle">Catat penerimaan Material dari supplier berdasarkan Purchase Order</div>
     </div>
 </div>
 
@@ -38,7 +38,7 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Purchase Order (PO) <span class="required">*</span></label>
+                        <label class="form-label">Purchase Order <span class="required">*</span></label>
                         <select name="t_purchase_order_id" id="poSelect" class="form-control" required>
                             <option value="">-- Pilih PO --</option>
                             @foreach($purchaseOrders as $po)

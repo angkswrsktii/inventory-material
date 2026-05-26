@@ -154,7 +154,7 @@ class GoodReceiptController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('good-receipts.show', $receipt)->with('success', 'Penerimaan barang berhasil disimpan.');
+            return redirect()->route('good-receipts.show', $receipt)->with('success', 'Penerimaan Material berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();

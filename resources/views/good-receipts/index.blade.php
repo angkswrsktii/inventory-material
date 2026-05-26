@@ -14,10 +14,10 @@
 <div class="page-header">
     <div>
         <div class="page-title">Good Receipt</div>
-        <div class="page-subtitle">Penerimaan barang dari supplier berdasarkan Purchase Order</div>
+        <div class="page-subtitle">Material masuk dari supplier berdasarkan Pembelian Material</div>
     </div>
     <a href="{{ route('good-receipts.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Terima Barang Baru
+        <i class="fas fa-plus"></i> Terima Material Baru
     </a>
 </div>
 
@@ -85,9 +85,9 @@
                     <td colspan="7">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-truck-ramp-box"></i>
-                            <h4>Belum Ada Penerimaan Barang</h4>
-                            <p>Mulai catat penerimaan barang dari Purchase Order</p>
-                            <a href="{{ route('good-receipts.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Terima Barang Baru</a>
+                            <h4>Belum Ada Penerimaan Material</h4>
+                            <p>Mulai catat penerimaan Material dari Purchase Order</p>
+                            <a href="{{ route('good-receipts.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Terima Material Baru</a>
                         </div>
                     </td>
                 </tr>

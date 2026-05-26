@@ -51,7 +51,7 @@
                             🏭 Kepala Gudang — Kelola stok & purchase request/order
                         </option>
                         <option value="karyawan"      {{ old('role') === 'karyawan'      ? 'selected' : '' }}>
-                            👷 Pegawai — Input penerimaan & permintaan barang
+                            👷 Pegawai — Input penerimaan & permintaan Material
                         </option>
                         <option value="admin"         {{ old('role') === 'admin'         ? 'selected' : '' }}>
                             🛡️ Administrator — Akses penuh sistem
@@ -104,7 +104,7 @@
                 <i class="fas fa-user-tie"></i> Hak Akses Pimpinan
             </div>
             <ul style="font-size:12px; color:var(--text-muted); list-style:none; display:flex; flex-wrap:wrap; gap:6px;">
-                @foreach(['Dashboard','Data Material','Kartu Stok','Kartu Pengambilan','Laporan','Manajemen User','Approval Purchase Order','Approval Permintaan Barang'] as $f)
+                @foreach(['Dashboard','Data Material','Kartu Stok','Kartu Pengambilan','Laporan','Manajemen User','Approval Purchase Order','Approval Permintaan Material'] as $f)
                     <li style="background:var(--accent-glow);color:var(--accent);padding:2px 10px;border-radius:20px;">✓ {{ $f }}</li>
                 @endforeach
             </ul>
@@ -114,7 +114,7 @@
                 <i class="fas fa-warehouse"></i> Hak Akses Kepala Gudang
             </div>
             <ul style="font-size:12px; color:var(--text-muted); list-style:none; display:flex; flex-wrap:wrap; gap:6px;">
-                @foreach(['Dashboard','Data Material','Kartu Stok','Penerimaan Barang','Purchase Request','Purchase Order','Approval Permintaan Barang'] as $f)
+                @foreach(['Dashboard','Data Material','Kartu Stok','Penerimaan Material','Purchase Request','Purchase Order','Approval Permintaan Material'] as $f)
                     <li style="background:rgba(16,185,129,0.1);color:#10b981;padding:2px 10px;border-radius:20px;">✓ {{ $f }}</li>
                 @endforeach
                 <li style="background:var(--danger-bg);color:var(--danger);padding:2px 10px;border-radius:20px;">✗ Manajemen User</li>
@@ -125,7 +125,7 @@
                 <i class="fas fa-user-gear"></i> Hak Akses Pegawai
             </div>
             <ul style="font-size:12px; color:var(--text-muted); list-style:none; display:flex; flex-wrap:wrap; gap:6px;">
-                @foreach(['Dashboard','Input Penerimaan Barang','Permintaan Barang','Lihat Status Persetujuan'] as $f)
+                @foreach(['Dashboard','Input Penerimaan Material','Permintaan Material','Lihat Status Persetujuan'] as $f)
                     <li style="background:rgba(124,107,239,0.1);color:var(--accent-2);padding:2px 10px;border-radius:20px;">✓ {{ $f }}</li>
                 @endforeach
                 <li style="background:var(--danger-bg);color:var(--danger);padding:2px 10px;border-radius:20px;">✗ Manajemen User</li>

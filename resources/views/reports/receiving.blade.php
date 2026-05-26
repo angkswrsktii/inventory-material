@@ -12,7 +12,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Receiving Report</div>
-        <div class="page-subtitle">Rekap penerimaan barang dari supplier berdasarkan Good Receipt</div>
+        <div class="page-subtitle">Rekap penerimaan Material dari supplier berdasarkan Good Receipt</div>
     </div>
     <button onclick="window.print()" class="btn btn-ghost no-print"><i class="fas fa-print"></i> Print</button>
 </div>

@@ -52,7 +52,7 @@
                 <table id="itemsTable">
                     <thead>
                         <tr>
-                            <th>Material / Barang <span class="required">*</span></th>
+                            <th>Material / Material <span class="required">*</span></th>
                             <th class="text-right" width="150">Qty Diminta <span class="required">*</span></th>
                             <th>Tujuan / Keperluan <span class="required">*</span></th>
                             <th width="50"></th>

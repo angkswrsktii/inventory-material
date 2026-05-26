@@ -27,7 +27,7 @@
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Kode Barang <span class="required">*</span></label>
+                        <label class="form-label">Kode Material <span class="required">*</span></label>
                         <input type="text" name="code" class="form-control" value="{{ old('code') }}" placeholder="MAT-001" required>
                         @error('code') <div class="form-error">{{ $message }}</div> @enderror
                     </div>

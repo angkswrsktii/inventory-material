@@ -14,10 +14,10 @@
 <div class="page-header">
     <div>
         <div class="page-title">Good Issue</div>
-        <div class="page-subtitle">Pengeluaran barang dari gudang untuk produksi atau keperluan lain</div>
+        <div class="page-subtitle">Material keluar dari gudang untuk proses produksi atau keperluan lain</div>
     </div>
     <a href="{{ route('good-issues.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Keluarkan Barang
+        <i class="fas fa-plus"></i> Keluarkan Material
     </a>
 </div>
 
@@ -94,9 +94,9 @@
                     <td colspan="6">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-box-open"></i>
-                            <h4>Belum Ada Pengeluaran Barang</h4>
-                            <p>Mulai catat pengeluaran barang untuk produksi atau keperluan lainnya</p>
-                            <a href="{{ route('good-issues.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Keluarkan Barang</a>
+                            <h4>Belum Ada Pengeluaran Material</h4>
+                            <p>Mulai catat pengeluaran Material untuk produksi atau keperluan lainnya</p>
+                            <a href="{{ route('good-issues.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Keluarkan Material</a>
                         </div>
                     </td>
                 </tr>

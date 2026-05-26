@@ -31,7 +31,7 @@
         </div>
         <div>
             <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Kepala Gudang</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Kelola stok, approval barang, purchase request & order</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Kelola stok, approval Material, purchase request & order</div>
         </div>
     </div>
     <div style="background:rgba(124,107,239,0.08); border:1px solid rgba(124,107,239,0.2); border-radius:var(--radius); padding:16px 20px; display:flex; align-items:center; gap:14px;">
@@ -40,7 +40,7 @@
         </div>
         <div>
             <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Pegawai</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Input penerimaan barang & ajukan permintaan barang</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Input penerimaan Material & ajukan permintaan Material</div>
         </div>
     </div>
     <div style="background:var(--accent-glow); border:1px solid rgba(79,142,247,0.2); border-radius:var(--radius); padding:16px 20px; display:flex; align-items:center; gap:14px;">

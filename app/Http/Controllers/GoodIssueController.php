@@ -121,7 +121,7 @@ class GoodIssueController extends Controller
             }
 
             DB::commit();
-            return redirect()->route('good-issues.show', $issue)->with('success', 'Pengeluaran barang berhasil disimpan.');
+            return redirect()->route('good-issues.show', $issue)->with('success', 'Pengeluaran Material berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Purchase Request (PR)')
-@section('topbar-title', 'Purchase Request (PR)')
+@section('title', 'Purchase Request')
+@section('topbar-title', 'Purchase Request')
 
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">

@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Kepala Gudang, Pimpinan, dan Admin bisa akses.
- * Dipakai untuk: approval permintaan barang, purchase request/order, pengelolaan stok.
+ * Dipakai untuk: approval permintaan Material, purchase request/order, pengelolaan stok.
  */
 class KepalaGudangMiddleware
 {
