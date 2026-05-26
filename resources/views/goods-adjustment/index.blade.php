@@ -32,8 +32,8 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Goods Adjustment & Inventory Info</div>
-        <div class="page-subtitle">Informasi stok dan update nilai B/Q serta Cut/Day secara langsung</div>
+        <div class="page-title">Stock Opname</div>
+        <div class="page-subtitle">Penyesuaian informasi stok dan estimasi material habis</div>
     </div>
     <a href="{{ route('goods-adjustment.create') }}" class="btn btn-primary btn-sm">
         <i class="fas fa-plus"></i> Input Adjustment Baru

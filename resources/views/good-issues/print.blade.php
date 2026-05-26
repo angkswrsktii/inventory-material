@@ -20,7 +20,7 @@
     
     <div class="header">
         <div>
-            <h2>GOOD ISSUE (GI)</h2>
+            <h2>GOOD ISSUE</h2>
             <p>No: {{ $goodIssue->gi_number }}</p>
         </div>
         <div style="text-align: right;">

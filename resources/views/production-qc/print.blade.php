@@ -89,7 +89,7 @@
     <div class="section-title">Informasi Referensi</div>
     <table>
         <tr>
-            <th>No. Good Issue (GI)</th>
+            <th>No. Good Issue</th>
             <td>{{ $productionQc->goodIssue->gi_number }}</td>
             <th>Status Dokumen</th>
             <td style="font-weight:bold;">{{ strtoupper($productionQc->status) }}</td>

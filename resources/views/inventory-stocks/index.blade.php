@@ -14,7 +14,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Inventory Stock</div>
-        <div class="page-subtitle">Daftar stok material dan part di setiap gudang</div>
+        <div class="page-subtitle">Daftar stok Material di setiap gudang</div>
     </div>
 </div>
 

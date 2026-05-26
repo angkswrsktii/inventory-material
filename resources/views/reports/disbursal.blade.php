@@ -6,7 +6,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Disbursal Report</div>
-        <div class="page-subtitle">Rekap dokumen pengeluaran material (Good Issue)</div>
+        <div class="page-subtitle">Rekap dokumen pengeluaran material dari gudang berdasarkan Material Keluar</div>
     </div>
     <button onclick="window.print()" class="btn btn-ghost no-print"><i class="fas fa-print"></i> Print</button>
 </div>

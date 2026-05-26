@@ -6,7 +6,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Riwayat Mutasi Stok</div>
-        <div class="page-subtitle">Pencatatan pergerakan masuk dan keluar material / part</div>
+        <div class="page-subtitle">Pencatatan pergerakan masuk dan keluar Material</div>
     </div>
 </div>
 

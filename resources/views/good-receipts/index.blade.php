@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Good Receipt (GR)')
+@section('title', 'Good Receipt')
 @section('topbar-title', __('app.nav.good_receipt') . ' — ' . __('app.nav.good_receipt'))
 
 @section('topbar-actions')

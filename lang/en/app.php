@@ -39,7 +39,7 @@ return [
 
     // ── Branding ──────────────────────────────────────────
     'brand' => [
-        'subtitle' => 'Inventory MIS',
+        'subtitle' => 'SIM Inventory',
     ],
 
     // ── Days & Months ─────────────────────────────────────

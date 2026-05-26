@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Good Issue (GI)')
+@section('title', 'Good Issue')
 @section('topbar-title', __('app.nav.good_issue') . ' — ' . __('app.nav.good_issue'))
 
 @section('topbar-actions')

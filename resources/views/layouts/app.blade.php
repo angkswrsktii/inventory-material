@@ -1079,21 +1079,25 @@
             {{-- Database: hanya Pimpinan, Admin, Kepala Gudang --}}
             @if(auth()->user()->isManagement() || auth()->user()->isKepalaGudang())
             <div class="nav-section">{{ __('app.nav.master_data') }}</div>
-            <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_material') }}">
-                <i class="fas fa-cube"></i> <span>{{ __('app.nav.data_material') }}</span>
-            </a>
-            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_part') }}">
-                <i class="fas fa-cubes"></i> <span>{{ __('app.nav.data_part') }}</span>
-            </a>
+
             <a href="{{ route('suppliers.index') }}" class="nav-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_supplier') }}">
                 <i class="fas fa-building"></i> <span>{{ __('app.nav.data_supplier') }}</span>
             </a>
+
             <a href="{{ route('customers.index') }}" class="nav-item {{ request()->routeIs('customers.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_customer') }}">
                 <i class="fas fa-users"></i> <span>{{ __('app.nav.data_customer') }}</span>
             </a>
 
             <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_project') }}">
                 <i class="fas fa-diagram-project"></i> <span>{{ __('app.nav.data_project') }}</span>
+            </a>
+
+             <a href="{{ route('materials.index') }}" class="nav-item {{ request()->routeIs('materials.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_material') }}">
+                <i class="fas fa-cube"></i> <span>{{ __('app.nav.data_material') }}</span>
+            </a>
+            
+            <a href="{{ route('parts.index') }}" class="nav-item {{ request()->routeIs('parts.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_part') }}">
+                <i class="fas fa-cubes"></i> <span>{{ __('app.nav.data_part') }}</span>
             </a>
             @endif
 

@@ -11,7 +11,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Pengeluaran Material (GI)</div>
+        <div class="page-title">Pengeluaran Material</div>
         <div class="page-subtitle">Catat pengeluaran Material dari gudang untuk produksi atau lainnya</div>
     </div>
 </div>

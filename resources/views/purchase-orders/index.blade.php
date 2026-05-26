@@ -34,8 +34,8 @@
                 <option value="">Semua Status</option>
                 <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
                 <option value="issued" {{ request('status') === 'issued' ? 'selected' : '' }}>Issued</option>
-                <option value="partial" {{ request('status') === 'partial' ? 'selected' : '' }}>Partial (GR)</option>
-                <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed (GR)</option>
+                <option value="partial" {{ request('status') === 'partial' ? 'selected' : '' }}>Partial</option>
+                <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                 <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
             </select>
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
@@ -87,9 +87,9 @@
                         @elseif($po->status === 'issued')
                             <span class="badge badge-primary">Issued</span>
                         @elseif($po->status === 'partial')
-                            <span class="badge badge-info">Partial (GR)</span>
+                            <span class="badge badge-info">Partial</span>
                         @elseif($po->status === 'completed')
-                            <span class="badge badge-success">Completed (GR)</span>
+                            <span class="badge badge-success">Completed</span>
                         @elseif($po->status === 'cancelled')
                             <span class="badge badge-danger">Cancelled</span>
                         @endif

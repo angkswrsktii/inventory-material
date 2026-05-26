@@ -63,9 +63,9 @@
                 @elseif($purchaseOrder->status === 'issued')
                     <span class="badge badge-primary">Issued</span>
                 @elseif($purchaseOrder->status === 'partial')
-                    <span class="badge badge-info">Partial (GR)</span>
+                    <span class="badge badge-info">Partial</span>
                 @elseif($purchaseOrder->status === 'completed')
-                    <span class="badge badge-success">Completed (GR)</span>
+                    <span class="badge badge-success">Completed</span>
                 @elseif($purchaseOrder->status === 'cancelled')
                     <span class="badge badge-danger">Cancelled</span>
                 @endif

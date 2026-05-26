@@ -11,7 +11,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Penerimaan Material (GR)</div>
+        <div class="page-title">Penerimaan Material</div>
         <div class="page-subtitle">Catat penerimaan Material dari supplier berdasarkan Purchase Order</div>
     </div>
 </div>
