@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Inventory Stock')
-@section('topbar-title', 'Inventory Stock')
+@section('topbar-title', __('app.nav.inventory') . ' — ' . __('app.nav.inventory_stock'))
 
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">

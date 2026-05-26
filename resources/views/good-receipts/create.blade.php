@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Tambah Good Receipt')
-@section('topbar-title', 'Tambah Good Receipt')
+@section('topbar-title', __('app.nav.good_receipt') . ' — ' . __('app.nav.good_receipt'))
 
 @section('content')
 <div class="breadcrumb">

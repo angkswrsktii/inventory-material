@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Mutasi Stok')
-@section('topbar-title', 'Mutasi Stok')
+@section('topbar-title', __('app.nav.inventory') . ' — ' . __('app.nav.mutation_history'))
 
 @section('content')
 <div class="page-header">

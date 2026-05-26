@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Kartu Pengambilan')
-@section('topbar-title', 'Kartu Pengambilan')
+@section('topbar-title', __('app.nav.work_order') . ' — ' . __('app.nav.quality_check'))
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">
         <i class="fas fa-clock"></i>

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Good Issue (GI)')
-@section('topbar-title', 'Good Issue (GI)')
+@section('topbar-title', __('app.nav.good_issue') . ' — ' . __('app.nav.good_issue'))
 
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">

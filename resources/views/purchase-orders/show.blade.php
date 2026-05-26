@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Detail Purchase Order')
-@section('topbar-title', 'Detail Purchase Order')
+@section('topbar-title', __('app.nav.purchasing') . ' — ' . __('app.nav.purchase_order'))
 
 @section('content')
 <div class="breadcrumb">

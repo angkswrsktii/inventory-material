@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Quality Control Hasil Produksi')
-@section('topbar-title', 'Quality Control Hasil Produksi')
+@section('topbar-title', __('app.nav.work_order') . ' — ' . __('app.nav.quality_check'))
 
 @section('content')
 <div class="page-header">

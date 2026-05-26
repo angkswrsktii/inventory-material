@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Data Customer')
-@section('topbar-title', 'Database')
+@section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_customer'))
 
 @section('content')
 <div class="page-header">

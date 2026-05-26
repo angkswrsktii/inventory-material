@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Pilih Good Issue untuk Recycle')
-@section('topbar-title', 'Recycle Good Issue')
+@section('topbar-title', __('app.nav.good_issue') . ' — ' . __('app.nav.good_issue'))
 
 @section('content')
 <div class="breadcrumb">

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Detail Part')
-@section('topbar-title', 'Detail Part')
+@section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_part'))
 
 @section('content')
 <div class="breadcrumb">

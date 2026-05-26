@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Buat Kartu Pengambilan')
-@section('topbar-title', 'Kartu Pengambilan')
+@section('topbar-title', __('app.nav.work_order') . ' — ' . __('app.nav.quality_check'))
 
 @section('content')
 <div class="breadcrumb">

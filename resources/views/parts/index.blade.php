@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Data Part')
-@section('topbar-title', 'Data Part')
+@section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_part'))
 
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">

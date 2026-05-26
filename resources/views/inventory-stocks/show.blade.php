@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Detail Mutasi Stok')
-@section('topbar-title', 'Detail Mutasi Stok')
+@section('topbar-title', __('app.nav.inventory') . ' — ' . __('app.nav.inventory_stock'))
 
 @section('content')
 <div class="breadcrumb">

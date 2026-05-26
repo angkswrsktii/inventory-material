@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Good Receipt (GR)')
-@section('topbar-title', 'Good Receipt (GR)')
+@section('topbar-title', __('app.nav.good_receipt') . ' — ' . __('app.nav.good_receipt'))
 
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">

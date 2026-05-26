@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Tambah Customer')
-@section('topbar-title', 'Tambah Customer')
+@section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_customer'))
 
 @section('content')
 <div class="breadcrumb">

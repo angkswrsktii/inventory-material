@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Disbursal Report')
+@section('topbar-title', __('app.nav.good_issue') . ' — ' . __('app.nav.disbursal_report'))
 @section('content')
 
 <div class="page-header">

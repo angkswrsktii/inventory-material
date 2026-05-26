@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Goods Adjustment & Stock Info')
-@section('topbar-title', 'Goods Adjustment')
+@section('topbar-title', __('app.nav.inventory') . ' — ' . __('app.nav.goods_adjustment'))
 
 @section('content')
 

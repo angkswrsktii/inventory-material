@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Pilih Good Issue untuk Work Order')
-@section('topbar-title', 'Work Order (Quality Check)')
+@section('topbar-title', __('app.nav.work_order') . ' — ' . __('app.nav.quality_check'))
 
 @section('content')
 <div class="breadcrumb">

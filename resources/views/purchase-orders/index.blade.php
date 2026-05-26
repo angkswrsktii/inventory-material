@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Purchase Order')
-@section('topbar-title', 'Purchase Order')
+@section('topbar-title', __('app.nav.purchasing') . ' — ' . __('app.nav.purchase_order'))
 
 @section('topbar-actions')
     <span style="font-size:12px; color: var(--text-muted);">

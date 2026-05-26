@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Receiving Report')
-@section('topbar-title', 'Receiving Report')
+@section('topbar-title', __('app.nav.good_receipt') . ' — ' . __('app.nav.receiving_report'))
 
 @section('topbar-actions')
     <button onclick="window.print()" class="btn btn-ghost btn-sm no-print">

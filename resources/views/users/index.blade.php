@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Manajemen User')
-@section('topbar-title', 'Manajemen User')
+@section('topbar-title', __('app.nav.administration') . ' — ' . __('app.nav.account_mgmt'))
 
 @section('content')
 <div class="page-header">

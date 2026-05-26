@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Edit User')
-@section('topbar-title', 'Edit User')
+@section('topbar-title', __('app.nav.administration') . ' — ' . __('app.nav.account_mgmt'))
 
 @section('content')
 <div class="breadcrumb">
