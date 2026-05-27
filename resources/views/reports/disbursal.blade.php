@@ -20,7 +20,7 @@
             <thead>
                 <tr>
                     <th>No. GI</th>
-                    <th>Tanggal Keluar</th>
+                    <th>{{ __('app.good_issue.issue_date') }}</th>
                     <th>PIC</th>
                     <th>Target Part</th>
                     <th>Tujuan / Purpose</th>

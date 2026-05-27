@@ -26,7 +26,7 @@
             <div class="card-body">
                 
                 <div class="form-group">
-                    <label class="form-label">Gudang / Warehouse <span class="required">*</span></label>
+                    <label class="form-label">{{ __("app.common.warehouse") }} / Warehouse <span class="required">*</span></label>
                     <select name="m_warehouse_id" class="form-control" required>
                         <option value="">-- Pilih Gudang --</option>
                         @foreach($warehouses as $warehouse)
@@ -79,8 +79,8 @@
         </div>
 
         <div style="display:flex; gap:10px; margin-top:20px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Adjustment & Mutasi</button>
-            <a href="{{ route('goods-adjustment.index') }}" class="btn btn-ghost">Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __("app.btn.save") }}</button>
+            <a href="{{ route('goods-adjustment.index') }}" class="btn btn-ghost">{{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

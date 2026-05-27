@@ -13,8 +13,8 @@
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Selamat Datang 👋</div>
-        <div class="page-subtitle">Overview sistem informasi manajemen inventori</div>
+        <div class="page-title">{{ __('app.dashboard.welcome') }}</div>
+        <div class="page-subtitle">{{ __('app.dashboard.subtitle') }}</div>
     </div>
 </div>
 
@@ -23,32 +23,32 @@
     <div class="stat-card blue">
         <div class="stat-icon"><i class="fas fa-cube"></i></div>
         <div class="stat-value">{{ $stats['total_materials'] }}</div>
-        <div class="stat-label">Total Material</div>
+        <div class="stat-label">{{ __('app.dashboard.total_material') }}</div>
     </div>
     <div class="stat-card green">
         <div class="stat-icon"><i class="fas fa-arrow-right-to-bracket"></i></div>
         <div class="stat-value">{{ number_format($stats['today_in'], 0) }}</div>
-        <div class="stat-label">Material Masuk Hari Ini</div>
+        <div class="stat-label">{{ __('app.dashboard.material_in_today') }}</div>
     </div>
     <div class="stat-card red">
         <div class="stat-icon"><i class="fas fa-arrow-right-from-bracket"></i></div>
         <div class="stat-value">{{ number_format($stats['today_out'], 0) }}</div>
-        <div class="stat-label">Material Keluar Hari Ini</div>
+        <div class="stat-label">{{ __('app.dashboard.material_out_today') }}</div>
     </div>
     <div class="stat-card yellow">
         <div class="stat-icon"><i class="fas fa-triangle-exclamation"></i></div>
         <div class="stat-value">{{ $stats['low_stock'] }}</div>
-        <div class="stat-label">Stok Hampir Habis</div>
+        <div class="stat-label">{{ __('app.dashboard.low_stock') }}</div>
     </div>
     <div class="stat-card red">
         <div class="stat-icon"><i class="fas fa-ban"></i></div>
         <div class="stat-value">{{ $stats['empty_stock'] }}</div>
-        <div class="stat-label">Stok Kosong</div>
+        <div class="stat-label">{{ __('app.dashboard.empty_stock') }}</div>
     </div>
     <div class="stat-card purple">
         <div class="stat-icon"><i class="fas fa-file-invoice"></i></div>
         <div class="stat-value">{{ $stats['monthly_withdrawals'] }}</div>
-        <div class="stat-label">Good Issue Bulan Ini</div>
+        <div class="stat-label">{{ __('app.dashboard.good_issue_monthly') }}</div>
     </div>
 </div>
 
@@ -56,7 +56,7 @@
     <!-- Chart -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-chart-line" style="color:var(--accent);margin-right:8px;"></i>Transaksi 7 Hari Terakhir</span>
+            <span class="card-title"><i class="fas fa-chart-line" style="color:var(--accent);margin-right:8px;"></i>{{ __('app.dashboard.chart_title') }}</span>
         </div>
         <div class="card-body" style="padding: 20px;">
             <canvas id="txChart" height="180"></canvas>
@@ -66,8 +66,8 @@
     <!-- Low Stock Alert -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-triangle-exclamation" style="color:var(--warning);margin-right:8px;"></i>Alert Stok Rendah</span>
-            <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
+            <span class="card-title"><i class="fas fa-triangle-exclamation" style="color:var(--warning);margin-right:8px;"></i>{{ __('app.dashboard.low_stock_alert') }}</span>
+            <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm">{{ __('app.dashboard.view_all') }}</a>
         </div>
         @if($lowStocks->count())
             <div class="table-wrap">
@@ -75,10 +75,10 @@
                     <thead>
                         <tr>
                             <th>Item</th>
-                            <th>Gudang</th>
-                            <th class="text-right">Stok</th>
+                            <th>{{ __('app.common.warehouse') }}</th>
+                            <th class="text-right">{{ __('app.common.stock') }}</th>
                             <th class="text-right">Min.</th>
-                            <th>Status</th>
+                            <th>{{ __('app.common.status') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,9 +97,9 @@
                             <td class="text-right" style="color:var(--text-muted);">{{ number_format($m->minimum_stock, 2) }}</td>
                             <td>
                                 @if($m->current_stock <= 0)
-                                    <span class="badge badge-danger">Kosong</span>
+                                    <span class="badge badge-danger">{{ __('app.stock.empty') }}</span>
                                 @else
-                                    <span class="badge badge-warning">Rendah</span>
+                                    <span class="badge badge-warning">{{ __('app.stock.low') }}</span>
                                 @endif
                             </td>
                         </tr>
@@ -110,8 +110,8 @@
         @else
             <div class="empty-state">
                 <i class="fas fa-check-circle" style="color:var(--success);"></i>
-                <h4>Semua Stok Normal</h4>
-                <p>Tidak ada stok Material yang rendah</p>
+                <h4>{{ __('app.dashboard.all_stock_normal') }}</h4>
+                <p>{{ __('app.dashboard.no_low_stock') }}</p>
             </div>
         @endif
     </div>
@@ -121,20 +121,20 @@
     <!-- Recent Transactions -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-right-left" style="color:var(--accent);margin-right:8px;"></i>Mutasi Terbaru</span>
-            <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
+            <span class="card-title"><i class="fas fa-right-left" style="color:var(--accent);margin-right:8px;"></i>{{ __('app.dashboard.recent_mutation') }}</span>
+            <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm">{{ __('app.dashboard.view_all') }}</a>
         </div>
         @if($recentTransactions->count())
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Waktu</th>
+                            <th>{{ __('app.common.time') }}</th>
                             <th>Item</th>
-                            <th>Gudang</th>
-                            <th>Tipe</th>
-                            <th class="text-right">Qty</th>
-                            <th class="text-right">Saldo</th>
+                            <th>{{ __('app.common.warehouse') }}</th>
+                            <th>{{ __('app.common.type') }}</th>
+                            <th class="text-right">{{ __('app.common.qty') }}</th>
+                            <th class="text-right">{{ __('app.mutasi.balance_short') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,9 +145,9 @@
                             <td>{{ $tx->warehouse->name ?? '-' }}</td>
                             <td>
                                 @if($tx->type === 'in')
-                                    <span class="badge badge-in"><i class="fas fa-arrow-down fa-xs"></i> Masuk</span>
+                                    <span class="badge badge-in"><i class="fas fa-arrow-down fa-xs"></i> {{ __('app.stock.in') }}</span>
                                 @else
-                                    <span class="badge badge-out"><i class="fas fa-arrow-up fa-xs"></i> Keluar</span>
+                                    <span class="badge badge-out"><i class="fas fa-arrow-up fa-xs"></i> {{ __('app.stock.out') }}</span>
                                 @endif
                             </td>
                             <td class="text-right">
@@ -166,7 +166,7 @@
         @else
             <div class="empty-state" style="padding:40px;">
                 <i class="fas fa-inbox"></i>
-                <h4>Belum Ada Mutasi</h4>
+                <h4>{{ __('app.dashboard.no_mutation') }}</h4>
             </div>
         @endif
     </div>
@@ -174,8 +174,8 @@
     <!-- Recent Withdrawals -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent-2);margin-right:8px;"></i>Good Issue Terbaru</span>
-            <a href="{{ route('good-issues.index') }}" class="btn btn-ghost btn-sm">Lihat Semua</a>
+            <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent-2);margin-right:8px;"></i>{{ __('app.dashboard.recent_good_issue') }}</span>
+            <a href="{{ route('good-issues.index') }}" class="btn btn-ghost btn-sm">{{ __('app.dashboard.view_all') }}</a>
         </div>
         @if($recentWithdrawals->count())
         <div style="padding: 12px;">
@@ -186,7 +186,7 @@
                     <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                         <div>
                             <div style="font-size:12px; color: var(--accent); font-weight:600; font-family:'Syne',sans-serif;">{{ $w->gi_number }}</div>
-                            <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:2px;">{{ $w->purpose ?? 'Pengeluaran Material' }}</div>
+                            <div style="font-size:13px; color:var(--text); font-weight:500; margin-top:2px;">{{ $w->purpose ?? __('app.good_issue.default_purpose') }}</div>
                         </div>
                     </div>
                     <div style="margin-top:8px; display:flex; gap:16px; font-size:11px; color:var(--text-muted);">
@@ -200,7 +200,7 @@
         @else
             <div class="empty-state" style="padding:40px;">
                 <i class="fas fa-inbox"></i>
-                <h4>Belum Ada Good Issue</h4>
+                <h4>{{ __('app.dashboard.no_good_issue') }}</h4>
             </div>
         @endif
     </div>
@@ -219,7 +219,7 @@ new Chart(ctx, {
         labels: chartData.map(d => d.date),
         datasets: [
             {
-                label: 'Masuk',
+                label: '{{ __("app.dashboard.in") }}',
                 data: chartData.map(d => d.in),
                 backgroundColor: 'rgba(52,211,153,0.7)',
                 borderColor: '#34d399',
@@ -227,7 +227,7 @@ new Chart(ctx, {
                 borderRadius: 4,
             },
             {
-                label: 'Keluar',
+                label: '{{ __("app.dashboard.out") }}',
                 data: chartData.map(d => d.out),
                 backgroundColor: 'rgba(248,113,113,0.7)',
                 borderColor: '#f87171',

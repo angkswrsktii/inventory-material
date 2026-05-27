@@ -33,7 +33,7 @@
                 <button type="submit" class="btn btn-primary">
                     <i class="fas fa-save"></i> Update Project
                 </button>
-                <a href="{{ route('projects.index') }}" class="btn btn-ghost">Batal</a>
+                <a href="{{ route('projects.index') }}" class="btn btn-ghost">{{ __("app.btn.cancel") }}</a>
             </div>
         </form>
     </div>

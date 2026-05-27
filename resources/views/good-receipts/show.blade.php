@@ -49,7 +49,7 @@
             @endforeach
             @if($goodReceipt->notes)
             <div style="padding:12px 20px;">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Catatan</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __('app.common.notes') }}</div>
                 <div style="font-size:13px; color:var(--text);">{{ $goodReceipt->notes }}</div>
             </div>
             @endif
@@ -65,7 +65,7 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="50">#</th>
+                        <th width="50">{{ __('app.common.no') }}</th>
                         <th>Material</th>
                         <th class="text-right">Qty PO</th>
                         <th class="text-right">Qty Terima</th>

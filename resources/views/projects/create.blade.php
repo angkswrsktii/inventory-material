@@ -1,17 +1,17 @@
 @extends('layouts.app')
-@section('title', 'Tambah Project')
+@section('title', __('app.project.add'))
 @section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_project'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('projects.index') }}">Data Project</a>
     <span class="sep">/</span>
-    <span>Tambah Baru</span>
+    <span>{{ __("app.btn.add") }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Tambah Project Baru</div>
+        <div class="page-title">{{ __("app.project.create_title") }}</div>
     </div>
 </div>
 
@@ -30,9 +30,9 @@
 
             <div style="display:flex; gap:10px; margin-top:24px;">
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Simpan Project
+                    <i class="fas fa-save"></i> {{ __("app.btn.save") }}
                 </button>
-                <a href="{{ route('projects.index') }}" class="btn btn-ghost">Batal</a>
+                <a href="{{ route('projects.index') }}" class="btn btn-ghost">{{ __("app.btn.cancel") }}</a>
             </div>
         </form>
     </div>

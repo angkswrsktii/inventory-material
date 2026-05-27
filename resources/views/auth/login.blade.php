@@ -258,7 +258,7 @@
         @csrf
 
         <div class="field">
-            <label for="email">Email</label>
+            <label for="email">{{ __('app.supplier.email') }}</label>
             <input type="email" id="email" name="email"
                    placeholder="nama@perusahaan.com"
                    value="{{ old('email') }}"

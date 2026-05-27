@@ -43,7 +43,7 @@
                        style="padding-left:36px;" placeholder="Cari no. WO, no. GI, part name...">
             </div>
             <select name="status" class="form-control" style="width:150px;">
-                <option value="">Semua Status</option>
+                <option value="">{{ __('app.common.all_status') }}</option>
                 <option value="draft"    {{ request('status')==='draft'    ? 'selected':'' }}>Draft</option>
                 <option value="approved" {{ request('status')==='approved' ? 'selected':'' }}>Disetujui</option>
             </select>
@@ -51,7 +51,7 @@
             <input type="date" name="date_to"   value="{{ request('date_to') }}"   class="form-control" style="width:150px;">
             <button type="submit" class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
             @if(request()->hasAny(['search','status','date_from','date_to']))
-                <a href="{{ route('production-qc.index') }}" class="btn btn-ghost">Reset</a>
+                <a href="{{ route('production-qc.index') }}" class="btn btn-ghost">{{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -66,8 +66,8 @@
                     <th>Tanggal QC</th>
                     <th class="text-right" style="color:var(--success);">OK (Good)</th>
                     <th class="text-right" style="color:var(--danger);">Total NG</th>
-                    <th>Status</th>
-                    <th class="text-center">Aksi</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th class="text-center">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -118,9 +118,9 @@
                             <a href="{{ route('production-qc.edit', $qc) }}" class="btn btn-xs btn-warning" title="Edit Data">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <form action="{{ route('production-qc.destroy', $qc) }}" method="POST" onsubmit="return confirm('Hapus data Work Order ini?')">
+                            <form action="{{ route('production-qc.destroy', $qc) }}" method="POST" onsubmit="return confirm('{{ __("app.common.confirm_delete") }}')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-xs btn-danger" title="Hapus Data"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-xs btn-danger" title="{{ __('app.btn.delete') }}"><i class="fas fa-trash"></i></button>
                             </form>
                             @endif
                         </div>

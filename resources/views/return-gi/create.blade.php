@@ -12,7 +12,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Input Recycle Material</div>
-        <div class="page-subtitle">Kembalikan material sisa/NG dari Work Order ke stok gudang</div>
+        <div class="page-subtitle">{{ __("app.return_gi.subtitle") }}</div>
     </div>
 </div>
 
@@ -132,8 +132,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Retur & Masukkan Stok</button>
-            <a href="{{ route('return-gi.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __("app.btn.save") }}</button>
+            <a href="{{ route('return-gi.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
     @endif

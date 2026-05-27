@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="breadcrumb">
-    <a href="{{ route('materials.index') }}">Data Material</a>
+    <a href="{{ route('materials.index') }}">{{ __('app.material.title') }}</a>
     <span class="sep">/</span>
     <span>{{ $material->name }}</span>
 </div>
@@ -15,7 +15,7 @@
         <div class="page-title">{{ $material->name }}</div>
         <div class="page-subtitle">
             <span class="mono" style="color:var(--accent);">{{ $material->code }}</span>
-            &nbsp;·&nbsp; {{ $material->supplier->name ?? 'Supplier tidak diset' }}
+            &nbsp;·&nbsp; {{ $material->supplier->name ?? '{{ __('app.material.no_supplier') }}' }}
         </div>
     </div>
     <div style="display:flex; gap:10px;">
@@ -31,18 +31,18 @@
     <!-- Info Panel -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:8px;"></i>Informasi Material</span>
+            <span class="card-title"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:8px;"></i>{{ __('app.material.info') }}</span>
         </div>
         <div style="padding:0;">
             @php
                 $rows = [
-                    ['Kode Material',      $material->code],
-                    ['Nama Material',    $material->name],
-                    ['Spesifikasi',      $material->specification ?: '-'],
-                    ['Satuan',           $material->unit],
+                    [{{ __('app.material.code') }},      $material->code],
+                    [{{ __('app.material.name') }},    $material->name],
+                    [{{ __('app.material.spec') }},      $material->specification ?: '-'],
+                    [{{ __('app.common.unit') }},           $material->unit],
                     ['Supplier',         $material->supplier->name ?? '-'],
-                    ['Panjang Material', $material->panjang_material ? number_format($material->panjang_material, 2).' mm' : '-'],
-                    ['Status',           $material->is_active ? 'Aktif' : 'Non-Aktif'],
+                    [{{ __('app.material.length') }}, $material->panjang_material ? number_format($material->panjang_material, 2).' mm' : '-'],
+                    [{{ __('app.common.status') }},           $material->is_active ? {{ __('app.common.active') }} : 'Non-Aktif'],
                 ];
             @endphp
             @foreach($rows as [$label, $value])
@@ -54,7 +54,7 @@
             @endforeach
             @if($material->description)
             <div style="padding:12px 20px;">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Keterangan</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __('app.common.description') }}</div>
                 <div style="font-size:13px; color:var(--text);">{{ $material->description }}</div>
             </div>
             @endif
@@ -70,11 +70,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Gudang</th>
-                        <th class="text-right">Min. Stok</th>
-                        <th class="text-right">Maks. Stok</th>
-                        <th class="text-right">Stok Saat Ini</th>
-                        <th width="80" class="text-center">Mutasi</th>
+                        <th>{{ __('app.common.warehouse') }}</th>
+                        <th class="text-right">{{ __('app.stock.min_stock') }}</th>
+                        <th class="text-right">{{ __('app.stock.max_stock') }}</th>
+                        <th class="text-right">{{ __('app.stock.current') }}</th>
+                        <th width="80" class="text-center">{{ __("app.mutasi.history") }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,7 +87,7 @@
                             {{ number_format($stock->current_stock, 2) }} {{ $material->unit }}
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('inventory-stocks.show', $stock) }}" class="btn btn-ghost btn-sm" title="Lihat Mutasi"><i class="fas fa-list"></i></a>
+                            <a href="{{ route('inventory-stocks.show', $stock) }}" class="btn btn-ghost btn-sm" title="{{ __('app.mutasi.history') }}"><i class="fas fa-list"></i></a>
                         </td>
                     </tr>
                     @empty
@@ -95,7 +95,7 @@
                         <td colspan="5">
                             <div class="empty-state" style="padding:40px;">
                                 <i class="fas fa-inbox"></i>
-                                <h4>Belum Ada Stok</h4>
+                                <h4>{{ __("app.stock.empty_title") }}</h4>
                                 <p>Material ini belum tersedia di gudang mana pun.</p>
                             </div>
                         </td>

@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Keterangan</label>
+                    <label class="form-label">{{ __('app.common.description') }}</label>
                     <textarea name="description" class="form-control" rows="2">{{ old('description', $part->description) }}</textarea>
                 </div>
                 <div class="form-group">
@@ -78,8 +78,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            <a href="{{ route('parts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('app.btn.save_changes') }}</button>
+            <a href="{{ route('parts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

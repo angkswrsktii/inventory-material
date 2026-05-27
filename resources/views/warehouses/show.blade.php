@@ -19,7 +19,7 @@
             <i class="fas fa-pen"></i> Edit
         </a>
         <a href="{{ route('warehouses.index') }}" class="btn btn-ghost btn-sm">
-            <i class="fas fa-arrow-left"></i> Kembali
+            <i class="fas fa-arrow-left"></i> {{ __("app.btn.back") }}
         </a>
     </div>
 </div>
@@ -35,12 +35,12 @@
     <!-- Info Card -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-warehouse" style="color:var(--accent-2);margin-right:8px;"></i>Informasi Gudang</span>
+            <span class="card-title"><i class="fas fa-warehouse" style="color:var(--accent-2);margin-right:8px;"></i>{{ __("app.warehouse.info") }}</span>
         </div>
         <div class="card-body" style="padding:0;">
             <table style="width:100%; border-collapse:collapse;">
                 <tr style="border-bottom:1px solid var(--border);">
-                    <td style="padding:12px 16px; color:var(--text-muted); font-size:12px; width:40%; white-space:nowrap;">Kode</td>
+                    <td style="padding:12px 16px; color:var(--text-muted); font-size:12px; width:40%; white-space:nowrap;">{{ __('app.common.code') }}</td>
                     <td style="padding:12px 16px; font-weight:600; font-family:monospace;">{{ $warehouse->code }}</td>
                 </tr>
                 <tr style="border-bottom:1px solid var(--border);">
@@ -48,16 +48,16 @@
                     <td style="padding:12px 16px; font-weight:600;">{{ $warehouse->name }}</td>
                 </tr>
                 <tr style="border-bottom:1px solid var(--border);">
-                    <td style="padding:12px 16px; color:var(--text-muted); font-size:12px;">Lokasi</td>
+                    <td style="padding:12px 16px; color:var(--text-muted); font-size:12px;">{{ __('app.warehouse.location') }}</td>
                     <td style="padding:12px 16px; color:var(--text-muted);">{{ $warehouse->location ?: '—' }}</td>
                 </tr>
                 <tr style="border-bottom:1px solid var(--border);">
-                    <td style="padding:12px 16px; color:var(--text-muted); font-size:12px;">Status</td>
+                    <td style="padding:12px 16px; color:var(--text-muted); font-size:12px;">{{ __('app.common.status') }}</td>
                     <td style="padding:12px 16px;">
                         @if($warehouse->is_active)
-                            <span class="badge badge-success">Aktif</span>
+                            <span class="badge badge-success">{{ __('app.common.active') }}</span>
                         @else
-                            <span class="badge badge-danger">Nonaktif</span>
+                            <span class="badge badge-danger">{{ __('app.common.inactive') }}</span>
                         @endif
                     </td>
                 </tr>
@@ -76,7 +76,7 @@
                 @csrf @method('PATCH')
                 <button type="submit" class="btn btn-ghost btn-sm" style="color:{{ $warehouse->is_active ? 'var(--warning)' : 'var(--success)' }}; width:100%;">
                     <i class="fas fa-{{ $warehouse->is_active ? 'ban' : 'check' }}"></i>
-                    {{ $warehouse->is_active ? 'Nonaktifkan Gudang' : 'Aktifkan Gudang' }}
+                    {{ $warehouse->is_active ? '{{ __("app.warehouse.deactivate") }}' : '{{ __("app.warehouse.activate") }}' }}
                 </button>
             </form>
         </div>
@@ -91,9 +91,9 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="50">#</th>
+                        <th width="50">{{ __('app.common.no') }}</th>
                         <th>Material</th>
-                        <th width="100">Stok</th>
+                        <th width="100">{{ __('app.common.stock') }}</th>
                         <th width="80">Satuan</th>
                     </tr>
                 </thead>
@@ -117,8 +117,8 @@
                         <td colspan="4">
                             <div class="empty-state" style="padding:40px 20px;">
                                 <i class="fas fa-box-open"></i>
-                                <h4>Belum Ada Stok</h4>
-                                <p>Gudang ini belum memiliki data stok</p>
+                                <h4>{{ __("app.stock.empty_title") }}</h4>
+                                <p>{{ __("app.warehouse.no_stock") }}</p>
                             </div>
                         </td>
                     </tr>

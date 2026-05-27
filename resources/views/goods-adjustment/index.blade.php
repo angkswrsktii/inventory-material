@@ -59,7 +59,7 @@
             <tr>
                 <th>Spesifikasi Material</th>
                 <th>Dimensi Material</th>
-                <th>Supplier</th>
+                <th>{{ __('app.common.supplier') }}</th>
                 <th>Warehouse</th>
                 <th>Part Name</th>
                 <th>Customer Part</th>
@@ -71,7 +71,7 @@
                 <th class="text-right">Lifetime</th>
                 <th class="text-right">Min Stock</th>
                 <th class="text-right">Max Stock</th>
-                <th class="text-center">Status</th>
+                <th class="text-center">{{ __('app.common.status') }}</th>
             </tr>
         </thead>
         <tbody>

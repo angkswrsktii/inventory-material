@@ -1191,7 +1191,7 @@
             <button class="sidebar-toggle-btn" id="sidebarToggle" title="{{ __('app.topbar.toggle_menu') }}" onclick="toggleSidebar()">
                 <i class="fas fa-bars" id="toggleIcon"></i>
             </button>
-            <div class="topbar-title">@yield('topbar-title', __('app.nav.dashboard'))</div>
+            <div class="topbar-title">@yield('topbar-title',  __('app.nav.dashboard'))</div>
             <div class="topbar-actions">
                 <div class="topbar-clock">
                     <div class="clock-time" id="clockTime">00:00:00</div>
@@ -1316,7 +1316,7 @@
         })();
 
         // ── Clock ─────────────────────────────────────────
-        const DAYS   = {!! json_encode(__('app.days')) !!};
+        const DAYS = {!! json_encode(__('app.days')) !!};
         const MONTHS = {!! json_encode(__('app.months')) !!};
 
         function updateClock() {

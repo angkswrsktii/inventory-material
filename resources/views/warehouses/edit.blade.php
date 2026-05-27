@@ -11,7 +11,7 @@
 
 <div class="page-header">
     <div>
-        <div class="page-title">Edit Gudang</div>
+        <div class="page-title">Edit {{ __('app.warehouse.title') }}</div>
         <div class="page-subtitle">Perbarui gudang</div>
     </div>
 </div>
@@ -22,12 +22,12 @@
 
         <div class="card" style="margin-bottom:20px;">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-warehouse" style="color:var(--accent-2);margin-right:8px;"></i>Informasi Gudang</span>
+                <span class="card-title"><i class="fas fa-warehouse" style="color:var(--accent-2);margin-right:8px;"></i>{{ __("app.warehouse.info") }}</span>
             </div>
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Kode Gudang <span class="required">*</span></label>
+                        <label class="form-label">{{ __("app.warehouse.code") }} <span class="required">*</span></label>
                         <input type="text" name="code" class="form-control"
                             value="{{ old('code', $warehouse->code) }}"
                             style="text-transform:uppercase;" required>
@@ -35,7 +35,7 @@
                         @error('code') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Nama Gudang <span class="required">*</span></label>
+                        <label class="form-label">{{ __("app.warehouse.name") }} <span class="required">*</span></label>
                         <input type="text" name="name" class="form-control"
                             value="{{ old('name', $warehouse->name) }}" required>
                         @error('name') <div class="form-error">{{ $message }}</div> @enderror
@@ -50,8 +50,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            <a href="{{ route('warehouses.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('app.btn.save_changes') }}</button>
+            <a href="{{ route('warehouses.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

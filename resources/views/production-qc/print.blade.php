@@ -126,7 +126,7 @@
         </tr>
     </table>
 
-    <div class="section-title">Catatan Tambahan</div>
+    <div class="section-title">{{ __("app.common.additional_notes") }}</div>
     <div style="border: 1px solid #999; padding: 15px; min-height: 60px; margin-bottom:30px;">
         {{ $productionQc->notes ?: 'Tidak ada catatan' }}
     </div>

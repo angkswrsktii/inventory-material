@@ -59,7 +59,7 @@
             @endif
 
             <div style="display:flex; justify-content:space-between; align-items:center; padding:11px 20px; border-bottom:1px solid var(--border); gap:12px;">
-                <span style="font-size:12px; color:var(--text-muted);">Dibuat Oleh</span>
+                <span style="font-size:12px; color:var(--text-muted);">{{ __('app.common.created_by') }}</span>
                 <span style="font-size:13px; font-weight:500;">{{ $returnGi->returner->name ?? '-' }}</span>
             </div>
 
@@ -73,15 +73,15 @@
     <!-- Items Panel -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--accent-2);margin-right:8px;"></i>Rincian Material Kembali ke Gudang (Stok Mutasi IN)</span>
+            <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--accent-2);margin-right:8px;"></i>{{ __("app.return_gi.detail_title") }}</span>
         </div>
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th width="50">#</th>
+                        <th width="50">{{ __('app.common.no') }}</th>
                         <th>Data Material</th>
-                        <th class="text-right">Qty Kembali</th>
+                        <th class="text-right">{{ __("app.return_gi.qty_return") }}</th>
                     </tr>
                 </thead>
                 <tbody>

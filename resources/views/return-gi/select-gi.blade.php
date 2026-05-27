@@ -12,7 +12,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Pilih Good Issue</div>
-        <div class="page-subtitle">Pilih Good Issue yang materialnya akan diretur kembali ke Gudang</div>
+        <div class="page-subtitle">Pilih Good Issue yang materialnya akan diretur kembali ke {{ __('app.warehouse.title') }}</div>
     </div>
 </div>
 
@@ -22,10 +22,10 @@
             <thead>
                 <tr>
                     <th>No. GI</th>
-                    <th>Tanggal Keluar</th>
+                    <th>{{ __('app.good_issue.issue_date') }}</th>
                     <th>Target Produksi (Part)</th>
                     <th>Tujuan / Catatan</th>
-                    <th width="100">Aksi</th>
+                    <th width="100">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>

@@ -27,7 +27,7 @@
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">No. PO</label>
+                        <label class="form-label">{{ __('app.common.po_number') }}</label>
                         <input type="text" class="form-control" value="{{ $purchaseOrder->po_number }}" readonly style="background:var(--surface-2);">
                     </div>
                     <div class="form-group">
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Catatan</label>
+                    <label class="form-label">{{ __('app.common.notes') }}</label>
                     <textarea name="notes" class="form-control" rows="2">{{ old('notes', $purchaseOrder->notes) }}</textarea>
                 </div>
             </div>
@@ -67,7 +67,7 @@
                     <thead>
                         <tr>
                             <th>Item (Material)</th>
-                            <th width="120">Qty</th>
+                            <th width="120">{{ __('app.common.qty') }}</th>
                             <th width="200">Harga Satuan <span class="required">*</span></th>
                             <th width="200">Total Harga</th>
                         </tr>
@@ -99,8 +99,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('app.btn.save_changes') }}</button>
+            <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

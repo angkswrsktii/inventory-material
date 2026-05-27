@@ -22,11 +22,11 @@
             <thead>
                 <tr>
                     <th>No. GI</th>
-                    <th>Tanggal Keluar</th>
+                    <th>{{ __('app.good_issue.issue_date') }}</th>
                     <th>Target Produksi (Part)</th>
                     <th>PIC Pemotong</th>
                     <th>Tujuan / Catatan</th>
-                    <th width="100">Aksi</th>
+                    <th width="100">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>

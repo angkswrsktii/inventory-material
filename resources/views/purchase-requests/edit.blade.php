@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Catatan Tambahan</label>
+                    <label class="form-label">{{ __("app.common.additional_notes") }}</label>
                     <textarea name="notes" class="form-control" rows="2">{{ old('notes', $purchaseRequest->notes) }}</textarea>
                 </div>
             </div>
@@ -46,7 +46,7 @@
         <div class="card" style="margin-bottom:20px;">
             <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                 <span class="card-title"><i class="fas fa-cubes" style="color:var(--warning);margin-right:8px;"></i>Item Permintaan</span>
-                <button type="button" class="btn btn-primary btn-sm" onclick="addItem()"><i class="fas fa-plus"></i> Tambah Item</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addItem()"><i class="fas fa-plus"></i> {{ __("app.btn.add_item") }}</button>
             </div>
             <div class="table-wrap">
                 <table id="itemsTable">
@@ -92,8 +92,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            <a href="{{ route('purchase-requests.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('app.btn.save_changes') }}</button>
+            <a href="{{ route('purchase-requests.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

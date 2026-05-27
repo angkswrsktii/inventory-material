@@ -35,10 +35,10 @@
                 @php
                     $rows = [
                         ['Nama Customer',   $customer->name],
-                        ['Kontak Person',   $customer->contact_person ?: '-'],
-                        ['Telepon',         $customer->phone ?: '-'],
+                        [{{ __('app.supplier.contact_person') }},   $customer->contact_person ?: '-'],
+                        [{{ __('app.supplier.phone') }},         $customer->phone ?: '-'],
                         ['Email',           $customer->email ?: '-'],
-                        ['Status',          $customer->is_active ? 'Aktif' : 'Nonaktif'],
+                        [{{ __('app.common.status') }},          $customer->is_active ? {{ __('app.common.active') }} : {{ __('app.common.inactive') }}],
                     ];
                 @endphp
                 @foreach($rows as [$label, $value])
@@ -49,7 +49,7 @@
                 </div>
                 @endforeach
                 <div style="padding:12px 20px;">
-                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Alamat</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __('app.supplier.address') }}</div>
                     <div style="font-size:13px; color:var(--text);">{{ $customer->address ?: '-' }}</div>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                     <tr>
                         <th>Part No.</th>
                         <th>Part Name</th>
-                        <th>Status</th>
+                        <th>{{ __('app.common.status') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,7 +83,7 @@
                         <td>{{ $part->part_name }}</td>
                         <td>
                             @if($part->is_active)
-                                <span class="badge badge-success">Aktif</span>
+                                <span class="badge badge-success">{{ __('app.common.active') }}</span>
                             @else
                                 <span class="badge badge-danger">Non-Aktif</span>
                             @endif
@@ -94,7 +94,7 @@
                         <td colspan="3">
                             <div class="empty-state" style="padding:40px;">
                                 <i class="fas fa-inbox"></i>
-                                <h4>Belum Ada Part</h4>
+                                <h4>{{ __("app.part.empty_title") }}</h4>
                                 <p>Customer ini belum memiliki daftar part.</p>
                             </div>
                         </td>

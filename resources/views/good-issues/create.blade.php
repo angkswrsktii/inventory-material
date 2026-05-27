@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Tambah Good Issue')
+@section('title', __('app.good_issue.add'))
 @section('topbar-title', __('app.nav.good_issue') . ' — ' . __('app.nav.good_issue'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('good-issues.index') }}">Good Issue</a>
     <span class="sep">/</span>
-    <span>Tambah Baru</span>
+    <span>{{ __("app.btn.add") }}</span>
 </div>
 
 <div class="page-header">
@@ -31,7 +31,7 @@
                         <input type="text" name="gi_number" class="form-control" value="{{ old('gi_number', $autoNumber) }}" readonly style="background:var(--surface-2);">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tanggal Keluar <span class="required">*</span></label>
+                        <label class="form-label">{{ __("app.good_issue.issue_date") }} <span class="required">*</span></label>
                         <input type="date" name="issue_date" class="form-control" value="{{ old('issue_date', date('Y-m-d')) }}" required>
                         @error('issue_date') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
@@ -89,13 +89,13 @@
         <div class="card" style="margin-bottom:20px;">
             <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
                 <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--warning);margin-right:8px;"></i>Item Dikeluarkan</span>
-                <button type="button" class="btn btn-primary btn-sm" onclick="addItem()"><i class="fas fa-plus"></i> Tambah Item</button>
+                <button type="button" class="btn btn-primary btn-sm" onclick="addItem()"><i class="fas fa-plus"></i> {{ __("app.btn.add_item") }}</button>
             </div>
             <div class="table-wrap">
                 <table id="itemsTable">
                     <thead>
                         <tr>
-                            <th>Stok Item (Material/Part di Gudang) <span class="required">*</span></th>
+                            <th>Stock Item (Material/Part) <span class="required">*</span></th>
                             <th class="text-right" width="120">Stok Tersedia</th>
                             <th class="text-right" width="150">Qty Dikeluarkan <span class="required">*</span></th>
                             <th width="50"></th>
@@ -111,7 +111,7 @@
 
         <div style="display:flex; gap:10px;">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Good Issue</button>
-            <a href="{{ route('good-issues.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <a href="{{ route('good-issues.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

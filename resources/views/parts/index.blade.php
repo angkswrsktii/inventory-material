@@ -13,11 +13,11 @@
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Data Part</div>
-        <div class="page-subtitle">Manajemen Database part (produk)</div>
+        <div class="page-title">{{ __('app.part.title') }}</div>
+        <div class="page-subtitle">{{ __('app.part.subtitle') }}</div>
     </div>
      <a href="{{ route('parts.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Tambah Part
+        <i class="fas fa-plus"></i> {{ __("app.part.add") }}
     </a>
 </div>
 
@@ -41,9 +41,9 @@
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Part No, Part Name, Customer..."
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search'))
-                <a href="{{ route('parts.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('parts.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -55,14 +55,14 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
                     <th>Part No.</th>
                     <th>Part Name</th>
                     <th>Customer</th>
                     <th>Panjang Part</th>
                     <th>B/Q</th>
-                    <th>Status</th>
-                    <th width="110">Aksi</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th width="110">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -100,7 +100,7 @@
                             <a href="{{ route('parts.edit', $part) }}" class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-pen"></i></a>
                             <form method="POST" action="{{ route('parts.destroy', $part) }}" onsubmit="return confirm('Yakin hapus part ini?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-ghost btn-sm" title="Hapus" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>
                     </td>
@@ -110,9 +110,9 @@
                     <td colspan="8">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-cubes"></i>
-                            <h4>Belum Ada Part</h4>
+                            <h4>{{ __("app.part.empty_title") }}</h4>
                             <p>Mulai tambah part pertama kamu</p>
-                            <a href="{{ route('parts.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Tambah Part</a>
+                            <a href="{{ route('parts.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.part.add") }}</a>
                         </div>
                     </td>
                 </tr>

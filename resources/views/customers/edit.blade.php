@@ -32,22 +32,22 @@
                         @error('name') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Kontak Person (PIC)</label>
+                        <label class="form-label">{{ __('app.supplier.contact_person') }} (PIC)</label>
                         <input type="text" name="contact_person" class="form-control" value="{{ old('contact_person', $customer->contact_person) }}">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Nomor Telepon</label>
+                        <label class="form-label">{{ __('app.supplier.phone') }}</label>
                         <input type="text" name="phone" class="form-control" value="{{ old('phone', $customer->phone) }}">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">{{ __('app.supplier.email') }}</label>
                         <input type="email" name="email" class="form-control" value="{{ old('email', $customer->email) }}">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Alamat Lengkap</label>
+                    <label class="form-label">{{ __('app.supplier.address') }}</label>
                     <textarea name="address" class="form-control" rows="2">{{ old('address', $customer->address) }}</textarea>
                 </div>
             </div>
@@ -56,8 +56,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            <a href="{{ route('customers.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('app.btn.save_changes') }}</button>
+            <a href="{{ route('customers.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

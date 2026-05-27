@@ -1,18 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah User')
+@section('title', __('app.user.add'))
 @section('topbar-title', __('app.nav.administration') . ' — ' . __('app.nav.account_mgmt'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('users.index') }}">Manajemen User</a>
     <span class="sep">/</span>
-    <span>Tambah User</span>
+    <span>{{ __('app.user.add') }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Tambah User Baru</div>
+        <div class="page-title">{{ __("app.user.create_title") }}</div>
         <div class="page-subtitle">Buat akun untuk Pimpinan, Kepala Gudang, atau Pegawai</div>
     </div>
 </div>

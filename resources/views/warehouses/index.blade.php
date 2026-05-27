@@ -1,15 +1,15 @@
 @extends('layouts.app')
-@section('title', 'Gudang')
+@section('title', __('app.common.warehouse'))
 @section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_warehouse'))
 
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Gudang</div>
-        <div class="page-subtitle">Kelola daftar gudang penyimpanan material</div>
+        <div class="page-title">{{ __('app.common.warehouse') }}</div>
+        <div class="page-subtitle">{{ __('app.warehouse.subtitle') }}</div>
     </div>
     <a href="{{ route('warehouses.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Tambah Gudang
+        <i class="fas fa-plus"></i> {{ __("app.warehouse.add") }}
     </a>
 </div>
 
@@ -30,17 +30,17 @@
         <form method="GET" action="{{ route('warehouses.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari kode, nama, lokasi..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.warehouse.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
             <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
-                <option value="">Semua Status</option>
-                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Aktif</option>
-                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Nonaktif</option>
+                <option value="">{{ __('app.common.all_status') }}</option>
+                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>{{ __('app.common.active') }}</option>
+                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>{{ __('app.common.inactive') }}</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search') || request('status') !== null)
-                <a href="{{ route('warehouses.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('warehouses.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -51,13 +51,13 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
-                    <th width="100">Kode</th>
-                    <th>Nama Gudang</th>
-                    <th>Lokasi</th>
-                    <th width="80">Stok</th>
-                    <th width="90">Status</th>
-                    <th width="150">Aksi</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
+                    <th width="100">{{ __('app.common.code') }}</th>
+                    <th>{{ __('app.warehouse.name') }}</th>
+                    <th>{{ __('app.warehouse.location') }}</th>
+                    <th width="80">{{ __('app.common.stock') }}</th>
+                    <th width="90">{{ __('app.common.status') }}</th>
+                    <th width="150">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,9 +78,9 @@
                     </td>
                     <td>
                         @if($warehouse->is_active)
-                            <span class="badge badge-success">Aktif</span>
+                            <span class="badge badge-success">{{ __('app.common.active') }}</span>
                         @else
-                            <span class="badge badge-danger">Nonaktif</span>
+                            <span class="badge badge-danger">{{ __('app.common.inactive') }}</span>
                         @endif
                     </td>
                     <td>
@@ -95,9 +95,9 @@
                                 </button>
                             </form>
                             <form action="{{ route('warehouses.destroy', $warehouse) }}" method="POST"
-                                onsubmit="return confirm('Hapus gudang {{ $warehouse->name }}? Data stok yang terhubung tidak akan ikut terhapus.')">
+                                onsubmit="return confirm('{{ __("app.common.confirm_delete") }}')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-ghost btn-sm" title="Hapus" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>
                     </td>
@@ -107,9 +107,9 @@
                     <td colspan="7">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-warehouse"></i>
-                            <h4>Belum Ada Gudang</h4>
+                            <h4>{{ __("app.warehouse.empty_title") }}</h4>
                             <p>Mulai tambah gudang pertama kamu</p>
-                            <a href="{{ route('warehouses.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Tambah Gudang</a>
+                            <a href="{{ route('warehouses.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.warehouse.add") }}</a>
                         </div>
                     </td>
                 </tr>

@@ -73,17 +73,17 @@
 <div class="info-grid">
     <div class="info-box">
         <h4>Informasi Supplier</h4>
-        <div class="info-row"><span class="info-label">Nama Supplier</span><span>: {{ $purchaseOrder->supplier_name }}</span></div>
+        <div class="info-row"><span class="info-label">{{ __('app.supplier.name') }}</span><span>: {{ $purchaseOrder->supplier_name }}</span></div>
         <div class="info-row"><span class="info-label">Kontak</span><span>: {{ $purchaseOrder->supplier_contact ?? '—' }}</span></div>
         <div class="info-row"><span class="info-label">Termin Bayar</span><span>: {{ $purchaseOrder->payment_terms ?? '—' }}</span></div>
     </div>
     <div class="info-box">
         <h4>Informasi PO</h4>
-        <div class="info-row"><span class="info-label">No. PO</span><span>: {{ $purchaseOrder->document_no }}</span></div>
+        <div class="info-row"><span class="info-label">{{ __('app.common.po_number') }}</span><span>: {{ $purchaseOrder->document_no }}</span></div>
         <div class="info-row"><span class="info-label">Tgl. Order</span><span>: {{ $purchaseOrder->order_date->format('d M Y') }}</span></div>
         <div class="info-row"><span class="info-label">Est. Terima</span><span>: {{ $purchaseOrder->expected_date?->format('d M Y') ?? '—' }}</span></div>
         <div class="info-row"><span class="info-label">Dari PR</span><span>: {{ $purchaseOrder->purchaseRequest->document_no ?? '—' }}</span></div>
-        <div class="info-row"><span class="info-label">Dibuat Oleh</span><span>: {{ $purchaseOrder->creator?->name ?? '—' }}</span></div>
+        <div class="info-row"><span class="info-label">{{ __('app.common.created_by') }}</span><span>: {{ $purchaseOrder->creator?->name ?? '—' }}</span></div>
     </div>
 </div>
 
@@ -98,8 +98,8 @@
     <thead>
         <tr>
             <th class="text-center" style="width:40px;">No</th>
-            <th>Nama Material</th>
-            <th>Spesifikasi</th>
+            <th>{{ __('app.material.name') }}</th>
+            <th>{{ __('app.material.spec') }}</th>
             <th>Satuan</th>
             <th class="text-right">Qty Order</th>
             <th class="text-right">Qty Diterima</th>
@@ -156,13 +156,13 @@
 <div class="footer">
     <div class="sign-box">
         <div class="sign-line"></div>
-        <div class="sign-label">Dibuat Oleh</div>
+        <div class="sign-label">{{ __('app.common.created_by') }}</div>
         <div class="sign-name">{{ $purchaseOrder->creator?->name ?? '—' }}</div>
         <div style="font-size:11px; color:#888;">{{ $purchaseOrder->creator?->role_label ?? '' }}</div>
     </div>
     <div class="sign-box">
         <div class="sign-line"></div>
-        <div class="sign-label">Kepala Gudang</div>
+        <div class="sign-label">Kepala {{ __('app.warehouse.title') }}</div>
         <div class="sign-name">&nbsp;</div>
     </div>
     <div class="sign-box">

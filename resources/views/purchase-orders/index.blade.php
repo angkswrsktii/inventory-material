@@ -14,10 +14,10 @@
 <div class="page-header">
     <div>
         <div class="page-title">Purchase Order</div>
-        <div class="page-subtitle">Daftar pesanan pembelian ke supplier</div>
+        <div class="page-subtitle">{{ __('app.po.subtitle') }}</div>
     </div>
     <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Buat PO Baru
+        <i class="fas fa-plus"></i> {{ __("app.po.add") }}
     </a>
 </div>
 
@@ -27,20 +27,20 @@
         <form method="GET" action="{{ route('purchase-orders.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. PO..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.po.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
            <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
-                <option value="">Semua Status</option>
+                <option value="">{{ __('app.common.all_status') }}</option>
                 <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
                 <option value="issued" {{ request('status') === 'issued' ? 'selected' : '' }}>Issued</option>
                 <option value="partial" {{ request('status') === 'partial' ? 'selected' : '' }}>Partial</option>
                 <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                 <option value="cancelled" {{ request('status') === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search') || request('status'))
-                <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -52,14 +52,14 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
-                    <th>No. PO</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
+                    <th>{{ __('app.common.po_number') }}</th>
                     <th>No. PR</th>
-                    <th>Supplier</th>
-                    <th>Tanggal PO</th>
-                    <th>Total Item</th>
-                    <th>Status</th>
-                    <th width="110">Aksi</th>
+                    <th>{{ __('app.common.supplier') }}</th>
+                    <th>{{ __('app.supplier.po_date') }}</th>
+                    <th>{{ __('app.common.total_item') }}</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th width="110">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -119,9 +119,9 @@
                     <td colspan="8">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-file-invoice-dollar"></i>
-                            <h4>Belum Ada Purchase Order</h4>
+                            <h4>{{ __("app.po.empty_title") }}</h4>
                             <p>Mulai buat pesanan pembelian ke supplier</p>
-                            <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Buat PO Baru</a>
+                            <a href="{{ route('purchase-orders.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.po.add") }}</a>
                         </div>
                     </td>
                 </tr>

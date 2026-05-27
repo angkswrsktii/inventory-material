@@ -5,8 +5,8 @@
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Riwayat Mutasi Stok</div>
-        <div class="page-subtitle">Pencatatan pergerakan masuk dan keluar Material</div>
+        <div class="page-title">{{ __('app.mutasi.title') }}</div>
+        <div class="page-subtitle">{{ __('app.mutasi.subtitle') }}</div>
     </div>
 </div>
 
@@ -15,18 +15,18 @@
         <form method="GET" action="{{ route('mutasi.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari Item, No Dokumen, Catatan..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.mutasi.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
             <select name="type" class="form-control" style="width:150px;">
-                <option value="">Semua Tipe</option>
-                <option value="in" {{ request('type') == 'in' ? 'selected' : '' }}>Masuk (IN)</option>
-                <option value="out" {{ request('type') == 'out' ? 'selected' : '' }}>Keluar (OUT)</option>
-                <option value="in_return" {{ request('type') == 'in_return' ? 'selected' : '' }}>Retur Masuk (IN RETUR)</option>
+                <option value="">{{ __('app.mutasi.all_types') }}</option>
+                <option value="in" {{ request('type') == 'in' ? 'selected' : '' }}>{{ __('app.mutasi.in') }}</option>
+                <option value="out" {{ request('type') == 'out' ? 'selected' : '' }}>{{ __('app.mutasi.out') }}</option>
+                <option value="in_return" {{ request('type') == 'in_return' ? 'selected' : '' }}>{{ __('app.mutasi.in_return') }}</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request()->hasAny(['search', 'type']))
-                <a href="{{ route('mutasi.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('mutasi.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -37,14 +37,14 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
-                    <th>Waktu Mutasi</th>
-                    <th>Item (Material / Part)</th>
-                    <th>Gudang</th>
-                    <th>Referensi Dokumen</th>
-                    <th>Tipe</th>
-                    <th class="text-right">Kuantitas</th>
-                    <th class="text-right">Saldo (Balance)</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
+                    <th>{{ __('app.mutasi.time') }}</th>
+                    <th>{{ __('app.mutasi.item') }}</th>
+                    <th>{{ __('app.common.warehouse') }}</th>
+                    <th>{{ __('app.mutasi.doc_ref') }}</th>
+                    <th>{{ __('app.common.type') }}</th>
+                    <th class="text-right">{{ __('app.common.quantity') }}</th>
+                    <th class="text-right">{{ __('app.mutasi.balance') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -91,8 +91,8 @@
                     <td colspan="8">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-history"></i>
-                            <h4>Belum Ada Riwayat Mutasi</h4>
-                            <p>Data mutasi akan muncul saat ada transaksi penerimaan atau pengeluaran Material.</p>
+                            <h4>{{ __('app.mutasi.empty_title') }}</h4>
+                            <p>{{ __('app.mutasi.empty_desc') }}</p>
                         </div>
                     </td>
                 </tr>
@@ -104,7 +104,7 @@
     @if($mutasis->hasPages())
     <div style="padding: 16px 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
         <div style="font-size:13px; color:var(--text-muted);">
-            Menampilkan {{ $mutasis->firstItem() }}–{{ $mutasis->lastItem() }} dari {{ $mutasis->total() }} Mutasi
+            {{ __('app.pagination.showing', ['from'=>$mutasis->firstItem(), 'to'=>$mutasis->lastItem(), 'total'=>$mutasis->total(), 'entity'=>__('app.mutasi.entity')]) }}
         </div>
         <div style="display:flex; gap:6px;">
             {{ $mutasis->links() }}

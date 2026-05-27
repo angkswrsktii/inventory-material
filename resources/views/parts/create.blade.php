@@ -1,17 +1,17 @@
 @extends('layouts.app')
-@section('title', 'Tambah Part')
+@section('title', __('app.part.add'))
 @section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_part'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('parts.index') }}">Data Part</a>
     <span class="sep">/</span>
-    <span>Tambah Part</span>
+    <span>{{ __('app.part.add') }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Tambah Part Baru</div>
+        <div class="page-title">{{ __("app.part.create_title") }}</div>
         <div class="page-subtitle">Isi form berikut untuk mendaftarkan part baru</div>
     </div>
 </div>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Keterangan</label>
+                    <label class="form-label">{{ __('app.common.description') }}</label>
                     <textarea name="description" class="form-control" rows="2" placeholder="Catatan tambahan...">{{ old('description') }}</textarea>
                 </div>
                 <div class="form-group">
@@ -77,8 +77,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Part</button>
-            <a href="{{ route('parts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __("app.btn.save") }}</button>
+            <a href="{{ route('parts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

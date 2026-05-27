@@ -46,7 +46,7 @@
             <div style="display:flex; gap:8px; margin-top:18px;">
                 <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Filter</button>
                 @if(request('date_from') || request('date_to') || request('pic_id'))
-                    <a href="{{ route('reports.receiving') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                    <a href="{{ route('reports.receiving') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
                 @endif
             </div>
         </form>
@@ -63,12 +63,12 @@
             <thead>
                 <tr>
                     <th>No. GR</th>
-                    <th>No. PO</th>
-                    <th>Tanggal Terima</th>
-                    <th>PIC Penerima</th>
-                    <th>Penerima System</th>
+                    <th>{{ __('app.common.po_number') }}</th>
+                    <th>{{ __('app.good_receipt.receive_date') }}</th>
+                    <th>{{ __('app.good_receipt.pic_receiver') }}</th>
+                    <th>{{ __('app.good_receipt.system_receiver') }}</th>
                     <th>Item Material</th>
-                    <th>Catatan</th>
+                    <th>{{ __('app.common.notes') }}</th>
                 </tr>
             </thead>
             <tbody>

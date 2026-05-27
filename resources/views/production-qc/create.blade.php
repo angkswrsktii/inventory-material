@@ -62,7 +62,7 @@
                         <div style="margin-top:3px;color:var(--text-muted);">{{ $goodIssue->purpose }}</div>
                     </div>
                     <div>
-                        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;">Tgl. Keluar GI</div>
+                        <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;">{{ __("app.good_issue.gi_date") }}</div>
                         <div style="margin-top:3px;color:var(--text-muted);">{{ $goodIssue->issue_date->format('d M Y') }}</div>
                     </div>
                 </div>
@@ -163,7 +163,7 @@
 
         <div style="display:flex;gap:10px;">
             <button type="submit" class="btn btn-primary">
-                <i class="fas fa-save"></i> Simpan Draft
+                <i class="fas fa-save"></i> {{ __("app.btn.save") }}
             </button>
             <a href="{{ route('production-qc.index') }}" class="btn btn-ghost">
                 <i class="fas fa-times"></i> Batal

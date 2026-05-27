@@ -101,7 +101,7 @@
 
                 <div style="display:flex; gap:10px;">
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Simpan Perubahan
+                        <i class="fas fa-save"></i> {{ __("app.btn.save_changes") }}
                     </button>
                     <a href="{{ route('users.index') }}" class="btn btn-ghost">
                         <i class="fas fa-times"></i> Batal

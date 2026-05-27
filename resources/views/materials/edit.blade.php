@@ -1,18 +1,18 @@
 @extends('layouts.app')
-@section('title', 'Edit Material')
+@section('title', __('app.material.edit_title'))
 @section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_material'))
 
 @section('content')
 <div class="breadcrumb">
-    <a href="{{ route('materials.index') }}">Data Material</a>
+    <a href="{{ route('materials.index') }}">{{ __('app.material.title') }}</a>
     <span class="sep">/</span>
-    <span>Edit: {{ $material->name }}</span>
+    <span>{{ __('app.btn.edit') }}: {{ $material->name }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Edit Material</div>
-        <div class="page-subtitle">Perbarui data material</div>
+        <div class="page-title">{{ __('app.material.edit_title') }}</div>
+        <div class="page-subtitle">{{ __('app.material.edit_subtitle') }}</div>
     </div>
 </div>
 
@@ -22,17 +22,17 @@
 
         <div class="card" style="margin-bottom:20px;">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-cube" style="color:var(--accent-2);margin-right:8px;"></i>Informasi Material</span>
+                <span class="card-title"><i class="fas fa-cube" style="color:var(--accent-2);margin-right:8px;"></i>{{ __('app.material.info') }}</span>
             </div>
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Kode Material <span class="required">*</span></label>
+                        <label class="form-label">{{ __('app.material.code') }} <span class="required">*</span></label>
                         <input type="text" name="code" class="form-control" value="{{ old('code', $material->code) }}" required>
                         @error('code') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Nama Material <span class="required">*</span></label>
+                        <label class="form-label">{{ __('app.material.name') }} <span class="required">*</span></label>
                         <input type="text" name="name" class="form-control" value="{{ old('name', $material->name) }}" required>
                         @error('name') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
@@ -86,7 +86,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Keterangan</label>
+                    <label class="form-label">{{ __('app.common.description') }}</label>
                     <textarea name="description" class="form-control" rows="2">{{ old('description', $material->description) }}</textarea>
                 </div>
                 <div class="form-group">
@@ -100,8 +100,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Perubahan</button>
-            <a href="{{ route('materials.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __('app.btn.save_changes') }}</button>
+            <a href="{{ route('materials.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

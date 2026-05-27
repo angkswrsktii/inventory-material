@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Catatan</label>
+                    <label class="form-label">{{ __('app.common.notes') }}</label>
                     <textarea name="notes" class="form-control" rows="2" placeholder="Catatan PO...">{{ old('notes') }}</textarea>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                     <thead>
                         <tr>
                             <th>Item (Material)</th>
-                            <th width="120">Qty</th>
+                            <th width="120">{{ __('app.common.qty') }}</th>
                             <!-- Bintang required pindah ke Total Harga -->
                             <th width="200">Harga Satuan</th>
                             <th width="200">Total Harga <span class="required">*</span></th>
@@ -94,8 +94,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan PO</button>
-            <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __("app.btn.save") }}</button>
+            <a href="{{ route('purchase-orders.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

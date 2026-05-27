@@ -32,7 +32,7 @@
             @endif
         @endif
         <a href="{{ route('withdrawal-cards.index') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Kembali
+            <i class="fas fa-arrow-left"></i> {{ __("app.btn.back") }}
         </a>
     </div>
 </div>
@@ -53,13 +53,13 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kode</th>
-                        <th>Nama Material</th>
+                        <th>{{ __('app.common.code') }}</th>
+                        <th>{{ __('app.material.name') }}</th>
                         <th>Satuan</th>
                         <th class="text-right">Stok Sebelum</th>
                         <th class="text-right">Jumlah Diambil</th>
                         <th class="text-right">Stok Sesudah</th>
-                        <th>Catatan</th>
+                        <th>{{ __('app.common.notes') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -114,7 +114,7 @@
             @endforeach
             @if($withdrawalCard->notes)
             <div style="padding:12px 18px;">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">Catatan</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:4px;">{{ __('app.common.notes') }}</div>
                 <div style="font-size:13px; color:var(--text);">{{ $withdrawalCard->notes }}</div>
             </div>
             @endif

@@ -1,17 +1,17 @@
 @extends('layouts.app')
-@section('title', 'Tambah Customer')
+@section('title', __('app.customer.add'))
 @section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_customer'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('customers.index') }}">Data Customer</a>
     <span class="sep">/</span>
-    <span>Tambah Customer</span>
+    <span>{{ __('app.customer.add') }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Tambah Customer Baru</div>
+        <div class="page-title">{{ __("app.customer.create_title") }}</div>
         <div class="page-subtitle">Isi form berikut untuk mendaftarkan pelanggan baru</div>
     </div>
 </div>
@@ -32,30 +32,30 @@
                         @error('name') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Kontak Person (PIC)</label>
+                        <label class="form-label">{{ __('app.supplier.contact_person') }} (PIC)</label>
                         <input type="text" name="contact_person" class="form-control" value="{{ old('contact_person') }}" placeholder="Nama PIC">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Nomor Telepon</label>
+                        <label class="form-label">{{ __('app.supplier.phone') }}</label>
                         <input type="text" name="phone" class="form-control" value="{{ old('phone') }}" placeholder="0812...">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">{{ __('app.supplier.email') }}</label>
                         <input type="email" name="email" class="form-control" value="{{ old('email') }}" placeholder="email@perusahaan.com">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Alamat Lengkap</label>
+                    <label class="form-label">{{ __('app.supplier.address') }}</label>
                     <textarea name="address" class="form-control" rows="2" placeholder="Jl. Raya ...">{{ old('address') }}</textarea>
                 </div>
             </div>
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Customer</button>
-            <a href="{{ route('customers.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __("app.btn.save") }}</button>
+            <a href="{{ route('customers.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

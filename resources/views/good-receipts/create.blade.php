@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', 'Tambah Good Receipt')
+@section('title', __('app.good_receipt.add'))
 @section('topbar-title', __('app.nav.good_receipt') . ' — ' . __('app.nav.good_receipt'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('good-receipts.index') }}">Good Receipt</a>
     <span class="sep">/</span>
-    <span>Tambah Baru</span>
+    <span>{{ __("app.btn.add") }}</span>
 </div>
 
 <div class="page-header">
@@ -50,7 +50,7 @@
                         @error('t_purchase_order_id') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Gudang Penyimpanan <span class="required">*</span></label>
+                        <label class="form-label">{{ __("app.warehouse.title") }} <span class="required">*</span></label>
                         <select name="m_warehouse_id" class="form-control" required>
                             <option value="">-- Pilih Gudang --</option>
                             @foreach($warehouses as $wh)
@@ -80,7 +80,7 @@
                         @error('m_pic_id') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Catatan Tambahan</label>
+                        <label class="form-label">{{ __("app.common.additional_notes") }}</label>
                         <input type="text" name="notes" class="form-control" value="{{ old('notes') }}" placeholder="Opsional">
                     </div>
                 </div>
@@ -112,7 +112,7 @@
 
         <div style="display:flex; gap:10px;">
             <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="fas fa-save"></i> Simpan Good Receipt</button>
-            <a href="{{ route('good-receipts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <a href="{{ route('good-receipts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>

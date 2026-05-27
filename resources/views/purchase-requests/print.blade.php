@@ -51,7 +51,7 @@
     <button onclick="window.print()" style="padding:8px 20px;background:#1a56db;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;">
         🖨️ Print / Save PDF
     </button>
-    <a href="{{ route('purchase-requests.show', $purchaseRequest) }}" style="margin-left:10px;font-size:13px;color:#555;">← Kembali</a>
+    <a href="{{ route('purchase-requests.show', $purchaseRequest) }}" style="margin-left:10px;font-size:13px;color:#555;">← {{ __("app.btn.back") }}</a>
 </div>
 
 <div class="header">
@@ -119,7 +119,7 @@
         <div class="sig-name">{{ $purchaseRequest->requester?->name ?? '___________________' }}</div>
     </div>
     <div class="sig-box">
-        <div class="sig-label">Kepala Gudang</div>
+        <div class="sig-label">Kepala {{ __('app.warehouse.title') }}</div>
         <div class="sig-name">
             @if($purchaseRequest->approver && method_exists($purchaseRequest->approver, 'isKepalaGudang') && $purchaseRequest->approver->isKepalaGudang())
                 {{ $purchaseRequest->approver->name }}

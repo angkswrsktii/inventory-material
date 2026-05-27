@@ -41,7 +41,7 @@
                     ['Customer',         $part->customer->name ?? '-'],
                     ['Panjang Part',     $part->panjang_part ? number_format($part->panjang_part, 2).' mm' : '-'],
                     ['B/Q',              $part->bq ? number_format($part->bq, 4) : '-'],
-                    ['Status',           $part->is_active ? 'Aktif' : 'Non-Aktif'],
+                    [{{ __('app.common.status') }},           $part->is_active ? {{ __('app.common.active') }} : 'Non-Aktif'],
                 ];
             @endphp
             @foreach($rows as [$label, $value])
@@ -53,7 +53,7 @@
             @endforeach
             @if($part->description)
             <div style="padding:12px 20px;">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Keterangan</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __('app.common.description') }}</div>
                 <div style="font-size:13px; color:var(--text);">{{ $part->description }}</div>
             </div>
             @endif
@@ -69,11 +69,11 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Gudang</th>
-                        <th class="text-right">Min. Stok</th>
-                        <th class="text-right">Maks. Stok</th>
-                        <th class="text-right">Stok Saat Ini</th>
-                        <th width="80" class="text-center">Mutasi</th>
+                        <th>{{ __('app.common.warehouse') }}</th>
+                        <th class="text-right">{{ __('app.stock.min_stock') }}</th>
+                        <th class="text-right">{{ __('app.stock.max_stock') }}</th>
+                        <th class="text-right">{{ __('app.stock.current') }}</th>
+                        <th width="80" class="text-center">{{ __("app.mutasi.history") }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,7 +86,7 @@
                             {{ number_format($stock->current_stock, 2) }}
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('inventory-stocks.show', $stock) }}" class="btn btn-ghost btn-sm" title="Lihat Mutasi"><i class="fas fa-list"></i></a>
+                            <a href="{{ route('inventory-stocks.show', $stock) }}" class="btn btn-ghost btn-sm" title="{{ __('app.mutasi.history') }}"><i class="fas fa-list"></i></a>
                         </td>
                     </tr>
                     @empty
@@ -94,7 +94,7 @@
                         <td colspan="5">
                             <div class="empty-state" style="padding:40px;">
                                 <i class="fas fa-inbox"></i>
-                                <h4>Belum Ada Stok</h4>
+                                <h4>{{ __("app.stock.empty_title") }}</h4>
                                 <p>Part ini belum tersedia di gudang mana pun.</p>
                             </div>
                         </td>

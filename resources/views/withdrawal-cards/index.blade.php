@@ -47,8 +47,8 @@
                     <th>Part Name</th>
                     <th>Work Order</th>
                     <th>Jml Item</th>
-                    <th>Status</th>
-                    <th class="text-center">Aksi</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th class="text-center">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -101,7 +101,7 @@
                     <td colspan="9">
                         <div class="empty-state">
                             <i class="fas fa-file-invoice"></i>
-                            <h4>Belum Ada Kartu Pengambilan</h4>
+                            <h4>{{ __("app.withdrawal.empty_title") }}</h4>
                             <p>Buat kartu pengambilan pertama Anda</p>
                         </div>
                     </td>

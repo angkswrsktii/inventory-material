@@ -96,7 +96,7 @@
     <table>
         <tr>
             <th class="text-center" width="5%">No</th>
-            <th>Nama Material</th>
+            <th>{{ __('app.material.name') }}</th>
             <th width="20%">Kode Item</th>
             <th class="text-right" width="20%">Qty Diterima Gudang</th>
         </tr>

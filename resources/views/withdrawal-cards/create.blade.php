@@ -29,7 +29,7 @@
                 Material yang Diambil
             </span>
             <button type="button" class="btn btn-primary btn-sm" onclick="addRow()">
-                <i class="fas fa-plus"></i> Tambah Material
+                <i class="fas fa-plus"></i> {{ __("app.material.add") }}
             </button>
         </div>
         <div class="table-wrap">
@@ -39,8 +39,8 @@
                         <th>Material</th>
                         <th>Stok Tersedia</th>
                         <th class="text-right">Jumlah</th>
-                        <th>Catatan</th>
-                        <th class="text-center">Hapus</th>
+                        <th>{{ __('app.common.notes') }}</th>
+                        <th class="text-center">{{ __("app.btn.delete") }}</th>
                     </tr>
                 </thead>
                 <tbody id="itemsBody">
@@ -118,7 +118,7 @@
                 </select>
                 @else
                 <input type="text" class="form-control" disabled placeholder="Belum ada data customer" style="opacity:.5;">
-                <div style="font-size:11px;color:var(--text-dim);margin-top:4px;"><a href="{{ route('customers.create') }}" style="color:var(--accent);">Tambah customer</a> terlebih dahulu.</div>
+                <div style="font-size:11px;color:var(--text-dim);margin-top:4px;"><a href="{{ route('customers.create') }}" style="color:var(--accent);">{{ __("app.customer.add") }}</a> first.</div>
                 @endif
                 @error('customer_id') <div class="form-error">{{ $message }}</div> @enderror
             </div>
@@ -152,7 +152,7 @@
             </div>
 
             <div class="form-group">
-                <label class="form-label">Catatan</label>
+                <label class="form-label">{{ __('app.common.notes') }}</label>
                 <textarea name="notes" class="form-control" rows="2"
                           placeholder="Catatan tambahan...">{{ old('notes') }}</textarea>
             </div>
@@ -160,7 +160,7 @@
             <div class="divider"></div>
 
             <button type="submit" class="btn btn-primary" style="width:100%;">
-                <i class="fas fa-save"></i> Simpan & Kurangi Stok
+                <i class="fas fa-save"></i> {{ __("app.btn.save") }}
             </button>
             <a href="{{ route('withdrawal-cards.index') }}" class="btn btn-ghost" style="width:100%; margin-top:8px; justify-content:center;">
                 <i class="fas fa-times"></i> Batal

@@ -14,10 +14,10 @@
 <div class="page-header">
     <div>
         <div class="page-title">Good Issue</div>
-        <div class="page-subtitle">Material keluar dari gudang untuk proses produksi atau keperluan lain</div>
+        <div class="page-subtitle">{{ __('app.good_issue.subtitle') }}</div>
     </div>
     <a href="{{ route('good-issues.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Keluarkan Material
+        <i class="fas fa-plus"></i> {{ __("app.good_issue.add") }}
     </a>
 </div>
 
@@ -38,12 +38,12 @@
         <form method="GET" action="{{ route('good-issues.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. GI, Tujuan / Catatan..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.good_issue.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search'))
-                <a href="{{ route('good-issues.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('good-issues.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -55,13 +55,13 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
                     <th>No. GI</th>
-                    <th>Tanggal Keluar</th>
+                    <th>{{ __('app.good_issue.issue_date') }}</th>
                     <th>Target Part</th>
                     <th>PIC Pemotong</th>
                     <th>Tujuan / Catatan</th>
-                    <th width="90">Aksi</th>
+                    <th width="90">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -94,9 +94,9 @@
                     <td colspan="6">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-box-open"></i>
-                            <h4>Belum Ada Pengeluaran Material</h4>
+                            <h4>{{ __("app.good_issue.empty_title") }}</h4>
                             <p>Mulai catat pengeluaran Material untuk produksi atau keperluan lainnya</p>
-                            <a href="{{ route('good-issues.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Keluarkan Material</a>
+                            <a href="{{ route('good-issues.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.good_issue.add") }}</a>
                         </div>
                     </td>
                 </tr>

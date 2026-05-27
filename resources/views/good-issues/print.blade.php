@@ -37,8 +37,8 @@
             <tr>
                 <th>No</th>
                 <th>Material</th>
-                <th>Kode</th>
-                <th class="text-right">Qty</th>
+                <th>{{ __('app.common.code') }}</th>
+                <th class="text-right">{{ __('app.common.qty') }}</th>
             </tr>
         </thead>
         <tbody>

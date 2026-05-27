@@ -14,10 +14,10 @@
 <div class="page-header">
     <div>
         <div class="page-title">Good Receipt</div>
-        <div class="page-subtitle">Material masuk dari supplier berdasarkan Pembelian Material</div>
+        <div class="page-subtitle">{{ __('app.good_receipt.subtitle') }}</div>
     </div>
     <a href="{{ route('good-receipts.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Terima Material Baru
+        <i class="fas fa-plus"></i> {{ __("app.good_receipt.add") }}
     </a>
 </div>
 
@@ -38,14 +38,14 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
                     <th>No. GR</th>
-                    <th>No. PO</th>
-                    <th>Tanggal Terima</th>
-                    <th>Penerima System</th>
-                    <th>PIC Penerima</th>
-                    <th>Catatan</th>
-                    <th width="90">Aksi</th>
+                    <th>{{ __('app.common.po_number') }}</th>
+                    <th>{{ __('app.good_receipt.receive_date') }}</th>
+                    <th>{{ __('app.good_receipt.system_receiver') }}</th>
+                    <th>{{ __('app.good_receipt.pic_receiver') }}</th>
+                    <th>{{ __('app.common.notes') }}</th>
+                    <th width="90">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,9 +85,9 @@
                     <td colspan="7">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-truck-ramp-box"></i>
-                            <h4>Belum Ada Penerimaan Material</h4>
+                            <h4>{{ __("app.good_receipt.empty_title") }}</h4>
                             <p>Mulai catat penerimaan Material dari Purchase Order</p>
-                            <a href="{{ route('good-receipts.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Terima Material Baru</a>
+                            <a href="{{ route('good-receipts.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.good_receipt.add") }}</a>
                         </div>
                     </td>
                 </tr>

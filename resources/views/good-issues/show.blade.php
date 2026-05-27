@@ -35,7 +35,7 @@
                     ['Target Produksi',  $goodIssue->part->part_name ?? '-'],
                     ['PIC Pemotong',     $goodIssue->pic->name ?? '-'],
                     ['Project',          $goodIssue->project->name ?? '-'],
-                    ['Tanggal Keluar',   $goodIssue->issue_date->format('d M Y')],
+                    [__('app.good_issue.issue_date'),   $goodIssue->issue_date->format('d M Y')],
                     ['Dikeluarkan Oleh', $goodIssue->issuer->name ?? '-'],
                 ];
             @endphp
@@ -62,10 +62,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="50">#</th>
+                        <th width="50">{{ __('app.common.no') }}</th>
                         <th>Item</th>
-                        <th>Gudang Asal</th>
-                        <th class="text-right">Qty Keluar</th>
+                        <th>{{ __("app.common.source_warehouse") }}</th>
+                        <th class="text-right">{{ __("app.good_issue.qty_out") }}</th>
                     </tr>
                 </thead>
                 <tbody>

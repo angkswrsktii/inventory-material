@@ -20,8 +20,8 @@
             <tr>
                 <th>No</th>
                 <th>Kode Material</th>
-                <th>Nama Material</th>
-                <th class="text-right">Qty Keluar</th>
+                <th>{{ __('app.material.name') }}</th>
+                <th class="text-right">{{ __("app.good_issue.qty_out") }}</th>
                 <th>Satuan</th>
             </tr>
         </thead>

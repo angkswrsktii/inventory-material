@@ -43,7 +43,7 @@
             <form action="{{ route('purchase-requests.revert-draft', $purchaseRequest) }}" method="POST" style="display:inline;">
                 @csrf
                 <button type="submit" class="btn btn-warning" onclick="return confirm('Kembalikan PR ini ke Draft agar bisa diedit?')">
-                    <i class="fas fa-undo"></i> Kembalikan ke Draft
+                    <i class="fas fa-undo"></i> {{ __("app.pr.revert_draft") }}
                 </button>
             </form>
         @endif
@@ -95,7 +95,7 @@
             </div>
             @if($purchaseRequest->notes)
             <div style="padding:12px 20px;">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Catatan Tambahan</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __("app.common.additional_notes") }}</div>
                 <div style="font-size:13px; color:var(--text);">{{ $purchaseRequest->notes }}</div>
             </div>
             @endif
@@ -111,10 +111,10 @@
             <table>
                 <thead>
                     <tr>
-                        <th width="50">#</th>
-                        <th>Kode</th>
+                        <th width="50">{{ __('app.common.no') }}</th>
+                        <th>{{ __('app.common.code') }}</th>
                         <th>Material</th>
-                        <th class="text-right">Qty</th>
+                        <th class="text-right">{{ __('app.common.qty') }}</th>
                         <th>Tujuan / Keperluan</th>
                     </tr>
                 </thead>

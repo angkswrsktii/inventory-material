@@ -6,7 +6,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Recycle Good Issue</div>
-        <div class="page-subtitle">Pengembalian material sisa atau NG dari Work Order (QC) ke Gudang</div>
+        <div class="page-subtitle">Pengembalian material sisa atau NG dari Work Order (QC) ke {{ __('app.warehouse.title') }}</div>
     </div>
     <a href="{{ route('return-gi.create') }}" class="btn btn-primary btn-sm">
         <i class="fas fa-plus"></i> Buat Recycle Baru
@@ -22,9 +22,9 @@
                 <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. Retur, No. WO, No. GI..."
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search'))
-                <a href="{{ route('return-gi.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('return-gi.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -40,7 +40,7 @@
                     <th>No. GI Asal</th>
                     <th>Tanggal Retur</th>
                     <th>Oleh</th>
-                    <th class="text-center" width="100">Aksi</th>
+                    <th class="text-center" width="100">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,7 +79,7 @@
                     <td colspan="6">
                         <div class="empty-state" style="padding: 60px 20px; text-align:center;">
                             <i class="fas fa-undo" style="font-size:24px; color:var(--text-dim); margin-bottom:10px;"></i>
-                            <h4>Belum Ada Recycle Good Issue</h4>
+                            <h4>{{ __("app.return_gi.empty_title") }}</h4>
                             <p style="color:var(--text-dim); font-size:13px;">Mulai catat pengembalian material dari WO (QC)</p>
                         </div>
                     </td>

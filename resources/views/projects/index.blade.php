@@ -9,7 +9,7 @@
         <div class="page-subtitle">Kelola daftar project yang digunakan pada sistem</div>
     </div>
     <a href="{{ route('projects.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Tambah Project Baru
+        <i class="fas fa-plus"></i> {{ __("app.project.add") }}
     </a>
 </div>
 
@@ -21,7 +21,7 @@
                 <tr>
                     <th width="60" class="text-center">No</th>
                     <th>Nama Project</th>
-                    <th width="120" class="text-center">Aksi</th>
+                    <th width="120" class="text-center">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>

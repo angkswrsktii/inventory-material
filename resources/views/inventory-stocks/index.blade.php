@@ -14,7 +14,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">Inventory Stock</div>
-        <div class="page-subtitle">Daftar stok Material di setiap gudang</div>
+        <div class="page-subtitle">{{ __('app.stock.subtitle') }}</div>
     </div>
 </div>
 
@@ -24,12 +24,12 @@
         <form method="GET" action="{{ route('inventory-stocks.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama material / part..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.stock.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search'))
-                <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('inventory-stocks.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -41,15 +41,15 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
                     <th>Item</th>
-                    <th>Tipe</th>
-                    <th>Gudang</th>
-                    <th class="text-right">Min. Stok</th>
-                    <th class="text-right">Maks. Stok</th>
-                    <th class="text-right">Stok Saat Ini</th>
-                    <th>Status</th>
-                    <th width="110">Aksi</th>
+                    <th>{{ __('app.common.type') }}</th>
+                    <th>{{ __('app.common.warehouse') }}</th>
+                    <th class="text-right">{{ __('app.stock.min_stock') }}</th>
+                    <th class="text-right">{{ __('app.stock.max_stock') }}</th>
+                    <th class="text-right">{{ __('app.stock.current') }}</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th width="110">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,7 +87,7 @@
                         @endif
                     </td>
                     <td>
-                        <a href="{{ route('inventory-stocks.show', $stock) }}" class="btn btn-ghost btn-sm" title="Detail Mutasi">
+                        <a href="{{ route('inventory-stocks.show', $stock) }}" class="btn btn-ghost btn-sm" title="{{ __('app.mutasi.history') }}">
                             <i class="fas fa-list"></i> Mutasi
                         </a>
                     </td>
@@ -97,8 +97,8 @@
                     <td colspan="9">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-boxes-stacked"></i>
-                            <h4>Belum Ada Stok Tersedia</h4>
-                            <p>Stok akan terbentuk otomatis ketika ada penerimaan Material atau pengeluaran Material.</p>
+                            <h4>{{ __('app.stock.empty_title') }}</h4>
+                            <p>{{ __('app.stock.empty_desc') }}</p>
                         </div>
                     </td>
                 </tr>
@@ -110,7 +110,7 @@
     @if($stocks->hasPages())
     <div style="padding: 16px 20px; border-top: 1px solid var(--border); display:flex; justify-content:space-between; align-items:center;">
         <div style="font-size:13px; color:var(--text-muted);">
-            Menampilkan {{ $stocks->firstItem() }}–{{ $stocks->lastItem() }} dari {{ $stocks->total() }} stok
+            {{ __('app.pagination.showing', ['from'=>$stocks->firstItem(), 'to'=>$stocks->lastItem(), 'total'=>$stocks->total(), 'entity'=>__('app.stock.entity')]) }}
         </div>
         <div style="display:flex; gap:6px;">
             @if($stocks->onFirstPage())

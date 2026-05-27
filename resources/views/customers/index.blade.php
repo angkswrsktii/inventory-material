@@ -5,11 +5,11 @@
 @section('content')
 <div class="page-header">
     <div>
-        <div class="page-title">Data Customer</div>
-        <div class="page-subtitle">Kelola daftar pelanggan atau klien perusahaan</div>
+        <div class="page-title">{{ __('app.customer.title') }}</div>
+        <div class="page-subtitle">{{ __('app.customer.subtitle') }}</div>
     </div>
     <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Tambah Customer
+        <i class="fas fa-plus"></i> {{ __("app.customer.add") }}
     </a>
 </div>
 
@@ -30,17 +30,17 @@
         <form method="GET" action="{{ route('customers.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama, telepon, email..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.supplier.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
             <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
-                <option value="">Semua Status</option>
-                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Aktif</option>
-                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Nonaktif</option>
+                <option value="">{{ __('app.common.all_status') }}</option>
+                <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>{{ __('app.common.active') }}</option>
+                <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>{{ __('app.common.inactive') }}</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search') || request('status') !== null)
-                <a href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('customers.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -51,13 +51,13 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
-                    <th>Nama Customer</th>
-                    <th>Kontak Person</th>
-                    <th>Telepon</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th width="120">Aksi</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
+                    <th>{{ __('app.customer.name') }}</th>
+                    <th>{{ __('app.supplier.contact_person') }}</th>
+                    <th>{{ __('app.supplier.phone') }}</th>
+                    <th>{{ __('app.supplier.email') }}</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th width="120">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,18 +75,18 @@
                     <td style="font-size:13px;color:var(--text-muted);">{{ $customer->email ?: '—' }}</td>
                     <td>
                         @if($customer->is_active)
-                            <span class="badge badge-success">Aktif</span>
+                            <span class="badge badge-success">{{ __('app.common.active') }}</span>
                         @else
-                            <span class="badge badge-danger">Nonaktif</span>
+                            <span class="badge badge-danger">{{ __('app.common.inactive') }}</span>
                         @endif
                     </td>
                     <td>
                         <div style="display:flex; gap:6px;">
                             <a href="{{ route('customers.show', $customer) }}" class="btn btn-ghost btn-sm" title="Detail"><i class="fas fa-eye"></i></a>
                             <a href="{{ route('customers.edit', $customer) }}" class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form action="{{ route('customers.destroy', $customer) }}" method="POST" onsubmit="return confirm('Hapus customer {{ $customer->name }}?')">
+                            <form action="{{ route('customers.destroy', $customer) }}" method="POST" onsubmit="return confirm('{{ __("app.common.confirm_delete") }}')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-ghost btn-sm" title="Hapus" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>
                         </div>
                     </td>
@@ -96,9 +96,9 @@
                     <td colspan="7">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-users"></i>
-                            <h4>Belum Ada Customer</h4>
+                            <h4>{{ __("app.customer.empty_title") }}</h4>
                             <p>Mulai tambah customer pertama kamu</p>
-                            <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Tambah Customer</a>
+                            <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.customer.add") }}</a>
                         </div>
                     </td>
                 </tr>

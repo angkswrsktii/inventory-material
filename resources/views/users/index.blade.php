@@ -10,7 +10,7 @@
         <div class="page-subtitle">Kelola akun pengguna sistem — Admin & Karyawan</div>
     </div>
     <a href="{{ route('users.create') }}" class="btn btn-primary">
-        <i class="fas fa-user-plus"></i> Tambah User
+        <i class="fas fa-user-plus"></i> {{ __("app.user.add") }}
     </a>
 </div>
 
@@ -30,7 +30,7 @@
             <i class="fas fa-warehouse"></i>
         </div>
         <div>
-            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Kepala Gudang</div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:var(--text);font-size:14px;">Kepala {{ __('app.warehouse.title') }}</div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Kelola stok, approval Material, purchase request & order</div>
         </div>
     </div>
@@ -67,11 +67,11 @@
             <thead>
                 <tr>
                     <th>Nama</th>
-                    <th>Email</th>
+                    <th>{{ __('app.supplier.email') }}</th>
                     <th>Role</th>
-                    <th>Status</th>
+                    <th>{{ __('app.common.status') }}</th>
                     <th>Dibuat</th>
-                    <th class="text-center">Aksi</th>
+                    <th class="text-center">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,7 +108,7 @@
                         @if($user->is_active)
                             <span class="badge badge-success"><i class="fas fa-circle" style="font-size:8px;"></i> Aktif</span>
                         @else
-                            <span class="badge badge-danger"><i class="fas fa-circle" style="font-size:8px;"></i> Nonaktif</span>
+                            <span class="badge badge-danger"><i class="fas fa-circle" style="font-size:8px;"></i> {{ __("app.common.inactive") }}</span>
                         @endif
                     </td>
                     <td style="font-size:12px;color:var(--text-muted);">{{ $user->created_at->format('d M Y') }}</td>
@@ -147,7 +147,7 @@
                     <td colspan="6">
                         <div class="empty-state">
                             <i class="fas fa-users"></i>
-                            <h4>Belum Ada User</h4>
+                            <h4>{{ __("app.user.empty_title") }}</h4>
                         </div>
                     </td>
                 </tr>

@@ -72,7 +72,7 @@
             </div>
             @if($purchaseOrder->notes)
             <div style="padding:12px 20px;">
-                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Catatan Tambahan</div>
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __("app.common.additional_notes") }}</div>
                 <div style="font-size:13px; color:var(--text);">{{ $purchaseOrder->notes }}</div>
             </div>
             @endif
@@ -89,9 +89,9 @@
                 <thead>
                     <tr>
                         <th width="40">#</th>
-                        <th>Kode</th>
+                        <th>{{ __('app.common.code') }}</th>
                         <th>Material</th>
-                        <th class="text-right">Qty</th>
+                        <th class="text-right">{{ __('app.common.qty') }}</th>
                         <th class="text-right">Harga Satuan</th>
                         <th class="text-right">Total Harga</th>
                     </tr>

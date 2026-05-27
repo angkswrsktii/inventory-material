@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="breadcrumb">
-    <a href="{{ route('suppliers.index') }}">Data Supplier</a>
+    <a href="{{ route('suppliers.index') }}">{{ __('app.supplier.title') }}</a>
     <span class="sep">/</span>
     <span>{{ $supplier->name }}</span>
 </div>
@@ -13,7 +13,7 @@
 <div class="page-header">
     <div>
         <div class="page-title">{{ $supplier->name }}</div>
-        <div class="page-subtitle">Detail informasi supplier / vendor</div>
+        <div class="page-subtitle">{{ __('app.supplier.detail_subtitle') }}</div>
     </div>
     <div style="display:flex; gap:10px;">
         @if(auth()->user()?->isAdmin())
@@ -29,17 +29,17 @@
     <div style="display:flex; flex-direction:column; gap:20px;">
         <div class="card">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-building" style="color:var(--accent);margin-right:8px;"></i>Informasi Perusahaan</span>
+                <span class="card-title"><i class="fas fa-building" style="color:var(--accent);margin-right:8px;"></i>{{ __('app.supplier.company_info') }}</span>
             </div>
             <div style="padding:0;">
                 @php
                     $rows = [
-                        ['Kode Supplier',   $supplier->code ?: '-'],
-                        ['Nama Perusahaan', $supplier->name],
-                        ['Kontak Person',   $supplier->contact_person ?: '-'],
-                        ['Telepon',         $supplier->phone ?: '-'],
+                        [{{ __('app.supplier.code') }},   $supplier->code ?: '-'],
+                        [{{ __('app.supplier.company_name') }}, $supplier->name],
+                        [{{ __('app.supplier.contact_person') }},   $supplier->contact_person ?: '-'],
+                        [{{ __('app.supplier.phone') }},         $supplier->phone ?: '-'],
                         ['Email',           $supplier->email ?: '-'],
-                        ['Status',          $supplier->is_active ? 'Aktif' : 'Nonaktif'],
+                        [{{ __('app.common.status') }},          $supplier->is_active ? {{ __('app.common.active') }} : {{ __('app.common.inactive') }}],
                     ];
                 @endphp
                 @foreach($rows as [$label, $value])
@@ -50,7 +50,7 @@
                 </div>
                 @endforeach
                 <div style="padding:12px 20px;">
-                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">Alamat</div>
+                    <div style="font-size:12px; color:var(--text-muted); margin-bottom:5px;">{{ __('app.supplier.address') }}</div>
                     <div style="font-size:13px; color:var(--text);">{{ $supplier->address ?: '-' }}</div>
                 </div>
             </div>
@@ -62,16 +62,16 @@
     <!-- PO History -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent-2);margin-right:8px;"></i>Riwayat Purchase Order</span>
+            <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent-2);margin-right:8px;"></i>{{ __('app.supplier.po_history') }}</span>
         </div>
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
-                        <th>Tanggal PO</th>
-                        <th>No. PO</th>
-                        <th>Total Item</th>
-                        <th>Status</th>
+                        <th>{{ __('app.supplier.po_date') }}</th>
+                        <th>{{ __('app.common.po_number') }}</th>
+                        <th>{{ __('app.common.total_item') }}</th>
+                        <th>{{ __('app.common.status') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -93,8 +93,8 @@
                         <td colspan="4">
                             <div class="empty-state" style="padding:40px;">
                                 <i class="fas fa-inbox"></i>
-                                <h4>Belum Ada PO</h4>
-                                <p>Supplier ini belum memiliki riwayat Purchase Order.</p>
+                                <h4>{{ __('app.supplier.no_po') }}</h4>
+                                <p>{{ __('app.supplier.no_po_desc') }}</p>
                             </div>
                         </td>
                     </tr>

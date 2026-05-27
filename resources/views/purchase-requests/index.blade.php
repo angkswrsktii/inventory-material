@@ -14,10 +14,10 @@
 <div class="page-header">
     <div>
         <div class="page-title">Purchase Request</div>
-        <div class="page-subtitle">Daftar permintaan pembelian material</div>
+        <div class="page-subtitle">{{ __('app.pr.subtitle') }}</div>
     </div>
     <a href="{{ route('purchase-requests.create') }}" class="btn btn-primary btn-sm">
-        <i class="fas fa-plus"></i> Buat PR Baru
+        <i class="fas fa-plus"></i> {{ __("app.pr.add") }}
     </a>
 </div>
 
@@ -27,20 +27,20 @@
         <form method="GET" action="{{ route('purchase-requests.index') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
             <div style="flex:1; min-width:200px; position:relative;">
                 <i class="fas fa-search" style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px;"></i>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. PR..."
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="{{ __('app.pr.search_placeholder') }}"
                     style="width:100%; background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px 8px 34px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
             </div>
             <select name="status" style="background:var(--surface-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:var(--radius-sm); font-family:inherit; font-size:13px; outline:none;">
-                <option value="">Semua Status</option>
+                <option value="">{{ __('app.common.all_status') }}</option>
                 <option value="draft" {{ request('status') === 'draft' ? 'selected' : '' }}>Draft</option>
                 <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>Pending</option>
                 <option value="approved" {{ request('status') === 'approved' ? 'selected' : '' }}>Approved</option>
                 <option value="rejected" {{ request('status') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                 <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed (PO)</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> Cari</button>
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request('search') || request('status'))
-                <a href="{{ route('purchase-requests.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> Reset</a>
+                <a href="{{ route('purchase-requests.index') }}" class="btn btn-ghost btn-sm"><i class="fas fa-times"></i> {{ __('app.btn.reset') }}</a>
             @endif
         </form>
     </div>
@@ -52,13 +52,13 @@
         <table>
             <thead>
                 <tr>
-                    <th width="50">#</th>
+                    <th width="50">{{ __('app.common.no') }}</th>
                     <th>No. PR</th>
-                    <th>Tanggal PR</th>
-                    <th>Dibuat Oleh</th>
-                    <th>Status</th>
-                    <th>Catatan</th>
-                    <th width="110">Aksi</th>
+                    <th>{{ __('app.pr.date') }}</th>
+                    <th>{{ __('app.common.created_by') }}</th>
+                    <th>{{ __('app.common.status') }}</th>
+                    <th>{{ __('app.common.notes') }}</th>
+                    <th width="110">{{ __('app.common.action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -103,7 +103,7 @@
                             @if(in_array($pr->status, ['draft', 'rejected']))
                             <form method="POST" action="{{ route('purchase-requests.destroy', $pr) }}" onsubmit="return confirm('Yakin hapus PR ini?')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-ghost btn-sm" title="Hapus" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>
                             @endif
                         </div>
@@ -114,9 +114,9 @@
                     <td colspan="7">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-file-invoice"></i>
-                            <h4>Belum Ada Purchase Request</h4>
+                            <h4>{{ __("app.pr.empty_title") }}</h4>
                             <p>Mulai buat permintaan pembelian pertama kamu</p>
-                            <a href="{{ route('purchase-requests.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> Buat PR Baru</a>
+                            <a href="{{ route('purchase-requests.create') }}" class="btn btn-primary btn-sm" style="margin-top:12px;"><i class="fas fa-plus"></i> {{ __("app.pr.add") }}</a>
                         </div>
                     </td>
                 </tr>

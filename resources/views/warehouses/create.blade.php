@@ -1,17 +1,17 @@
 @extends('layouts.app')
-@section('title', 'Tambah Gudang')
+@section('title', __('app.warehouse.add'))
 @section('topbar-title', __('app.nav.master_data') . ' — ' . __('app.nav.data_warehouse'))
 
 @section('content')
 <div class="breadcrumb">
     <a href="{{ route('warehouses.index') }}">{{ __('app.nav.data_warehouse') }}</a>
     <span class="sep">/</span>
-    <span>Tambah Gudang</span>
+    <span>{{ __('app.warehouse.add') }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Tambah Gudang Baru</div>
+        <div class="page-title">{{ __("app.warehouse.create_title") }}</div>
         <div class="page-subtitle">Isi form berikut untuk mendaftarkan gudang baru</div>
     </div>
 </div>
@@ -22,19 +22,19 @@
 
         <div class="card" style="margin-bottom:20px;">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-warehouse" style="color:var(--accent-2);margin-right:8px;"></i>Informasi Gudang</span>
+                <span class="card-title"><i class="fas fa-warehouse" style="color:var(--accent-2);margin-right:8px;"></i>{{ __("app.warehouse.info") }}</span>
             </div>
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Kode Gudang <span class="required">*</span></label>
+                        <label class="form-label">{{ __("app.warehouse.code") }} <span class="required">*</span></label>
                         <input type="text" name="code" class="form-control" value="{{ old('code') }}"
                             placeholder="Contoh: WH04" style="text-transform:uppercase;" required>
                         <div class="form-hint">Kode unik untuk identifikasi gudang (maks. 20 karakter)</div>
                         @error('code') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Nama Gudang <span class="required">*</span></label>
+                        <label class="form-label">{{ __("app.warehouse.name") }} <span class="required">*</span></label>
                         <input type="text" name="name" class="form-control" value="{{ old('name') }}"
                             placeholder="Contoh: Gudang 4" required>
                         @error('name') <div class="form-error">{{ $message }}</div> @enderror
@@ -50,8 +50,8 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Simpan Gudang</button>
-            <a href="{{ route('warehouses.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> Batal</a>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> {{ __("app.btn.save") }}</button>
+            <a href="{{ route('warehouses.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
 </div>
