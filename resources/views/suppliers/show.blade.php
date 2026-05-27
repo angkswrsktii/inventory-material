@@ -34,6 +34,7 @@
             <div style="padding:0;">
                 @php
                     $rows = [
+                        ['Kode Supplier',   $supplier->code ?: '-'],
                         ['Nama Perusahaan', $supplier->name],
                         ['Kontak Person',   $supplier->contact_person ?: '-'],
                         ['Telepon',         $supplier->phone ?: '-'],

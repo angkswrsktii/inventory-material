@@ -27,11 +27,20 @@
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
+                        <label class="form-label">Kode Supplier <span class="required">*</span></label>
+                        <input type="text" name="code" class="form-control" value="{{ old('code') }}"
+                            placeholder="Contoh: S01" maxlength="8" style="text-transform:uppercase;" required>
+                        <div class="form-hint">Kode unik supplier, maks. 8 karakter</div>
+                        @error('code') <div class="form-error">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">Nama Perusahaan <span class="required">*</span></label>
                         <input type="text" name="name" class="form-control" value="{{ old('name') }}" placeholder="PT. Nama Supplier" required>
                         @error('name') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
-                    <div class="form-group">
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="flex:0 0 100%;">
                         <label class="form-label">Kontak Person (PIC)</label>
                         <input type="text" name="contact_person" class="form-control" value="{{ old('contact_person') }}" placeholder="Nama PIC">
                     </div>

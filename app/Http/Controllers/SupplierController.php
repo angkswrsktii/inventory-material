@@ -9,12 +9,12 @@ class SupplierController extends Controller
 {
     public function index(Request $request)
     {
-        // Hapus with('creator') karena relasinya tidak ada
         $query = Supplier::orderByDesc('id');
 
         if ($request->search) {
             $query->where(function ($q) use ($request) {
                 $q->where('name', 'like', "%{$request->search}%")
+                    ->orWhere('code', 'like', "%{$request->search}%")
                     ->orWhere('phone', 'like', "%{$request->search}%")
                     ->orWhere('email', 'like', "%{$request->search}%");
             });
@@ -37,16 +37,17 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'code'           => 'required|string|max:8|unique:m_suppliers,code',
+            'name'           => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
-            'email' => 'nullable|email|max:255',
-            'address' => 'nullable|string',
+            'phone'          => 'nullable|string|max:50',
+            'email'          => 'nullable|email|max:255',
+            'address'        => 'nullable|string',
         ]);
 
         Supplier::create([
             ...$request->only([
-                'name', 'contact_person', 'phone', 'email', 'address',
+                'code', 'name', 'contact_person', 'phone', 'email', 'address',
             ]),
             'is_active' => true,
         ]);
@@ -70,15 +71,16 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'code'           => 'required|string|max:8|unique:m_suppliers,code,' . $supplier->id,
+            'name'           => 'required|string|max:255',
             'contact_person' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:50',
-            'email' => 'nullable|email|max:255',
-            'address' => 'nullable|string',
+            'phone'          => 'nullable|string|max:50',
+            'email'          => 'nullable|email|max:255',
+            'address'        => 'nullable|string',
         ]);
 
         $supplier->update($request->only([
-            'name', 'contact_person', 'phone', 'email', 'address',
+            'code', 'name', 'contact_person', 'phone', 'email', 'address',
         ]));
 
         return redirect()->route('suppliers.index')

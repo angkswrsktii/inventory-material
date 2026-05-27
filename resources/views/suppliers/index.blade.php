@@ -52,6 +52,7 @@
             <thead>
                 <tr>
                     <th width="50">#</th>
+                    <th width="90">Kode</th>
                     <th>Nama Supplier</th>
                     <th>Kontak Person</th>
                     <th>Telepon</th>
@@ -64,6 +65,11 @@
                 @forelse($suppliers as $supplier)
                 <tr>
                     <td style="color:var(--text-muted);">{{ $suppliers->firstItem() + $loop->index }}</td>
+                    <td>
+                        <span style="font-family:monospace; font-size:12px; background:var(--surface-2); padding:2px 8px; border-radius:4px; border:1px solid var(--border);">
+                            {{ $supplier->code ?: '—' }}
+                        </span>
+                    </td>
                     <td>
                         <div style="font-weight:600;">{{ $supplier->name }}</div>
                         @if($supplier->address)
@@ -93,7 +99,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7">
+                    <td colspan="8">
                         <div class="empty-state" style="padding: 60px 20px;">
                             <i class="fas fa-building"></i>
                             <h4>Belum Ada Supplier</h4>
