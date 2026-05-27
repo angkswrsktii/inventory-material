@@ -11,6 +11,7 @@ return [
         'data_part'         => 'Komponen',
         'data_supplier'     => 'Pemasok',
         'data_customer'     => 'Pelanggan',
+        'data_warehouse'    => 'Gudang',
         'data_project'      => 'Proyek',
         'purchasing'        => 'Pembelian',
         'purchase_request'  => 'Permintaan Material',

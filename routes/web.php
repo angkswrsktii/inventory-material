@@ -17,6 +17,7 @@ use App\Http\Controllers\GoodReceiptController;
 use App\Http\Controllers\InventoryStockController;
 use App\Http\Controllers\MutasiController;
 use App\Http\Controllers\ReturnGiController;
+use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -108,6 +109,10 @@ Route::middleware(['auth'])->group(function () {
     // ── CUSTOMERS ─────────────────────────────────────────
     Route::resource('customers', CustomerController::class);
     Route::patch('customers/{customer}/toggle-active', [CustomerController::class, 'toggleActive'])->name('customers.toggle-active');
+
+    // ── WAREHOUSES ────────────────────────────────────────
+    Route::resource('warehouses', WarehouseController::class);
+    Route::patch('warehouses/{warehouse}/toggle-active', [WarehouseController::class, 'toggleActive'])->name('warehouses.toggle-active');
 
     // ── QC Produksi ──────────────────────────────────────
     Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');

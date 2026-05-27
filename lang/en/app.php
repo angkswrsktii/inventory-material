@@ -11,6 +11,7 @@ return [
         'data_part'         => 'Part',
         'data_supplier'     => 'Vendor',
         'data_customer'     => 'Customer',
+        'data_warehouse'    => 'Warehouse',
         'data_project'      => 'Projects',
         'purchasing'        => 'Procurement',
         'purchase_request'  => 'Purchase Request',

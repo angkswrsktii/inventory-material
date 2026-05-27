@@ -1088,6 +1088,10 @@
                 <i class="fas fa-users"></i> <span>{{ __('app.nav.data_customer') }}</span>
             </a>
 
+            <a href="{{ route('warehouses.index') }}" class="nav-item {{ request()->routeIs('warehouses.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_warehouse') }}">
+                <i class="fas fa-warehouse"></i> <span>{{ __('app.nav.data_warehouse') }}</span>
+            </a>
+
             <a href="{{ route('projects.index') }}" class="nav-item {{ request()->routeIs('projects.*') ? 'active' : '' }}" data-label="{{ __('app.nav.data_project') }}">
                 <i class="fas fa-diagram-project"></i> <span>{{ __('app.nav.data_project') }}</span>
             </a>
