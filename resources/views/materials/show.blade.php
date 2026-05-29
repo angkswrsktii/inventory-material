@@ -15,7 +15,7 @@
         <div class="page-title">{{ $material->name }}</div>
         <div class="page-subtitle">
             <span class="mono" style="color:var(--accent);">{{ $material->code }}</span>
-            &nbsp;·&nbsp; {{ $material->supplier->name ?? '{{ __('app.material.no_supplier') }}' }}
+            &nbsp;·&nbsp; {{ $material->supplier->name ?? __('app.material.no_supplier') }}
         </div>
     </div>
     <div style="display:flex; gap:10px;">
@@ -36,13 +36,13 @@
         <div style="padding:0;">
             @php
                 $rows = [
-                    [{{ __('app.material.code') }},      $material->code],
-                    [{{ __('app.material.name') }},    $material->name],
-                    [{{ __('app.material.spec') }},      $material->specification ?: '-'],
-                    [{{ __('app.common.unit') }},           $material->unit],
+                    [__('app.material.code'),      $material->code],
+                    [__('app.material.name'),    $material->name],
+                    [__('app.material.spec'),      $material->specification ?: '-'],
+                    [__('app.common.unit'),           $material->unit],
                     ['Supplier',         $material->supplier->name ?? '-'],
-                    [{{ __('app.material.length') }}, $material->panjang_material ? number_format($material->panjang_material, 2).' mm' : '-'],
-                    [{{ __('app.common.status') }},           $material->is_active ? {{ __('app.common.active') }} : 'Non-Aktif'],
+                    [__('app.material.length'), $material->panjang_material ? number_format($material->panjang_material, 2).' mm' : '-'],
+                    [__('app.common.status'),           $material->is_active ? __('app.common.active') : 'Non-Aktif'],
                 ];
             @endphp
             @foreach($rows as [$label, $value])

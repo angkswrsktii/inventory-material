@@ -30,12 +30,12 @@
         <div style="padding:0;">
             @php
                 $rows = [
-                    [{{ __('app.common.warehouse') }},           $stock->warehouse->name ?? '-'],
-                    [{{ __('app.common.item_name') }},        $stock->material->name ?? $stock->part->part_name ?? '-'],
-                    [{{ __('app.common.item_code') }},        $stock->material->code ?? $stock->part->part_no ?? '-'],
-                    [{{ __('app.stock.min_stock') }},     number_format($stock->minimum_stock, 2)],
-                    [{{ __('app.stock.max_stock') }},    $stock->max_stock ? number_format($stock->max_stock, 2) : '-'],
-                    [{{ __('app.stock.current') }},    number_format($stock->current_stock, 2)],
+                    [__('app.common.warehouse'),           $stock->warehouse->name ?? '-'],
+                    [__('app.common.item_name'),        $stock->material->name ?? $stock->part->part_name ?? '-'],
+                    [__('app.common.item_code'),        $stock->material->code ?? $stock->part->part_no ?? '-'],
+                    [__('app.stock.min_stock'),     number_format($stock->minimum_stock, 2)],
+                    [__('app.stock.max_stock'),    $stock->max_stock ? number_format($stock->max_stock, 2) : '-'],
+                    [__('app.stock.current'),    number_format($stock->current_stock, 2)],
                 ];
             @endphp
             @foreach($rows as [$label, $value])

@@ -34,12 +34,12 @@
             <div style="padding:0;">
                 @php
                     $rows = [
-                        [{{ __('app.supplier.code') }},   $supplier->code ?: '-'],
-                        [{{ __('app.supplier.company_name') }}, $supplier->name],
-                        [{{ __('app.supplier.contact_person') }},   $supplier->contact_person ?: '-'],
-                        [{{ __('app.supplier.phone') }},         $supplier->phone ?: '-'],
+                        [__('app.supplier.code'),   $supplier->code ?: '-'],
+                        [__('app.supplier.company_name'), $supplier->name],
+                        [__('app.supplier.contact_person'),   $supplier->contact_person ?: '-'],
+                        [__('app.supplier.phone'),         $supplier->phone ?: '-'],
                         ['Email',           $supplier->email ?: '-'],
-                        [{{ __('app.common.status') }},          $supplier->is_active ? {{ __('app.common.active') }} : {{ __('app.common.inactive') }}],
+                        [__('app.common.status'),          $supplier->is_active ? __('app.common.active') : __('app.common.inactive')],
                     ];
                 @endphp
                 @foreach($rows as [$label, $value])

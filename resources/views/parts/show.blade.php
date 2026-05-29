@@ -41,7 +41,7 @@
                     ['Customer',         $part->customer->name ?? '-'],
                     ['Panjang Part',     $part->panjang_part ? number_format($part->panjang_part, 2).' mm' : '-'],
                     ['B/Q',              $part->bq ? number_format($part->bq, 4) : '-'],
-                    [{{ __('app.common.status') }},           $part->is_active ? {{ __('app.common.active') }} : 'Non-Aktif'],
+                    [__('app.common.status'),           $part->is_active ? __('app.common.active') : 'Non-Aktif'],
                 ];
             @endphp
             @foreach($rows as [$label, $value])

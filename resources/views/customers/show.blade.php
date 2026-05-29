@@ -35,10 +35,10 @@
                 @php
                     $rows = [
                         ['Nama Customer',   $customer->name],
-                        [{{ __('app.supplier.contact_person') }},   $customer->contact_person ?: '-'],
-                        [{{ __('app.supplier.phone') }},         $customer->phone ?: '-'],
+                        [__('app.supplier.contact_person'),   $customer->contact_person ?: '-'],
+                        [__('app.supplier.phone'),         $customer->phone ?: '-'],
                         ['Email',           $customer->email ?: '-'],
-                        [{{ __('app.common.status') }},          $customer->is_active ? {{ __('app.common.active') }} : {{ __('app.common.inactive') }}],
+                        [__('app.common.status'),          $customer->is_active ? __('app.common.active') : __('app.common.inactive')],
                     ];
                 @endphp
                 @foreach($rows as [$label, $value])
