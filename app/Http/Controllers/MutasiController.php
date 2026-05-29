@@ -12,21 +12,19 @@ class MutasiController extends Controller
         $query = Mutasi::with(['warehouse', 'material', 'part', 'creator', 'reference'])->orderByDesc('id');
 
         if ($request->search) {
-            $query->whereHas('material', function($q) use ($request) {
-                $q->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('code', 'like', "%{$request->search}%");
-            })->orWhereHas('part', function($q) use ($request) {
-                $q->where('part_name', 'like', "%{$request->search}%")
-                  ->orWhere('part_no', 'like', "%{$request->search}%");
-            })->orWhere('notes', 'like', "%{$request->search}%");
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('material', function ($q2) use ($request) {
+                    $q2->where('name', 'like', "%{$request->search}%")
+                       ->orWhere('code', 'like', "%{$request->search}%");
+                })->orWhereHas('part', function ($q2) use ($request) {
+                    $q2->where('part_name', 'like', "%{$request->search}%")
+                       ->orWhere('part_no', 'like', "%{$request->search}%");
+                })->orWhere('notes', 'like', "%{$request->search}%");
+            });
         }
 
         if ($request->type) {
-            if ($request->type == 'in_return') {
-                $query->where('type', 'in')->where('reference_type', 'App\Models\ReturnGi');
-            } else {
-                $query->where('type', $request->type)->where('reference_type', '!=', 'App\Models\ReturnGi');
-            }
+            $query->where('type', $request->type);
         }
 
         $mutasis = $query->paginate(20)->withQueryString();

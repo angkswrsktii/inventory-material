@@ -1139,20 +1139,24 @@
             </a>
 
             <div class="nav-section">{{ __('app.nav.inventory') }}</div>
+            @if(!auth()->user()->isKaryawan())
             <a href="{{ route('goods-adjustment.index') }}" class="nav-item {{ request()->routeIs('goods-adjustment.*') ? 'active' : '' }}" data-label="{{ __('app.nav.goods_adjustment') }}">
                 <i class="fas fa-sliders"></i> <span>{{ __('app.nav.goods_adjustment') }}</span>
             </a>
+            @endif
             <a href="{{ route('inventory-stocks.index') }}" class="nav-item {{ request()->routeIs('inventory-stocks.*') ? 'active' : '' }}" data-label="{{ __('app.nav.inventory_stock') }}">
                 <i class="fas fa-boxes-stacked"></i> <span>{{ __('app.nav.inventory_stock') }}</span>
             </a>
-             <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}" data-label="{{ __('app.nav.mutation_history') }}">
+            <a href="{{ route('mutasi.index') }}" class="nav-item {{ request()->routeIs('mutasi.*') ? 'active' : '' }}" data-label="{{ __('app.nav.mutation_history') }}">
                 <i class="fas fa-clock-rotate-left"></i> <span>{{ __('app.nav.mutation_history') }}</span>
             </a>
 
+            @if(!auth()->user()->isKaryawan())
             <div class="nav-section">{{ __('app.nav.work_order') }}</div>
             <a href="{{ route('production-qc.index') }}" class="nav-item {{ request()->routeIs('production-qc.*') ? 'active' : '' }}" data-label="{{ __('app.nav.quality_check') }}">
                 <i class="fas fa-clipboard-check"></i> <span>{{ __('app.nav.quality_check') }}</span>
             </a>
+            @endif
 
 
             {{-- Administrasi: hanya Pimpinan & Admin --}}
@@ -1234,6 +1238,121 @@
     </div>
 
     @stack('scripts')
+
+    {{-- ── Global Confirm Modal ─────────────────────────── --}}
+    <div id="appModal" style="display:none; position:fixed; inset:0; z-index:99999; align-items:center; justify-content:center; padding:20px;">
+        <div id="appModalBackdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px);"></div>
+        <div style="position:relative; background:var(--surface-1); border:1px solid var(--border); border-radius:18px;
+                    padding:36px 32px 28px; max-width:420px; width:100%;
+                    box-shadow:0 24px 64px rgba(0,0,0,0.55); animation:modalIn .18s ease;">
+            <div style="text-align:center; margin-bottom:18px;">
+                <span id="appModalIconWrap" style="display:inline-flex; align-items:center; justify-content:center;
+                      width:60px; height:60px; border-radius:50%; background:rgba(239,68,68,0.12); font-size:26px; color:var(--danger);">
+                    <i id="appModalIcon" class="fas fa-triangle-exclamation"></i>
+                </span>
+            </div>
+            <h3 id="appModalTitle" style="text-align:center; font-size:17px; font-weight:700; color:var(--text); margin-bottom:10px;"></h3>
+            <p  id="appModalMessage" style="text-align:center; font-size:13px; color:var(--text-muted); margin-bottom:28px; line-height:1.6;"></p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button id="appModalCancelBtn" class="btn btn-ghost" style="min-width:110px; font-size:14px;"></button>
+                <button id="appModalConfirmBtn" class="btn btn-danger" style="min-width:110px; font-size:14px;"></button>
+            </div>
+        </div>
+    </div>
+    <style>
+        @keyframes modalIn {
+            from { opacity:0; transform:scale(.94) translateY(10px); }
+            to   { opacity:1; transform:scale(1)   translateY(0); }
+        }
+    </style>
+
+    <script>
+        // ── Global Confirm Modal ──────────────────────────
+        let _appModalCallback = null;
+
+        function openAppModal(opts) {
+            document.getElementById('appModalTitle').textContent      = opts.title   || '';
+            document.getElementById('appModalMessage').textContent    = opts.message || '';
+            document.getElementById('appModalCancelBtn').textContent  = opts.cancel  || '{{ __("app.btn.cancel") }}';
+            const okBtn = document.getElementById('appModalConfirmBtn');
+            okBtn.textContent  = opts.ok    || '{{ __("app.btn.confirm") }}';
+            okBtn.className    = 'btn ' + (opts.okClass || 'btn-danger');
+            const iconEl = document.getElementById('appModalIcon');
+            const iconWrap = document.getElementById('appModalIconWrap');
+            iconEl.className   = 'fas ' + (opts.icon || 'fa-triangle-exclamation');
+            iconWrap.style.background = opts.iconBg || 'rgba(239,68,68,0.12)';
+            iconWrap.style.color      = opts.iconColor || 'var(--danger)';
+            _appModalCallback  = opts.onConfirm || null;
+            const modal = document.getElementById('appModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAppModal() {
+            document.getElementById('appModal').style.display = 'none';
+            document.body.style.overflow = '';
+            _appModalCallback = null;
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('appModalConfirmBtn').addEventListener('click', function () {
+                const cb = _appModalCallback; // simpan dulu sebelum closeAppModal null-kan
+                closeAppModal();
+                if (cb) cb();
+            });
+            document.getElementById('appModalCancelBtn').addEventListener('click', closeAppModal);
+            document.getElementById('appModalBackdrop').addEventListener('click', closeAppModal);
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeAppModal();
+            });
+
+            // ── Handle forms with data-confirm ────────────
+            document.body.addEventListener('submit', function (e) {
+                const form = e.target;
+                if (!form.hasAttribute('data-confirm')) return;
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                const msg       = form.getAttribute('data-confirm');
+                const title     = form.getAttribute('data-confirm-title')  || '{{ __("app.common.confirm_delete") }}';
+                const okText    = form.getAttribute('data-confirm-ok')     || '{{ __("app.btn.delete") }}';
+                const okClass   = form.getAttribute('data-confirm-class')  || 'btn-danger';
+                const icon      = form.getAttribute('data-confirm-icon')   || 'fa-trash';
+                openAppModal({
+                    title, message: msg, ok: okText, okClass, icon,
+                    onConfirm: function () {
+                        // Hapus atribut agar submit berikutnya tidak ditahan lagi
+                        form.removeAttribute('data-confirm');
+                        form.submit();
+                    }
+                });
+            }, true);
+
+            // ── Handle buttons/links with data-confirm-btn ─
+            document.body.addEventListener('click', function (e) {
+                const btn = e.target.closest('[data-confirm-btn]');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                // Capture referensi form sekarang, bukan di dalam closure async
+                const targetForm = btn.closest('form');
+                openAppModal({
+                    title:     btn.getAttribute('data-confirm-title')  || '{{ __("app.btn.confirm") }}',
+                    message:   btn.getAttribute('data-confirm-btn'),
+                    ok:        btn.getAttribute('data-confirm-ok')     || '{{ __("app.btn.confirm") }}',
+                    okClass:   btn.getAttribute('data-confirm-class')  || 'btn-primary',
+                    icon:      btn.getAttribute('data-confirm-icon')   || 'fa-circle-question',
+                    iconBg:    btn.getAttribute('data-confirm-iconbg') || 'rgba(99,102,241,0.12)',
+                    iconColor: btn.getAttribute('data-confirm-iconc')  || 'var(--accent)',
+                    onConfirm: function () {
+                        if (targetForm) {
+                            targetForm.removeAttribute('data-confirm');
+                            targetForm.submit();
+                        }
+                    }
+                });
+            }, true);
+        });
+    </script>
 
     <script>
         // ── Theme Toggle ──────────────────────────────────

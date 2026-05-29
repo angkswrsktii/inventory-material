@@ -86,7 +86,7 @@
                             </a>
                             @if(auth()->user()?->isAdmin() && $w->status !== 'approved')
                             <form action="{{ route('withdrawal-cards.destroy', $w) }}" method="POST"
-                                  onsubmit="return confirm('Yakin hapus dokumen ini?')">
+                                  data-confirm="{{ __('app.common.confirm_delete') }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-xs btn-danger">
                                     <i class="fas fa-trash"></i>

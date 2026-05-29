@@ -4,46 +4,49 @@
 
 @section('content')
 <div class="breadcrumb">
-    <a href="{{ route('good-receipts.index') }}">Good Receipt</a>
+    <a href="{{ route('good-receipts.index') }}">{{ __('app.good_receipt.title') }}</a>
     <span class="sep">/</span>
     <span>{{ __("app.btn.add") }}</span>
 </div>
 
 <div class="page-header">
     <div>
-        <div class="page-title">Penerimaan Material</div>
-        <div class="page-subtitle">Catat penerimaan Material dari supplier berdasarkan Purchase Order</div>
+        <div class="page-title">{{ __('app.good_receipt.title') }}</div>
+        <div class="page-subtitle">{{ __('app.good_receipt.subtitle') }}</div>
     </div>
 </div>
 
-<div style="max-width:900px;">
+<div style="max-width:980px;">
     <form action="{{ route('good-receipts.store') }}" method="POST">
         @csrf
 
         <div class="card" style="margin-bottom:20px;">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent);margin-right:8px;"></i>Informasi Penerimaan</span>
+                <span class="card-title"><i class="fas fa-file-invoice" style="color:var(--accent);margin-right:8px;"></i>{{ __('app.good_receipt.info_header') }}</span>
             </div>
             <div class="card-body">
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">No. GR <span class="required">*</span></label>
+                        <label class="form-label">{{ __('app.good_receipt.no_gr') }} <span class="required">*</span></label>
                         <input type="text" name="gr_number" class="form-control" value="{{ old('gr_number', $autoNumber) }}" readonly style="background:var(--surface-2);">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tanggal Terima <span class="required">*</span></label>
-                        <input type="date" name="receipt_date" class="form-control" value="{{ old('receipt_date', date('Y-m-d')) }}" required>
+                        <label class="form-label">{{ __('app.good_receipt.receive_date') }} <span class="required">*</span></label>
+                        <input type="date" id="receiptDate" name="receipt_date" class="form-control" value="{{ old('receipt_date', date('Y-m-d')) }}" required>
                         @error('receipt_date') <div class="form-error">{{ $message }}</div> @enderror
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">Purchase Order <span class="required">*</span></label>
+                        <label class="form-label">{{ __('app.common.po_number') }} <span class="required">*</span></label>
                         <select name="t_purchase_order_id" id="poSelect" class="form-control" required>
-                            <option value="">-- Pilih PO --</option>
+                            <option value="">-- {{ __('app.common.po_number') }} --</option>
                             @foreach($purchaseOrders as $po)
-                                <option value="{{ $po->id }}" data-items="{{ json_encode($po->items) }}" {{ old('t_purchase_order_id') == $po->id ? 'selected' : '' }}>
-                                    {{ $po->po_number }} - {{ $po->supplier->name ?? 'Unknown Supplier' }}
+                                <option value="{{ $po->id }}"
+                                    data-items="{{ json_encode($po->items) }}"
+                                    data-supplier-code="{{ $po->supplier->code ?? '' }}"
+                                    {{ old('t_purchase_order_id') == $po->id ? 'selected' : '' }}>
+                                    {{ $po->po_number }} - {{ $po->supplier->name ?? '-' }}
                                 </option>
                             @endforeach
                         </select>
@@ -52,7 +55,7 @@
                     <div class="form-group">
                         <label class="form-label">{{ __("app.warehouse.title") }} <span class="required">*</span></label>
                         <select name="m_warehouse_id" class="form-control" required>
-                            <option value="">-- Pilih Gudang --</option>
+                            <option value="">-- {{ __('app.common.warehouse') }} --</option>
                             @foreach($warehouses as $wh)
                                 <option value="{{ $wh->id }}" {{ old('m_warehouse_id') == $wh->id ? 'selected' : '' }}>
                                     {{ $wh->name }}
@@ -64,9 +67,9 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label class="form-label">PIC Penerima <span class="required">*</span></label>
+                        <label class="form-label">{{ __('app.good_receipt.pic_receiver') }} <span class="required">*</span></label>
                         <select name="m_pic_id" class="form-control" required>
-                            <option value="">-- Pilih PIC --</option>
+                            <option value="">-- {{ __('app.good_receipt.pic_receiver') }} --</option>
                             @foreach($users as $u)
                                 @if(auth()->user()->isKaryawan() && auth()->id() === $u->id)
                                     <option value="{{ $u->id }}" selected disabled>{{ $u->name }} ({{ $u->role_label }})</option>
@@ -81,7 +84,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">{{ __("app.common.additional_notes") }}</label>
-                        <input type="text" name="notes" class="form-control" value="{{ old('notes') }}" placeholder="Opsional">
+                        <input type="text" name="notes" class="form-control" value="{{ old('notes') }}" placeholder="{{ __('app.common.additional_notes') }}">
                     </div>
                 </div>
             </div>
@@ -89,21 +92,23 @@
 
         <div class="card" style="margin-bottom:20px;" id="itemsCard" style="display:none;">
             <div class="card-header">
-                <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--warning);margin-right:8px;"></i>Item Diterima</span>
+                <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--warning);margin-right:8px;"></i>{{ __('app.good_receipt.items_title') }}</span>
             </div>
             <div class="table-wrap">
                 <table id="itemsTable">
                     <thead>
                         <tr>
-                            <th>Material/Part</th>
-                            <th class="text-right">Qty PO</th>
-                            <th class="text-right" width="150">Qty Diterima <span class="required">*</span></th>
-                            <th>Kondisi</th>
+                            <th>{{ __('app.common.item_name') }}</th>
+                            <th width="160">{{ __('app.good_receipt.col_load_number') }} <span class="required">*</span>
+                                <div style="font-size:10px;font-weight:400;color:var(--text-muted);">{{ __('app.good_receipt.load_col_hint') }}</div>
+                            </th>
+                            <th class="text-right">{{ __('app.good_receipt.col_po_qty') }}</th>
+                            <th class="text-right" width="150">{{ __('app.good_receipt.col_received_qty') }} <span class="required">*</span></th>
+                            <th>{{ __('app.good_receipt.condition') }}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Items will be populated by JS -->
-                        <tr><td colspan="5" class="text-center" style="padding:30px;color:var(--text-muted);">Pilih Purchase Order terlebih dahulu</td></tr>
+                        <tr><td colspan="5" class="text-center" style="padding:30px;color:var(--text-muted);">-- {{ __('app.common.po_number') }} --</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -111,7 +116,7 @@
         </div>
 
         <div style="display:flex; gap:10px;">
-            <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="fas fa-save"></i> Simpan Good Receipt</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="fas fa-save"></i> {{ __('app.good_receipt.save_btn') }}</button>
             <a href="{{ route('good-receipts.index') }}" class="btn btn-ghost"><i class="fas fa-times"></i> {{ __("app.btn.cancel") }}</a>
         </div>
     </form>
@@ -120,66 +125,85 @@
 
 @push('scripts')
 <script>
-    const poSelect = document.getElementById('poSelect');
+    const poSelect       = document.getElementById('poSelect');
+    const receiptDate    = document.getElementById('receiptDate');
     const itemsTableBody = document.querySelector('#itemsTable tbody');
-    const itemsCard = document.getElementById('itemsCard'); // tambahkan id itemsCard di html Anda
-    const warehouses = @json($warehouses);
+    const itemsCard      = document.getElementById('itemsCard');
+
+    function generateLoadNumber() {
+        const dateVal      = receiptDate.value;
+        const supplierCode = poSelect.options[poSelect.selectedIndex]?.getAttribute('data-supplier-code') || '';
+        if (!dateVal || !supplierCode) return '';
+        const d  = new Date(dateVal);
+        const yy = String(d.getFullYear()).slice(-2);
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        return `${yy}${mm}${dd}${supplierCode}`;
+    }
+
+    function updateLoadNumbers() {
+        const suggested = generateLoadNumber();
+        document.querySelectorAll('.load-number-input').forEach(input => {
+            if (!input.dataset.manuallyEdited) input.value = suggested;
+        });
+    }
 
     function renderItems() {
         const selectedOption = poSelect.options[poSelect.selectedIndex];
-        
-        if(!selectedOption.value) {
-            itemsTableBody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:30px;color:var(--text-muted);">Pilih Purchase Order terlebih dahulu</td></tr>';
-            itemsCard.style.display = 'none'; // Sembunyikan jika kosong
+        if (!selectedOption.value) {
+            itemsTableBody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:30px;color:var(--text-muted);">-- {{ __("app.common.po_number") }} --</td></tr>';
+            itemsCard.style.display = 'none';
             return;
         }
 
         const items = JSON.parse(selectedOption.getAttribute('data-items'));
-        if(items.length === 0) {
-            itemsTableBody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:30px;color:var(--text-muted);">Semua item pada PO ini sudah diterima (Fully Received).</td></tr>';
+        if (items.length === 0) {
+            itemsTableBody.innerHTML = '<tr><td colspan="5" class="text-center" style="padding:30px;color:var(--text-muted);">{{ __("app.common.no_data") }}</td></tr>';
             itemsCard.style.display = 'block';
             return;
         }
 
         itemsCard.style.display = 'block';
+        const suggested = generateLoadNumber();
         let html = '';
 
         items.forEach((item, index) => {
-            const name = item.material ? item.material.name : (item.part ? item.part.part_name : '-');
-            const code = item.material ? item.material.code : (item.part ? item.part.part_no : '-');
-            const unit = item.material ? item.material.unit : 'Pcs';
-            
-            // Mengambil sisa yang dioper dari controller
-            const remainingQty = parseFloat(item.remaining_quantity); 
-            
-            const matIdInput = item.m_material_id ? `<input type="hidden" name="items[${index}][m_material_id]" value="${item.m_material_id}">` : '';
-            const partIdInput = item.m_part_id ? `<input type="hidden" name="items[${index}][m_part_id]" value="${item.m_part_id}">` : '';
+            const name         = item.material ? item.material.name  : (item.part ? item.part.part_name : '-');
+            const code         = item.material ? item.material.code  : (item.part ? item.part.part_no   : '-');
+            const unit         = item.material ? item.material.unit  : 'Pcs';
+            const remainingQty = parseFloat(item.remaining_quantity);
+
+            const matIdInput  = item.m_material_id ? `<input type="hidden" name="items[${index}][m_material_id]" value="${item.m_material_id}">` : '';
+            const partIdInput = item.m_part_id     ? `<input type="hidden" name="items[${index}][m_part_id]"     value="${item.m_part_id}">` : '';
 
             html += `
                 <tr>
                     <td>
                         <div style="font-weight:500;">${name}</div>
                         <div style="font-size:11px;color:var(--text-muted);">${code}</div>
-                        <div style="font-size:11px;color:var(--accent);">Sisa: ${remainingQty} dari Total PO: ${item.quantity}</div>
-                        
                         <input type="hidden" name="items[${index}][t_purchase_order_item_id]" value="${item.id}">
-                        ${matIdInput}
-                        ${partIdInput}
-                    </td>
-                    <td class="text-right">
-                        ${remainingQty} ${unit} <!-- Menampilkan sisa saja -->
+                        ${matIdInput}${partIdInput}
                     </td>
                     <td>
+                        <input type="text" name="items[${index}][load_material_number]"
+                               class="form-control load-number-input"
+                               value="${suggested}" placeholder="260527S01"
+                               maxlength="50" style="font-size:12px;padding:6px;"
+                               oninput="this.dataset.manuallyEdited='1'" required>
+                    </td>
+                    <td class="text-right">${remainingQty} ${unit}</td>
+                    <td>
                         <div style="display:flex;align-items:center;gap:8px;">
-                            <!-- Set value dan max menjadi remainingQty -->
-                            <input type="number" name="items[${index}][quantity]" class="form-control" value="${remainingQty}" max="${remainingQty}" min="0.01" step="0.01" style="font-size:13px;padding:6px;width:100px;" required>
+                            <input type="number" name="items[${index}][quantity]" class="form-control"
+                                   value="${remainingQty}" max="${remainingQty}" min="0.01" step="0.01"
+                                   style="font-size:13px;padding:6px;width:100px;" required>
                             <span style="font-size:12px;color:var(--text-muted);">${unit}</span>
                         </div>
                     </td>
                     <td>
                         <select name="items[${index}][condition]" class="form-control" style="font-size:12px;padding:6px;">
-                            <option value="good">Good</option>
-                            <option value="damaged">Damaged</option>
+                            <option value="good">{{ __('app.good_receipt.condition') }} - Good</option>
+                            <option value="damaged">{{ __('app.good_receipt.condition') }} - Damaged</option>
                         </select>
                     </td>
                 </tr>
@@ -190,10 +214,7 @@
     }
 
     poSelect.addEventListener('change', renderItems);
-    
-    // Initial render if old data exists
-    if(poSelect.value) {
-        renderItems();
-    }
+    receiptDate.addEventListener('change', updateLoadNumbers);
+    if (poSelect.value) renderItems();
 </script>
 @endpush

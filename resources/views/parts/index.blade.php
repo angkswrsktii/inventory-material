@@ -98,7 +98,7 @@
                         <div style="display:flex; gap:6px;">
                             <a href="{{ route('parts.show', $part) }}" class="btn btn-ghost btn-sm" title="Detail"><i class="fas fa-eye"></i></a>
                             <a href="{{ route('parts.edit', $part) }}" class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="{{ route('parts.destroy', $part) }}" onsubmit="return confirm('Yakin hapus part ini?')">
+                            <form method="POST" action="{{ route('parts.destroy', $part) }}" data-confirm="{{ __('app.common.confirm_delete') }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>

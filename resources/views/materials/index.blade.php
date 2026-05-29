@@ -90,7 +90,7 @@
                         <div style="display:flex; gap:6px;">
                             <a href="{{ route('materials.show', $material) }}" class="btn btn-ghost btn-sm" title="Detail"><i class="fas fa-eye"></i></a>
                             <a href="{{ route('materials.edit', $material) }}" class="btn btn-ghost btn-sm" title="Edit"><i class="fas fa-pen"></i></a>
-                            <form method="POST" action="{{ route('materials.destroy', $material) }}" onsubmit="return confirm('Yakin hapus material ini?')">
+                            <form method="POST" action="{{ route('materials.destroy', $material) }}" data-confirm="{{ __('app.common.confirm_delete') }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>

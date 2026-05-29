@@ -91,8 +91,8 @@
         <tr>
             <th>No. Good Issue</th>
             <td>{{ $productionQc->goodIssue->gi_number }}</td>
-            <th>Status Dokumen</th>
-            <td style="font-weight:bold;">{{ strtoupper($productionQc->status) }}</td>
+            <th>No. Work Order</th>
+            <td style="font-weight:bold;">{{ $productionQc->wo_number }}</td>
         </tr>
         <tr>
             <th>Target Part Name</th>

@@ -10,30 +10,23 @@
 </div>
 
 <div class="page-header">
-    <div style="display:flex;align-items:center;gap:12px;">
+    <div>
         <div class="page-title">{{ $productionQc->wo_number }}</div>
-        @if($productionQc->status == 'approved')
-            <span class="badge badge-success">Disetujui</span>
-        @else
-            <span class="badge badge-warning">Draft</span>
-        @endif
     </div>
     <div style="display:flex;gap:8px;">
         <a href="{{ route('production-qc.print', $productionQc) }}" target="_blank" class="btn btn-secondary">
-            <i class="fas fa-print"></i> Cetak Dokumen
+            <i class="fas fa-print"></i> {{ __('app.btn.print') }}
         </a>
-
-        @if($productionQc->status === 'draft')
         <a href="{{ route('production-qc.edit', $productionQc) }}" class="btn btn-warning">
-            <i class="fas fa-edit"></i> Edit
+            <i class="fas fa-edit"></i> {{ __('app.btn.edit') }}
         </a>
-        <form action="{{ route('production-qc.approve', $productionQc) }}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-success" onclick="return confirm('Setujui Work Order ini? Stok Part (Good) akan bertambah.')">
-                <i class="fas fa-check"></i> Approve
+        <form action="{{ route('production-qc.destroy', $productionQc) }}" method="POST"
+              data-confirm="{{ __('app.common.confirm_delete') }}">
+            @csrf @method('DELETE')
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> {{ __('app.btn.delete') }}
             </button>
         </form>
-        @endif
     </div>
 </div>
 
@@ -67,6 +60,13 @@
                     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);">
                         <div>
                             <span style="font-weight:600;font-size:13px;">{{ $item->material->name ?? '-' }}</span>
+                            @if($item->load_material_number)
+                                <div style="margin-top:3px;">
+                                    <span style="font-family:monospace;font-size:11px;background:var(--surface-3,var(--border));padding:2px 6px;border-radius:4px;color:var(--accent);">
+                                        {{ $item->load_material_number }}
+                                    </span>
+                                </div>
+                            @endif
                         </div>
                         <span style="color:var(--danger);font-weight:600;">{{ number_format($item->quantity,2) }} {{ $item->unit ?? 'Pcs' }}</span>
                     </div>

@@ -16,7 +16,6 @@ use App\Http\Controllers\GoodIssueController;
 use App\Http\Controllers\GoodReceiptController;
 use App\Http\Controllers\InventoryStockController;
 use App\Http\Controllers\MutasiController;
-use App\Http\Controllers\ReturnGiController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
 
@@ -48,17 +47,15 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/good-issues/{goodIssue}/print', [GoodIssueController::class, 'print'])
         ->name('reports.print.good-issue');
 
-    // Return GI
-    Route::get('return-gi/{returnGi}/print', [ReturnGiController::class, 'print'])->name('return-gi.print');
-    Route::resource('return-gi', ReturnGiController::class);
-
     // ── PURCHASE REQUESTS ─────────────────────────────────
     // Kepala Gudang bisa buat PR, Pimpinan approve
     Route::resource('purchase-requests', PurchaseRequestController::class);
 
-    // goods adjustment
-    Route::post('goods-adjustment/update-material', [GoodsAdjustmentController::class, 'updateMaterialData'])->name('goods-adjustment.update-material');
-    Route::resource('goods-adjustment',GoodsAdjustmentController::class)->only(['index', 'create', 'store']);
+    // goods adjustment — karyawan tidak boleh akses
+    Route::middleware('kepala_gudang')->group(function () {
+        Route::post('goods-adjustment/update-material', [GoodsAdjustmentController::class, 'updateMaterialData'])->name('goods-adjustment.update-material');
+        Route::resource('goods-adjustment', GoodsAdjustmentController::class)->only(['index', 'create', 'store']);
+    });
 
     // Aksi alur status PR
     Route::post('purchase-requests/{purchaseRequest}/submit',       [PurchaseRequestController::class, 'submit'])->name('purchase-requests.submit');
@@ -114,19 +111,16 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('warehouses', WarehouseController::class);
     Route::patch('warehouses/{warehouse}/toggle-active', [WarehouseController::class, 'toggleActive'])->name('warehouses.toggle-active');
 
-    // ── QC Produksi ──────────────────────────────────────
-    Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');
-    Route::get('production-qc/create',                  [ProductionQcController::class, 'create'])->name('production-qc.create');
-    Route::post('production-qc',                        [ProductionQcController::class, 'store'])->name('production-qc.store');
-    Route::get('production-qc/{productionQc}',          [ProductionQcController::class, 'show'])->name('production-qc.show');
-    Route::post('production-qc/{productionQc}/approve', [ProductionQcController::class, 'approve'])->name('production-qc.approve');
-    Route::post('production-qc/{productionQc}/reject',  [ProductionQcController::class, 'reject'])->name('production-qc.reject');
-    Route::delete('production-qc/{productionQc}',       [ProductionQcController::class, 'destroy'])->name('production-qc.destroy');
-    // Tambahkan route ini sebelum route resource jika menggunakan resource
-    Route::get('production-qc/{productionQc}/print', [ProductionQcController::class, 'print'])->name('production-qc.print');
-    Route::post('production-qc/{productionQc}/approve', [ProductionQcController::class, 'approve'])->name('production-qc.approve');
-
-    Route::resource('production-qc', ProductionQcController::class);
+    // ── QC Produksi (Perintah Kerja) — karyawan tidak boleh akses ────────────
+    Route::middleware('kepala_gudang')->group(function () {
+        Route::get('production-qc',                         [ProductionQcController::class, 'index'])->name('production-qc.index');
+        Route::get('production-qc/create',                  [ProductionQcController::class, 'create'])->name('production-qc.create');
+        Route::post('production-qc',                        [ProductionQcController::class, 'store'])->name('production-qc.store');
+        Route::get('production-qc/{productionQc}',       [ProductionQcController::class, 'show'])->name('production-qc.show');
+        Route::delete('production-qc/{productionQc}',    [ProductionQcController::class, 'destroy'])->name('production-qc.destroy');
+        Route::get('production-qc/{productionQc}/print', [ProductionQcController::class, 'print'])->name('production-qc.print');
+        Route::resource('production-qc', ProductionQcController::class);
+    });
 
     // User management (pimpinan/admin only — middleware di controller)
     Route::get('users',                         [UserController::class, 'index'])->name('users.index');

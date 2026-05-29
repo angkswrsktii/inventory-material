@@ -21,7 +21,13 @@
         @if($purchaseRequest->status === 'draft')
             <form action="{{ route('purchase-requests.submit', $purchaseRequest) }}" method="POST" style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Ajukan PR ini untuk di-review?')"><i class="fas fa-paper-plane"></i> Ajukan PR</button>
+                <button type="submit" class="btn btn-primary"
+                        data-confirm-btn="Ajukan PR ini untuk di-review?"
+                        data-confirm-ok="Ya, Ajukan"
+                        data-confirm-class="btn-primary"
+                        data-confirm-icon="fa-paper-plane"
+                        data-confirm-iconbg="rgba(79,142,247,0.12)"
+                        data-confirm-iconc="var(--accent)"><i class="fas fa-paper-plane"></i> Ajukan PR</button>
             </form>
             <a href="{{ route('purchase-requests.edit', $purchaseRequest) }}" class="btn btn-secondary">
                 <i class="fas fa-pen"></i> Edit
@@ -32,17 +38,33 @@
         @if($purchaseRequest->status === 'pending')
             <form action="{{ route('purchase-requests.approve', $purchaseRequest) }}" method="POST" style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-success" onclick="return confirm('Setujui PR ini?')"><i class="fas fa-check"></i> Setujui</button>
+                <button type="submit" class="btn btn-success"
+                        data-confirm-btn="Setujui PR ini?"
+                        data-confirm-ok="Ya, Setujui"
+                        data-confirm-class="btn-success"
+                        data-confirm-icon="fa-check-circle"
+                        data-confirm-iconbg="rgba(16,185,129,0.12)"
+                        data-confirm-iconc="var(--success)"><i class="fas fa-check"></i> Setujui</button>
             </form>
             <form action="{{ route('purchase-requests.reject', $purchaseRequest) }}" method="POST" style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-danger" onclick="return confirm('Tolak PR ini?')"><i class="fas fa-times"></i> Tolak</button>
+                <button type="submit" class="btn btn-danger"
+                        data-confirm-btn="Tolak PR ini?"
+                        data-confirm-ok="Ya, Tolak"
+                        data-confirm-class="btn-danger"
+                        data-confirm-icon="fa-times-circle"><i class="fas fa-times"></i> Tolak</button>
             </form>
             
             <!-- Tombol Kembalikan ke Draft (Hanya muncul saat pending) -->
             <form action="{{ route('purchase-requests.revert-draft', $purchaseRequest) }}" method="POST" style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-warning" onclick="return confirm('Kembalikan PR ini ke Draft agar bisa diedit?')">
+                <button type="submit" class="btn btn-warning"
+                        data-confirm-btn="Kembalikan PR ini ke Draft agar bisa diedit?"
+                        data-confirm-ok="Ya, Kembalikan"
+                        data-confirm-class="btn-warning"
+                        data-confirm-icon="fa-undo"
+                        data-confirm-iconbg="rgba(245,158,11,0.12)"
+                        data-confirm-iconc="var(--warning)">
                     <i class="fas fa-undo"></i> {{ __("app.pr.revert_draft") }}
                 </button>
             </form>

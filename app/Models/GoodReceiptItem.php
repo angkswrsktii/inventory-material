@@ -15,6 +15,7 @@ class GoodReceiptItem extends Model
         't_good_receipt_id',
         't_purchase_order_item_id',
         'm_material_id',
+        'load_material_number',
         'quantity',
         'unit',
         'notes',

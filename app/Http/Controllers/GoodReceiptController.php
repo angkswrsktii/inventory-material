@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\GoodReceipt;
 use App\Models\GoodReceiptItem;
 use App\Models\Material;
+use App\Models\MaterialBatch;
 use App\Models\Mutasi;
 use App\Models\PurchaseOrder;
 use App\Models\Stock;
@@ -32,7 +33,7 @@ class GoodReceiptController extends Controller
     public function create(Request $request)
     {
         $purchaseOrders = PurchaseOrder::whereIn('status', ['issued', 'partial'])
-            ->with(['items.material'])
+            ->with(['items.material', 'supplier'])
             ->get();
 
         $purchaseOrders = $purchaseOrders->map(function ($po) {
@@ -50,7 +51,6 @@ class GoodReceiptController extends Controller
 
         $warehouses = Warehouse::where('is_active', true)->get();
 
-        // Kalau karyawan, hanya tampilkan dirinya sendiri
         if ($this->isKaryawanUser()) {
             $users = User::where('id', Auth::id())->where('is_active', true)->get();
         } else {
@@ -66,21 +66,21 @@ class GoodReceiptController extends Controller
 
     public function store(Request $request)
     {
-        // Karyawan dipaksa pakai id dirinya sendiri
         if ($this->isKaryawanUser()) {
             $request->merge(['m_pic_id' => Auth::id()]);
         }
 
         $request->validate([
-            't_purchase_order_id'          => 'required|exists:t_purchase_orders,id',
-            'm_warehouse_id'               => 'required|exists:m_warehouses,id',
-            'm_pic_id'                     => 'required|exists:m_users,id',
-            'receipt_date'                 => 'required|date',
-            'delivery_note_number'         => 'nullable|string|max:100',
-            'notes'                        => 'nullable|string',
-            'items'                        => 'required|array|min:1',
-            'items.*.m_material_id'        => 'nullable|exists:m_materials,id',
-            'items.*.quantity'             => 'required|numeric|min:0.01',
+            't_purchase_order_id'                => 'required|exists:t_purchase_orders,id',
+            'm_warehouse_id'                     => 'required|exists:m_warehouses,id',
+            'm_pic_id'                           => 'required|exists:m_users,id',
+            'receipt_date'                       => 'required|date',
+            'delivery_note_number'               => 'nullable|string|max:100',
+            'notes'                              => 'nullable|string',
+            'items'                              => 'required|array|min:1',
+            'items.*.m_material_id'              => 'nullable|exists:m_materials,id',
+            'items.*.load_material_number'       => 'nullable|string|max:50',
+            'items.*.quantity'                   => 'required|numeric|min:0.01',
         ]);
 
         try {
@@ -109,10 +109,13 @@ class GoodReceiptController extends Controller
                     if ($material) $unit = $material->unit;
                 }
 
-                GoodReceiptItem::create([
+                $loadNumber = $itemData['load_material_number'] ?? null;
+
+                $receiptItem = GoodReceiptItem::create([
                     't_good_receipt_id'        => $receipt->id,
                     't_purchase_order_item_id' => $itemData['t_purchase_order_item_id'] ?? null,
                     'm_material_id'            => $itemData['m_material_id'] ?? null,
+                    'load_material_number'     => $loadNumber,
                     'quantity'                 => $itemData['quantity'],
                     'unit'                     => $unit,
                 ]);
@@ -125,6 +128,31 @@ class GoodReceiptController extends Controller
                     $stock->current_stock += $itemData['quantity'];
                     $stock->save();
 
+                    // Catat batch FIFO jika load_material_number diisi
+                    if (!empty($loadNumber)) {
+                        $batch = MaterialBatch::where('load_material_number', $loadNumber)
+                            ->where('m_material_id', $itemData['m_material_id'])
+                            ->where('m_warehouse_id', $request->m_warehouse_id)
+                            ->first();
+
+                        if ($batch) {
+                            // Batch sudah ada (misal terima 2x dengan no. load sama), tambah qty
+                            $batch->initial_quantity   += $itemData['quantity'];
+                            $batch->remaining_quantity += $itemData['quantity'];
+                            $batch->save();
+                        } else {
+                            MaterialBatch::create([
+                                'load_material_number'    => $loadNumber,
+                                'm_material_id'           => $itemData['m_material_id'],
+                                'm_warehouse_id'          => $request->m_warehouse_id,
+                                't_good_receipt_item_id'  => $receiptItem->id,
+                                'initial_quantity'        => $itemData['quantity'],
+                                'remaining_quantity'      => $itemData['quantity'],
+                                'receipt_date'            => $request->receipt_date,
+                            ]);
+                        }
+                    }
+
                     Mutasi::create([
                         'm_warehouse_id' => $request->m_warehouse_id,
                         'm_material_id'  => $itemData['m_material_id'],
@@ -133,7 +161,7 @@ class GoodReceiptController extends Controller
                         'type'           => 'in',
                         'quantity'       => $itemData['quantity'],
                         'balance'        => $stock->current_stock,
-                        'notes'          => 'Penerimaan GR: ' . $grNumber,
+                        'notes'          => 'Penerimaan GR: ' . $grNumber . ($loadNumber ? ' | Batch: ' . $loadNumber : ''),
                         'created_by'     => Auth::id(),
                     ]);
                 }
@@ -164,21 +192,11 @@ class GoodReceiptController extends Controller
     private function isKaryawanUser()
     {
         $user = Auth::user();
-        if (!$user) {
-            return false;
-        }
+        if (!$user) return false;
 
-        if (method_exists($user, 'isKaryawan')) {
-            return $user->isKaryawan();
-        }
-
-        if (isset($user->role)) {
-            return strtolower($user->role) === 'karyawan';
-        }
-
-        if (isset($user->is_karyawan)) {
-            return (bool) $user->is_karyawan;
-        }
+        if (method_exists($user, 'isKaryawan')) return $user->isKaryawan();
+        if (isset($user->role))      return strtolower($user->role) === 'karyawan';
+        if (isset($user->is_karyawan)) return (bool) $user->is_karyawan;
 
         return false;
     }

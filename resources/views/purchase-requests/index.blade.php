@@ -101,7 +101,7 @@
                             @endif
 
                             @if(in_array($pr->status, ['draft', 'rejected']))
-                            <form method="POST" action="{{ route('purchase-requests.destroy', $pr) }}" onsubmit="return confirm('Yakin hapus PR ini?')">
+                            <form method="POST" action="{{ route('purchase-requests.destroy', $pr) }}" data-confirm="{{ __('app.common.confirm_delete') }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>

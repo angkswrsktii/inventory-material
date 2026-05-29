@@ -1,11 +1,10 @@
 @extends('layouts.app')
-
-@section('title', 'Detail Good Receipt')
+@section('title', __('app.good_receipt.title'))
 @section('topbar-title', __('app.nav.good_receipt') . ' — ' . __('app.nav.good_receipt'))
 
 @section('content')
 <div class="breadcrumb">
-    <a href="{{ route('good-receipts.index') }}">Good Receipt</a>
+    <a href="{{ route('good-receipts.index') }}">{{ __('app.good_receipt.title') }}</a>
     <span class="sep">/</span>
     <span>{{ $goodReceipt->gr_number }}</span>
 </div>
@@ -13,11 +12,11 @@
 <div class="page-header">
     <div>
         <div class="page-title">{{ $goodReceipt->gr_number }}</div>
-        <div class="page-subtitle">Detail penerimaan Material</div>
+        <div class="page-subtitle">{{ __('app.good_receipt.detail_subtitle') }}</div>
     </div>
     <div style="display:flex; gap:10px;">
         <a href="{{ route('reports.print.good-receipt', $goodReceipt) }}" target="_blank" class="btn btn-secondary">
-            <i class="fas fa-print"></i> Print GR
+            <i class="fas fa-print"></i> {{ __('app.btn.print') }}
         </a>
     </div>
 </div>
@@ -26,18 +25,18 @@
     <!-- Info Panel -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:8px;"></i>Informasi Dokumen</span>
+            <span class="card-title"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:8px;"></i>{{ __('app.good_receipt.info_title') }}</span>
         </div>
         <div style="padding:0;">
             @php
                 $rows = [
-                    ['No. GR',          $goodReceipt->gr_number],
-                    ['No. PO',          $goodReceipt->purchaseOrder->po_number ?? '-'],
-                    ['Tanggal Terima',  $goodReceipt->receipt_date->format('d M Y')],
-                    ['Supplier',        $goodReceipt->purchaseOrder->supplier->name ?? '-'],
-                    ['Penerima (System)', $goodReceipt->receiver->name ?? '-'],
-                    ['PIC Penerima',    $goodReceipt->pic->name ?? '-'],
-                    ['Project',         $goodReceipt->project->name ?? '-'],
+                    [__('app.good_receipt.no_gr'),           $goodReceipt->gr_number],
+                    [__('app.good_receipt.no_po'),           $goodReceipt->purchaseOrder->po_number ?? '-'],
+                    [__('app.good_receipt.receive_date'),    $goodReceipt->receipt_date->format('d M Y')],
+                    [__('app.common.supplier'),              $goodReceipt->purchaseOrder->supplier->name ?? '-'],
+                    [__('app.good_receipt.system_receiver'), $goodReceipt->receiver->name ?? '-'],
+                    [__('app.good_receipt.pic_receiver'),    $goodReceipt->pic->name ?? '-'],
+                    [__('app.common.project'),               $goodReceipt->project->name ?? '-'],
                 ];
             @endphp
             @foreach($rows as [$label, $value])
@@ -59,16 +58,17 @@
     <!-- Items -->
     <div class="card">
         <div class="card-header">
-            <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--accent-2);margin-right:8px;"></i>Item Diterima</span>
+            <span class="card-title"><i class="fas fa-boxes-stacked" style="color:var(--accent-2);margin-right:8px;"></i>{{ __('app.good_receipt.items_title') }}</span>
         </div>
         <div class="table-wrap">
             <table>
                 <thead>
                     <tr>
                         <th width="50">{{ __('app.common.no') }}</th>
-                        <th>Material</th>
-                        <th class="text-right">Qty PO</th>
-                        <th class="text-right">Qty Terima</th>
+                        <th>{{ __('app.common.item_name') }}</th>
+                        <th>{{ __('app.good_receipt.col_load_number') }}</th>
+                        <th class="text-right">{{ __('app.good_receipt.col_po_qty') }}</th>
+                        <th class="text-right">{{ __('app.good_receipt.col_received_qty') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -77,17 +77,22 @@
                         <td style="color:var(--text-muted);">{{ $loop->iteration }}</td>
                         <td>
                             <div style="font-weight:500;">{{ $item->material->name ?? '-' }}</div>
-                            <div style="font-size:11px; color:var(--text-muted);">
-                                {{ $item->material->code ?? '-' }}
-                            </div>
+                            <div style="font-size:11px; color:var(--text-muted);">{{ $item->material->code ?? '-' }}</div>
+                        </td>
+                        <td>
+                            @if($item->load_material_number)
+                                <span style="font-family:monospace; font-size:12px; background:var(--surface-2); padding:3px 8px; border-radius:4px; color:var(--accent);">
+                                    {{ $item->load_material_number }}
+                                </span>
+                            @else
+                                <span style="color:var(--text-muted); font-size:12px;">-</span>
+                            @endif
                         </td>
                         <td class="text-right" style="color:var(--text-muted);">
-                            {{ number_format($item->purchaseOrderItem->quantity ?? 0, 2) }} 
-                            {{ $item->unit ?? 'Pcs' }}
+                            {{ number_format($item->purchaseOrderItem->quantity ?? 0, 2) }} {{ $item->unit ?? 'Pcs' }}
                         </td>
                         <td class="text-right" style="font-weight:600; color:var(--success);">
-                            {{ number_format($item->quantity, 2) }} 
-                            {{ $item->unit ?? 'Pcs' }}
+                            {{ number_format($item->quantity, 2) }} {{ $item->unit ?? 'Pcs' }}
                         </td>
                     </tr>
                     @endforeach

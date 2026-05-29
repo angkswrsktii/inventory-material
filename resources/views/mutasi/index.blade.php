@@ -22,7 +22,6 @@
                 <option value="">{{ __('app.mutasi.all_types') }}</option>
                 <option value="in" {{ request('type') == 'in' ? 'selected' : '' }}>{{ __('app.mutasi.in') }}</option>
                 <option value="out" {{ request('type') == 'out' ? 'selected' : '' }}>{{ __('app.mutasi.out') }}</option>
-                <option value="in_return" {{ request('type') == 'in_return' ? 'selected' : '' }}>{{ __('app.mutasi.in_return') }}</option>
             </select>
             <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i> {{ __('app.btn.search') }}</button>
             @if(request()->hasAny(['search', 'type']))
@@ -69,9 +68,7 @@
                         {{ $mutasi->notes ?: '-' }}
                     </td>
                     <td>
-                        @if($mutasi->type === 'in' && $mutasi->reference_type === 'App\Models\ReturnGi')
-                            <span class="badge badge-warning">IN RETUR</span>
-                        @elseif($mutasi->type === 'in')
+                        @if($mutasi->type === 'in')
                             <span class="badge badge-success">IN</span>
                         @elseif($mutasi->type === 'out')
                             <span class="badge badge-danger">OUT</span>

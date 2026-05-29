@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Customer;
 use App\Models\Material;
+use App\Models\MaterialBatch;
 use App\Models\Part;
 use App\Models\Stock;
 use App\Models\Supplier;
@@ -269,7 +270,7 @@ class MaterialStockSeeder extends Seeder
             }
 
             // Buat stock
-            Stock::firstOrCreate(
+            $stockRecord = Stock::firstOrCreate(
                 [
                     'm_warehouse_id' => $warehouseId,
                     'm_material_id'  => $material->id,
@@ -280,6 +281,26 @@ class MaterialStockSeeder extends Seeder
                     'max_stock'     => $max_stock ?? 0,
                 ]
             );
+
+            // Buat batch FIFO untuk material yang punya stok awal > 0
+            $initialStock = $stock ?? 0;
+            if ($initialStock > 0) {
+                // Format nomor load: YYMMDD + kode supplier (tanggal seed: 01 Jan 2024)
+                $loadNumber = '240101' . $sup_code;
+
+                MaterialBatch::firstOrCreate(
+                    [
+                        'load_material_number' => $loadNumber,
+                        'm_material_id'        => $material->id,
+                        'm_warehouse_id'       => $warehouseId,
+                    ],
+                    [
+                        'initial_quantity'   => $initialStock,
+                        'remaining_quantity' => $initialStock,
+                        'receipt_date'       => '2024-01-01',
+                    ]
+                );
+            }
         }
     }
 }

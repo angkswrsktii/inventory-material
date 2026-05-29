@@ -22,7 +22,13 @@
        @if($purchaseOrder->status === 'draft')
             <form action="{{ route('purchase-orders.send', $purchaseOrder) }}" method="POST" style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-primary" onclick="return confirm('Kirim dan tandai PO ini sebagai Issued?')"><i class="fas fa-paper-plane"></i> Proses / Issued PO</button>
+                <button type="submit" class="btn btn-primary"
+                        data-confirm-btn="Kirim dan tandai PO ini sebagai Issued?"
+                        data-confirm-ok="Ya, Kirim"
+                        data-confirm-class="btn-primary"
+                        data-confirm-icon="fa-paper-plane"
+                        data-confirm-iconbg="rgba(79,142,247,0.12)"
+                        data-confirm-iconc="var(--accent)"><i class="fas fa-paper-plane"></i> Proses / Issued PO</button>
             </form>
             <a href="{{ route('purchase-orders.edit', $purchaseOrder) }}" class="btn btn-secondary"><i class="fas fa-pen"></i> Edit</a>
         @endif

@@ -14,6 +14,7 @@ class GoodIssueItem extends Model
     protected $fillable = [
         't_good_issue_id',
         'm_material_id',
+        'load_material_number',
         'quantity',
         'unit',
         'notes',

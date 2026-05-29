@@ -95,7 +95,7 @@
                                 </button>
                             </form>
                             <form action="{{ route('warehouses.destroy', $warehouse) }}" method="POST"
-                                onsubmit="return confirm('{{ __("app.common.confirm_delete") }}')">
+                                data-confirm="{{ __('app.common.confirm_delete') }}">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-ghost btn-sm" title="{{ __('app.btn.delete') }}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
                             </form>

@@ -132,7 +132,7 @@
 
                             @if($user->id !== auth()->id())
                                 <form action="{{ route('users.destroy', $user) }}" method="POST"
-                                      onsubmit="return confirm('Yakin ingin menghapus user {{ $user->name }}?')">
+                                      data-confirm="{{ __('app.common.confirm_delete') }}">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-xs btn-danger">
                                         <i class="fas fa-trash"></i>
