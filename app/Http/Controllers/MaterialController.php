@@ -51,7 +51,7 @@ class MaterialController extends Controller
             'is_active'        => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? true : false;
+        $validated['is_active'] = $request->boolean('is_active');
 
         Material::create($validated);
 
@@ -86,7 +86,7 @@ class MaterialController extends Controller
             'is_active'        => 'boolean',
         ]);
 
-        $validated['is_active'] = $request->has('is_active') ? true : false;
+        $validated['is_active'] = $request->boolean('is_active');
 
         $material->update($validated);
 
